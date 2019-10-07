@@ -73,3 +73,9 @@ NuGet.exe
 *.nupkg
 *.ncrunchsolution
 *.dot[Cc]over
+.vs/Project_c_framework/v16/Server/sqlite3/storage.ide-wal
+.vs/Project_c_framework/v16/Server/sqlite3/storage.ide-shm
+.vs/Project_c_framework/v16/Server/sqlite3/storage.ide
+.vs/Project_c_framework/v16/Server/sqlite3/db.lock
+.vs/Project_c_framework/DesignTimeBuild/.dtbcache
+.vs/Project_c_framework/config/applicationhost.config
