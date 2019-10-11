@@ -85,3 +85,6 @@ NuGet.exe
 .vs/Squeduler/config/applicationhost.config
 .vs/sqeudulerApp/config/applicationhost.config
 .vs/VSWorkspaceState.json
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-shm
+.vs/sqeudulerApp/config/applicationhost.config
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-wal
