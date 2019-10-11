@@ -92,3 +92,4 @@ NuGet.exe
 .vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-shm
 *.ide-wal
 .vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-shm
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide

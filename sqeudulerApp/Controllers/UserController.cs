@@ -50,8 +50,7 @@ namespace sqeudulerApp.Controllers
             if (Email != null)
             {
                 if (Email != null)
-                {
-                    bool Found_account = false;
+                {                  
                     String sql = "SELECT * FROM [dbo].[User] WHERE [Email] = '" + Email.ToString() + "';";
 
                     string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -60,7 +59,7 @@ namespace sqeudulerApp.Controllers
                     SqlCommand comm = new SqlCommand(sql, conn);
                     conn.Open();
                     SqlDataReader nwReader = comm.ExecuteReader();
-                    Found_account = nwReader.HasRows;
+                    bool Found_account = nwReader.HasRows;
                     nwReader.Close();
                     conn.Close();
                     string New_password = Generate_Random_String(8);
@@ -72,13 +71,9 @@ namespace sqeudulerApp.Controllers
                         conn.Open();
                         nwReader = comm.ExecuteReader();
                         nwReader.Close();
-                        conn.Close();
-                        return RedirectToAction("Index");
+                        conn.Close();                       
                     }
-                    else
-                    {
-                        return View();
-                    }
+                    return RedirectToAction("Index");
                 }
                 else
                 {
