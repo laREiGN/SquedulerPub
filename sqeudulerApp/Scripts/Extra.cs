@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -45,7 +45,7 @@ namespace sqeudulerApp.Scripts
             
             MailMessage msg = new MailMessage();
             SmtpClient client = new SmtpClient();
-           try
+            try
             {
                 //adds subject to email
                 msg.Subject = Subject;
