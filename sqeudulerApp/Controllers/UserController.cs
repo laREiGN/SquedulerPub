@@ -40,17 +40,19 @@ namespace sqeudulerApp.Controllers
             else
             {
                 Email em = new Email();
-                for (int i = 1; i < 10000; i++)
+                for (int i = 1; i < 1000; i++)
                 {
                     User user = _User.GetUser(i);
-                    if (user.Email == Email)
-                    {
-                        string body1 = "Your password is ";
-                        string password = user.Password;
-                        string body2 = " . \nPlease change it right away to prevent further log in problems.";
-                        string body = body1 + password + body2;
-                        em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", Email, "Password Recovery", body);
-                        return View();
+                    if (user != null){
+                        if (user.Email == Email)
+                        {
+                            string body1 = "Your password is ";
+                            string password = user.Password;
+                            string body2 = " . \nPlease change it right away to prevent further log in problems.";
+                            string body = body1 + password + body2;
+                            em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", Email, "Password Recovery", body);
+                            return RedirectToAction("Index");
+                        }
                     }
                 }
                 return View();
