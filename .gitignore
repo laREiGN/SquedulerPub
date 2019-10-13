@@ -79,3 +79,10 @@ NuGet.exe
 .vs/Project_c_framework/v16/Server/sqlite3/db.lock
 .vs/Project_c_framework/DesignTimeBuild/.dtbcache
 .vs/Project_c_framework/config/applicationhost.config
+*.config
+.vs/sqeudulerApp/config/applicationhost.config
+.vs/sqeudulerApp/v16/Server/sqlite3/db.lock
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-shm
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide-wal
+.vs/sqeudulerApp/config/applicationhost.config
