@@ -13,3 +13,5 @@ sqeudulerApp/bin/Debug/netcoreapp3.0/Properties/launchSettings.json
 sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.deps.json
 *.cache
 .vs/sqeudulerApp/v16/Server/sqlite3/storage.ide
+.vs/sqeudulerApp/DesignTimeBuild/.dtbcache
+.vs/sqeudulerApp/v16/Server/sqlite3/storage.ide
