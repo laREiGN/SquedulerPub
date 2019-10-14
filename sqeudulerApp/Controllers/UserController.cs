@@ -73,7 +73,7 @@ namespace sqeudulerApp.Controllers
                             string password = New_password;
                             string body2 = " . \nPlease change it right away to prevent further log in problems.";
                             string body = body1 + password + body2;
-                            em.NewHeadlessEmail("squeduler@gmail.com", "@SquedulerEmailServerPassword9710", Email, "Password Recovery", body);
+                            em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", Email, "Password Recovery", body);
                             return RedirectToAction("Index");
                         }
                     }
