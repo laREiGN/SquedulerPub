@@ -33,6 +33,11 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
+        public IActionResult JoinTeamWindow()
+        {
+            return View();
+        }
+
         public IActionResult ForgotPassword(string Email)
         {
             if (string.IsNullOrEmpty(Email))
