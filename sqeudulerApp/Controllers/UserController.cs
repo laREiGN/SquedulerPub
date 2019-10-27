@@ -82,7 +82,10 @@ namespace sqeudulerApp.Controllers
             }
         }
 
-     
+        public IActionResult TeamPage()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult Create(User model)
