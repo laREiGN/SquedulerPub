@@ -134,19 +134,19 @@ namespace sqeudulerApp.Controllers
                     sqlResultReader.Close();
                     //close sql connection
                     conn.Close();
-                    return RedirectToAction("TeamPage");
+                    return RedirectToAction("TeamPage", "User");
                 }
                 else
                 {
                     sqlResultReader.Close();
                     conn.Close();
                     // buggy, for some reason the path changes but you get the same page. because of that the buttons don't work anymore
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "User");
                 }
             }
             else {
                 // test, alternative attempt to try to debug
-                return RedirectToAction("Index", new { id = _User});
+                return RedirectToAction("Index", "User");
             }
             
         }
