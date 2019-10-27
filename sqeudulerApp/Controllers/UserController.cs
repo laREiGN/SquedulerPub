@@ -134,7 +134,7 @@ namespace sqeudulerApp.Controllers
                     sqlResultReader.Close();
                     //close sql connection
                     conn.Close();
-                    return RedirectToAction("ForgotPassword");
+                    return RedirectToAction("TeamPage");
                 }
                 else
                 {
