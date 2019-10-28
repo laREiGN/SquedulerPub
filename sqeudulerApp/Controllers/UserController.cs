@@ -44,7 +44,7 @@ namespace sqeudulerApp.Controllers
             {
                 Email em = new Email();
                 // for (int i = 1; i < _User.GetUsers.Count(); i++) better solution? ~ Tom
-                for (int i = 1; i < 1000; i++)
+                for (int i = 0; i < _User.GetUsers.Count() - 1; i++)
                 {
                     User user = _User.GetUser(i);
                     if (user != null){
@@ -80,8 +80,9 @@ namespace sqeudulerApp.Controllers
                         }
                     }
                 }
-                return View();
+                return RedirectToAction("Index");
             }
+          
         }
 
         public IActionResult TeamPage()
