@@ -87,8 +87,6 @@ namespace sqeudulerApp.Controllers
             }
         }
 
-     
-
         [HttpPost]
         public IActionResult Create(User model)
         {
