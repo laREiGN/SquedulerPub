@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace sqeudulerApp.Models
 {
+    // Not exactly a real user, it is more of the inputs of the pages
     public class User
     {
 

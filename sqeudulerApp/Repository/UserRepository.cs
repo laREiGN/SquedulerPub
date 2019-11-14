@@ -14,6 +14,7 @@ namespace sqeudulerApp.Repository
         {
             db = _db;
         }
+
         public IEnumerable<User> GetUsers => db.User;
 
         public void Add(User _User)
