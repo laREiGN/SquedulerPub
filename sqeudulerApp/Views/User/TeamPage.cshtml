@@ -15,6 +15,20 @@
     <script type="text/javascript" src="~/js/bootstrap.js"></script>
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
 
+    @* JS to open modal popup *@
+    <script src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#CreateTeamButton").click(function () {
+                $("#CreateTeamPopup").modal('show');
+            })
+            $("#btnCancelCreate").click(function () {
+                $("#CreateTeamPopup").modal('hide');
+            });
+        });
+    </script>
+    @* end of JS to open modal popup *@
+
     <title>Teamspage | Teams</title>
     <style>
         .form {
@@ -55,40 +69,38 @@
         }
 
         .pre-info {
-           position: absolute;
-           padding-top: 10px;
-           padding-left: 20px;
-           padding-bottom: 20px;
-           bottom: -187px;
-           transition: all 0.5s ease;
-           background-color: rgba(57, 68, 97, 0.65);
-           left: 0;
-           right: 0;
+            position: absolute;
+            padding-top: 10px;
+            padding-left: 20px;
+            padding-bottom: 20px;
+            bottom: -187px;
+            transition: all 0.5s ease;
+            background-color: rgba(57, 68, 97, 0.65);
+            left: 0;
+            right: 0;
         }
 
         .pre-inner:hover .pre-info {
-           background-color: rgba(57, 68, 97, 0.65);
-           bottom: 0; 
-           height: 100%;
-           width: 100%;
-           color: #fff; 
-
+            background-color: rgba(57, 68, 97, 0.65);
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+            color: #fff;
         }
 
         .top-left {
-          position: absolute;
-          top: 8px;
-          left: 16px;
-          color: white;
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            color: white;
         }
 
         .top-right {
-          position: absolute;
-          top: 8px;
-          right: 16px;
-          color: white;
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            color: white;
         }
-
     </style>
 </head>
 <body>
@@ -99,8 +111,9 @@
             </div>
             <div class="col-9 text-right">
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Teams:
+                    <button class="btn btn-outline-secondary" type="button" id="CreateTeamButton">Create Team</button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        My Teams:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <form class="Team">
@@ -119,68 +132,109 @@
                     </div>
                 </div>
             </div>
-                <button type="button" class="btn btn-outline-secondary">Logout</button>
+            <button type="button" class="btn btn-outline-secondary">Logout</button>
 
 
+        </div>
+    </div>
+    <div class="row header">
+        <div class="col text-center">
+            <h3>Teampage</h3>
+            <br />
+            <h4>Create or join a team</h4>
+            <p>To join a team: Press on the "Teams" button and type in the teamcode</p>
+        </div>
+    </div>
+    <div class="row justify-content-center form">
+        <div class="col-6">
+            <div class="col-12">
+                <div class="pre-inner">
+                    <img src="http://lorempixel.com/600/120/">
+                    <div class="top-left">Name: Blokker 1</div>
+                    <div class="top-right">Code: ABCDEF</div>
+                    <a href="http://www.google.com">
+                        <div class="pre-info">
+                            <h4>Blokker 1: description</h4>
+                            <span class="btn btn-light">Select team</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <br />
+            <div class="col-12">
+                <div class="pre-inner">
+                    <img src="http://lorempixel.com/600/120/">
+                    <a href="http://www.google.com">
+                        <div class="top-left">Name: Blokker 2</div>
+                        <div class="top-right">Code: QWERTY</div>
+                        <div class="pre-info">
+                            <h4>Blokker 2: description</h4>
+                            <span class="btn btn-light">Select team</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <br />
+            <div class="col-12">
+                <div class="pre-inner">
+                    <img src="http://lorempixel.com/600/120/">
+                    <a href="http://www.google.com">
+                        <div class="top-left">Name: Blokker 3</div>
+                        <div class="top-right">Code: ASDFGH</div>
+                        <div class="pre-info">
+                            <h4>Bokker 3: description</h4>
+                            <span class="btn btn-light">Select team</span>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="row header">
-            <div class="col text-center">
-                <h3>Teampage</h3>
-                <br />
-                <h4>Create or join a team</h4>
-                <p>To join a team: Press on the "Teams" button and type in the teamcode</p>
-            </div>
-        </div>
-        <div class="row justify-content-center form">
-            <div class="col-6">
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <div class="top-left">Name: Blokker 1</div>
-                        <div class="top-right">Code: ABCDEF</div>
-                        <a href="http://www.google.com">
-                            <div class="pre-info">
-                                <h4>Blokker 1: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 2</div>
-                            <div class="top-right">Code: QWERTY</div>
-                            <div class="pre-info">
-                                <h4>Blokker 2: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 3</div>
-                            <div class="top-right">Code: ASDFGH</div>
-                            <div class="pre-info">
-                                <h4>Bokker 3: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
         <div class="row footer">
             <div class="col text-center">
-              
+
             </div>
         </div>
     </div>
+    @* design of modal popup *@
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="CreateTeamPopup" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Team:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label>Group Name:</label>
+                                <input class="form-control" type="text" placeholder="Enter a name" id="inputTeamName" />
+                            </div>
+                            <div class="form-group">
+                                <label>Group Location:</label>
+                                <input class="form-control" type="text" placeholder="Enter a city" id="inputTeamCity" />
+                            </div>
+                            <div class="form-group">
+                                <label>Group Address:</label>
+                                <input class="form-control" type="text" placeholder="Enter an address" id="inputTeamAdress" />
+                            </div>
+                            <div class="form-group">
+                                <label>Group Zipcode:</label>
+                                <input class="form-control" type="text" placeholder="Enter a zipcode" id="inputTeamZipcode" />
+                            </div>
+                            <div class="form-group">
+                                <label>Group Description:</label>
+                                <input class="form-control" type="text" placeholder="Enter a description" id="inputDescription" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="btnCreate" class="btn btn-primary button button4">Create</button>
+                        <button type="button" id="btnCancelCreate" class="btn btn-primary button">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* end of design of modal popup *@
 </body>
 </html>
