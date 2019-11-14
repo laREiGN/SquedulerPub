@@ -22,9 +22,13 @@
         $(document).ready(function () {
             $("#CreateTeamButton").click(function () {
                 $("#CreateTeamPopup").modal('show');
-            })
+            });
             $("#btnCancelCreate").click(function () {
                 $("#CreateTeamPopup").modal('hide');
+            });
+            $("#btnLogOut").click(function () {
+                var url = '@Url.Action("SignOut", "User")';
+                location.href = url;
             });
         });
     </script>
@@ -135,7 +139,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary">Logout</button>
+            <button type="button" id="btnLogOut" class="btn btn-outline-secondary">Logout</button>
         </div>
     </div>
     <div class="row header">

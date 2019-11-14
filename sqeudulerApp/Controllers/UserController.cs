@@ -268,5 +268,10 @@ namespace sqeudulerApp.Controllers
             }
             else { return RedirectToAction("Index", "User"); }
         }
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
     }
 }
