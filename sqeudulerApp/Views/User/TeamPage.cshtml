@@ -26,10 +26,6 @@
             $("#btnCancelCreate").click(function () {
                 $("#CreateTeamPopup").modal('hide');
             });
-            $("#btnLogOut").click(function () {
-                var url = '@Url.Action("SignOut", "User")';
-                location.href = url;
-            });
         });
     </script>
     @* end of JS to open modal popup *@
@@ -139,7 +135,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" id="btnLogOut" class="btn btn-outline-secondary">Logout</button>
+            <button type="button" id="btnLogOut" onclick="location.href='@Url.Action("SignOut", "User")'" class="btn btn-outline-secondary">Logout</button>
         </div>
     </div>
     <div class="row header">
