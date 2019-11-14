@@ -20,11 +20,13 @@ namespace sqeudulerApp.Controllers
 
         private readonly IUser _User;
         private readonly ITeams _Teams;
+        private readonly IUserTeam _UserTeam;
 
-        public UserController(IUser _IUser, ITeams _ITeams)
+        public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam)
         {
             _User = _IUser;
             _Teams = _ITeams;
+            _UserTeam = _IUserTeam;
         }
 
         public IActionResult Index()
@@ -165,7 +167,9 @@ namespace sqeudulerApp.Controllers
             if (ModelState.IsValid)
             {
                 // generates a random code, later used to connect to team
-                model.TeamCode = Generate_Random_String(10);
+                //TODO - MAKE SURE CODE IS UNIQUE
+                string teamCode = Generate_Random_String(10);
+                model.TeamCode = teamCode;
 
                 // takes current session user id (email in this case)
                 string currentUser = HttpContext.Session.GetString("Uid");
@@ -183,11 +187,21 @@ namespace sqeudulerApp.Controllers
                 sqlResultReader.Read();
 
                 // the top result of the above query is saved as team owner in the teams table, and the reader is closed
-                model.TeamOwner = Convert.ToInt32(sqlResultReader[0].ToString());
+                int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
+                model.TeamOwner = currentUserID;
                 conn.Close();
 
                 //the new team is added to the database
                 _Teams.Add(model);
+
+                //adds current user to the correct team (userteam table)
+                UserTeam model2 = new UserTeam();
+                model2.UserID = currentUserID;
+                model2.Team = teamCode;
+                model2.Role = "admin";
+                _UserTeam.Add(model2);
+
+                //opens teampage again
                 return RedirectToAction("TeamPage");
             }
             return View();
