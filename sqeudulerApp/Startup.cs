@@ -32,6 +32,7 @@ namespace sqeudulerApp
             services.AddControllersWithViews();
             //dependency injection
             services.AddTransient<IUser, UserRepository>();
+            services.AddTransient<ITeams, TeamsRepository>();
             services.AddDistributedMemoryCache();
             services.AddSession();
         }

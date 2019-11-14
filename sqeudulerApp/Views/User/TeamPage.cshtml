@@ -1,4 +1,5 @@
-﻿
+﻿@model sqeudulerApp.Models.Teams
+
 @{
     ViewData["Title"] = "TeamPage";
     Layout = null;
@@ -113,7 +114,7 @@
             <div class="col-9 text-right">
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary" type="button" id="CreateTeamButton">Create Team</button>
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         My Teams:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -172,6 +173,8 @@
             </div>
         </div>
     </div>
+
+    @* design of the create team popup *@
     <div class="container">
         <div class="modal fade" tabindex="-1" id="CreateTeamPopup" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-lg">
@@ -180,36 +183,44 @@
                         <h4 class="modal-title">Create Team:</h4>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form asp-action="TeamPage">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label>Group Name:</label>
-                                <input class="form-control" type="text" placeholder="Enter a name" id="inputTeamName" />
+                                <br />
+                                <label asp-for="Teamname" class="control-label">Team Name:</label>
+                                <input asp-for="Teamname" class="form-control" placeholder="Enter a team name here:" />
+                                <span asp-validation-for="Teamname" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label>Group Location:</label>
-                                <input class="form-control" type="text" placeholder="Enter a city" id="inputTeamCity" />
+                                <label asp-for="TeamCity" class="control-label">Team City:</label>
+                                <input asp-for="TeamCity" class="form-control" placeholder="Enter a city here:" />
+                                <span asp-validation-for="TeamCity" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label>Group Address:</label>
-                                <input class="form-control" type="text" placeholder="Enter an address" id="inputTeamAdress" />
+                                <label asp-for="TeamAddress" class="control-label">Team Address:</label>
+                                <input asp-for="TeamAddress" class="form-control" placeholder="Enter an address here:" />
+                                <span asp-validation-for="TeamAddress" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label>Group Zipcode:</label>
-                                <input class="form-control" type="text" placeholder="Enter a zipcode" id="inputTeamZipcode" />
+                                <label asp-for="TeamZipCode" class="control-label">Team Zip-code:</label>
+                                <input asp-for="TeamZipCode" class="form-control" placeholder="Enter a zip code here:" />
+                                <span asp-validation-for="TeamZipCode" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label>Group Description:</label>
-                                <input class="form-control" type="text" placeholder="Enter a description" id="inputDescription" />
+                                <label asp-for="Description" class="control-label">Team Description:</label>
+                                <input asp-for="Description" class="form-control" placeholder="Enter a description here:" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" id="btnCreate" class="btn btn-primary button button4">Create</button>
+                                <button type="button" id="btnCancelCreate" class="btn btn-primary button">Cancel</button>
                             </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" id="btnCreate" class="btn btn-primary button button4">Create</button>
-                        <button type="button" id="btnCancelCreate" class="btn btn-primary button">Cancel</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    @* end of the design of the create team popup *@
 </body>
 </html>

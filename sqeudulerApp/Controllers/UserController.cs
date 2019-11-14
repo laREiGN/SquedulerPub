@@ -19,10 +19,12 @@ namespace sqeudulerApp.Controllers
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         private readonly IUser _User;
+        private readonly ITeams _Teams;
 
-        public UserController(IUser _IUser)
+        public UserController(IUser _IUser, ITeams _ITeams)
         {
             _User = _IUser;
+            _Teams = _ITeams;
         }
 
         public IActionResult Index()
@@ -158,6 +160,40 @@ namespace sqeudulerApp.Controllers
         }
 
         [HttpPost]
+        public IActionResult TeamPage(Teams model)
+        {
+            if (ModelState.IsValid)
+            {
+                // generates a random code, later used to connect to team
+                model.TeamCode = Generate_Random_String(10);
+
+                // takes current session user id (email in this case)
+                string currentUser = HttpContext.Session.GetString("Uid");
+
+                //connection opened to database
+                using SqlConnection conn = new SqlConnection(strCon);
+
+                // sql query, that reads userid's associated to the current users email
+                string query = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
+
+                // block of code, that ready the results of the above query
+                using SqlCommand comm = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader sqlResultReader = comm.ExecuteReader();
+                sqlResultReader.Read();
+
+                // the top result of the above query is saved as team owner in the teams table, and the reader is closed
+                model.TeamOwner = Convert.ToInt32(sqlResultReader[0].ToString());
+                conn.Close();
+
+                //the new team is added to the database
+                _Teams.Add(model);
+                return RedirectToAction("TeamPage");
+            }
+            return View();
+        }
+
+        [HttpPost]
         public IActionResult Login(User model)
         {
             string Email = model.Email;
@@ -218,8 +254,5 @@ namespace sqeudulerApp.Controllers
             }
             else { return RedirectToAction("Index", "User"); }
         }
-
     }
-
-
 }

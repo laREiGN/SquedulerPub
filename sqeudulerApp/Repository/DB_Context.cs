@@ -22,6 +22,8 @@ namespace sqeudulerApp.Repository
         }
         public DbSet<User> User { get; set; }
 
+        public DbSet<Teams> Teams { get; set; }
+
 
     }
 }
