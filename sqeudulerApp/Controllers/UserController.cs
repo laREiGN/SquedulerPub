@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Drawing;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
 
 namespace sqeudulerApp.Controllers
@@ -92,7 +93,49 @@ namespace sqeudulerApp.Controllers
 
         public IActionResult TeamPage()
         {
-            return View();
+            string userEmail = HttpContext.Session.GetString("Uid");
+            using SqlConnection conn = new SqlConnection(strCon);
+            {
+                //sql query. The result is basically the team name first and the teamcode second
+                //note: I use parameters for security reasons
+                string query = "SELECT [Teams].[Teamname], [UserTeam].[Team] FROM [dbo].[UserTeam] " +
+                    "JOIN [dbo].[User] ON [UserTeam].[UserID] = [User].[UserId]" +
+                    "JOIN [dbo].[Teams] ON [UserTeam].[Team] = [Teams].[TeamCode]" +
+                    " WHERE [User].[Email]= @userEmail;";
+
+                //create a sql command with the new sql query and the original connection string
+                using SqlCommand comm = new SqlCommand(query, conn);
+                {
+                    //here you can give the parameters
+                    comm.Parameters.Add("@userEmail", System.Data.SqlDbType.VarChar);
+                    comm.Parameters["@userEmail"].Value = userEmail;
+
+                    //open the connection
+                    conn.Open();
+
+                    //use the original sql datareader and execute the new sql command
+                    SqlDataReader sqlResultReader = comm.ExecuteReader();
+
+                    // Create a new list that will contain the results of the query
+                    List<Tuple<string, string>> teams_of_current_user = new List<Tuple<string, string>>();
+
+                    // Iterate through the results of the query a row per itteration
+                    while (sqlResultReader.Read())
+                    {
+                        // add the first item of the current column to the list
+                        Tuple<string, string> teaminfo = new Tuple<string, string>(sqlResultReader[0].ToString(), sqlResultReader[1].ToString());
+                        teams_of_current_user.Add(teaminfo);
+                    }
+                    // add the list to the viewbag dictionary which we can refer to in our html code
+                    ViewBag.teams_of_current_user = teams_of_current_user;
+
+                    //close sql reader
+                    sqlResultReader.Close();
+                    //close sql connection
+                    conn.Close();
+                }
+            }
+            return View("TeamPage");
         }
 
         [HttpPost]
@@ -121,40 +164,59 @@ namespace sqeudulerApp.Controllers
             string Password = model.Password;
             if (ModelState.IsValid && Email != null && Password != null)
             {
-                //sql query where we search for the email address in the database with the associated password. Only 1 result should be found.
-                String query = "SELECT [Email], [Password] FROM [dbo].[User] " +
-                    "WHERE [Email]='" + Email.ToString() + "' AND [Password]='" + Password.ToString() + "';";
                 //create a sql connection with the connection string
-                SqlConnection conn = new SqlConnection(strCon);
-                //create a sql command with the new sql query and the original connection string
-                SqlCommand comm = new SqlCommand(query, conn);
-                //open the connection
-                conn.Open();
-                //úse the original sql datareader and execute the new sql command
-                SqlDataReader sqlResultReader = comm.ExecuteReader();
-
-                // There should be 1 row and 2 columns meaning 2 fields (row * columns)
-                if (sqlResultReader.VisibleFieldCount == 2)
+                using SqlConnection conn = new SqlConnection(strCon);
                 {
-                    //close sql reader
-                    sqlResultReader.Close();
-                    //close sql connection
-                    conn.Close();
-                    return RedirectToAction("TeamPage", "User");
-                }
-                else
-                {
-                    sqlResultReader.Close();
-                    conn.Close();
-                    // buggy, for some reason the path changes but you get the same page. because of that the buttons don't work anymore
-                    return RedirectToAction("Index", "User");
-                }
-            }
-            else {
-                // test, alternative attempt to try to debug
-                return RedirectToAction("Index", "User");
-            }
+                    //sql query where we search for the email address in the database with the associated password. Only 1 result should be found.
+                    //note: I use parameters for security reasons
+                    string query = "SELECT [Email], [Password] FROM [dbo].[User] WHERE [Email]= @email;";
 
+                    //create a sql command with the new sql query and the original connection string
+                    using SqlCommand comm = new SqlCommand(query, conn);
+                    {
+                        //here you can give the parameters
+                        comm.Parameters.Add("@email", System.Data.SqlDbType.VarChar);
+                        comm.Parameters["@email"].Value = Email;
+                        // comm.Parameters.Add("@password", System.Data.SqlDbType.VarChar);
+                        // comm.Parameters["@password"].Value = Password;
+
+                        //open the connection
+                        conn.Open();
+
+                        //use the original sql datareader and execute the new sql command
+                        SqlDataReader sqlResultReader = comm.ExecuteReader();
+                        if (sqlResultReader.Read() && sqlResultReader.VisibleFieldCount == 2)
+                        {
+                            // There should be 1 row and 2 columns meaning 2 fields (row * columns)
+                            if (sqlResultReader[0].ToString() == Email && sqlResultReader[1].ToString() == Password)
+                            {
+                                //close sql reader
+                                sqlResultReader.Close();
+                                //close sql connection
+                                conn.Close();
+
+                                //safe user id to session so we can use it later to retrieve data from the database, it accepts two strings
+                                // one for the key and one for the value
+                                // use this to retrieve string HttpContext.Session.GetString("Uid")
+                                // it accepts a key and returns the string value
+                                // you can also use a viewbag to transport values to html views
+                                HttpContext.Session.SetString("Uid", Email);
+
+                                return RedirectToAction("TeamPage", "User");
+                            }
+                            else
+                            {
+                                sqlResultReader.Close();
+                                conn.Close();
+                                return RedirectToAction("Index", "User");
+                            }
+                        }
+                        else { return RedirectToAction("Index", "User"); }
+                    }
+                }
+
+            }
+            else { return RedirectToAction("Index", "User"); }
         }
 
     }
