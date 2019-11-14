@@ -1,4 +1,4 @@
-﻿@model sqeudulerApp.Models.User
+﻿@model sqeudulerApp.Models.Login
 
 @{
     ViewData["Title"] = "Index";
@@ -74,19 +74,19 @@
                     <div class="form-group">
                         <br />
                         <label asp-for="Email" class="control-label">Email:</label>
-                        <input asp-for="Email" class="form-control" type="email" id="email" placeholder="Enter email"/>
+                        <input asp-for="Email" class="form-control" type="email" id="email" placeholder="Enter email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Password" class="control-label">Password:</label>
-                        <input asp-for="Password" class="form-control" type="password" id="password" placeholder="Enter password"/>
+                        <input asp-for="Password" class="form-control" type="password" id="password" placeholder="Enter password" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
                     <!----- will implement later
     <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="rememberPassword">
-        <label class="form-check-label" for="rememberPassword">Remember me</label>
+        <input type="checkbox" asp-for="RememberMe" class="form-check-input" id="rememberPassword">
+        <label asp-for="RememberMe" class="form-check-label" for="rememberPassword">Remember me</label>
     </div>
     --->
 

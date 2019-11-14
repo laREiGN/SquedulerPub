@@ -120,8 +120,6 @@
                 </div>
             </div>
                 <button type="button" class="btn btn-outline-secondary">Logout</button>
-
-
             </div>
         </div>
         <div class="row header">
@@ -134,47 +132,25 @@
         </div>
         <div class="row justify-content-center form">
             <div class="col-6">
+
+                @foreach (var teaminfo in ViewBag.teams_of_current_user)
+                {
                 <div class="col-12">
                     <div class="pre-inner">
                         <img src="http://lorempixel.com/600/120/">
-                        <div class="top-left">Name: Blokker 1</div>
-                        <div class="top-right">Code: ABCDEF</div>
+                        <div class="top-left">Name: @teaminfo.Item1</div>
+                        <div class="top-right">Code: @teaminfo.Item2</div>
                         <a href="http://www.google.com">
                             <div class="pre-info">
-                                <h4>Blokker 1: description</h4>
+                                <h4>@teaminfo.Item1: description</h4>
                                 <span class="btn btn-light">Select team</span>
                             </div>
                         </a>
                     </div>
                 </div>
                 <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 2</div>
-                            <div class="top-right">Code: QWERTY</div>
-                            <div class="pre-info">
-                                <h4>Blokker 2: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 3</div>
-                            <div class="top-right">Code: ASDFGH</div>
-                            <div class="pre-info">
-                                <h4>Bokker 3: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                }
+
             </div>
         <div class="row footer">
             <div class="col text-center">
