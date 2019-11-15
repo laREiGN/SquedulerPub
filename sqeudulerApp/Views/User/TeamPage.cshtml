@@ -118,14 +118,14 @@
                         My Teams:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <form class="Team">
+                        <form class="Teams" asp-action="JoinTeam">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label>Team code: </label>
-                                <input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HFCT4H">
-                            </div>
-
-                            <div class="btnGroup">
-                                <button type="button" class="btn btn-outline-secondary btn-sm">Join</button>
+                                <br />
+                                <label asp-for="TeamCode" class="control-label">Team Code:</label>
+                                <input asp-for="TeamCode" class="form-control" placeholder="Example: FGT24HFCT4H" />
+                                <span asp-validation-for="TeamCode" class="text-danger"></span>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Join</button>
                             </div>
                         </form>
                         <br />
@@ -184,7 +184,7 @@
                         <h4 class="modal-title">Create Team:</h4>
                     </div>
                     <div class="modal-body">
-                        <form asp-action="TeamPage">
+                        <form asp-action="CreateTeam">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
                                 <br />

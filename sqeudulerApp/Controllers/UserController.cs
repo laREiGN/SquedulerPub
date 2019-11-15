@@ -21,6 +21,7 @@ namespace sqeudulerApp.Controllers
         private readonly IUser _User;
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
+        
 
         public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam)
         {
@@ -35,11 +36,6 @@ namespace sqeudulerApp.Controllers
         }
 
         public IActionResult Create()
-        {
-            return View();
-        }
-
-        public IActionResult JoinTeamWindow()
         {
             return View();
         }
@@ -143,6 +139,107 @@ namespace sqeudulerApp.Controllers
         }
 
         [HttpPost]
+        //  TODO:   ADD ELSE PATH FOR UNEXISTING TEAMCODE
+        public ActionResult JoinTeam(Teams model)
+        {
+            string TeamCode = model.TeamCode;
+            if (string.IsNullOrEmpty(TeamCode))
+            {
+                return RedirectToAction("TeamPage");
+            }
+            else
+            {
+                string query = "SELECT [TeamCode] FROM [dbo].[Teams] WHERE [TeamCode]= '" + TeamCode + "';";
+                using SqlConnection conn = new SqlConnection(strCon);
+                using SqlCommand comm = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader sqlResultReader = comm.ExecuteReader();
+                if (sqlResultReader.Read())
+                {
+                    string dbTeamCode = sqlResultReader[0].ToString();
+                    conn.Close();
+                    if (dbTeamCode != null)
+                    {
+                        // takes current session user id (email in this case)
+                        string currentUser = HttpContext.Session.GetString("Uid");
+
+                        //connection opened to database
+                        using SqlConnection conn2 = new SqlConnection(strCon);
+
+                        // sql query, that reads userid's associated to the current users email
+                        string query2 = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
+
+                        // block of code, that ready the results of the above query
+                        using SqlCommand comm2 = new SqlCommand(query2, conn2);
+                        conn2.Open();
+                        SqlDataReader sqlResultReader2 = comm2.ExecuteReader();
+
+                        //checks if query returns data
+                        if (sqlResultReader2.Read())
+                        {
+                            // the top result of the above query is saved as a variable
+                            int currentUserID = Convert.ToInt32(sqlResultReader2[0].ToString());
+                            conn2.Close();
+
+                            //query that checks teams associated with current user
+                            using SqlConnection conn3 = new SqlConnection(strCon);
+                            string query3 = "SELECT [Team] FROM [dbo].[UserTeam] WHERE [UserID] = '" + currentUserID + "';";
+                            using SqlCommand comm3 = new SqlCommand(query3, conn3);
+                            conn3.Open();
+                            SqlDataReader sqlResultReader3 = comm3.ExecuteReader();
+                            //checks if user is actually in any teams
+                            if (sqlResultReader3.Read())
+                            {
+                                List<string> teams = new List<string>();
+                                //all teams of user get put into a list for later use
+                                while (sqlResultReader3.Read())
+                                {
+                                    string userTeam = sqlResultReader3[0].ToString();
+                                    teams.Add(userTeam);
+                                }
+                                //if user is already in the team with the code supplied, nothing happens
+
+                                //TODO - ADD ERROR MESSAGE OR NOTIFICATION
+                                if (teams.Contains(TeamCode))
+                                {
+                                    return RedirectToAction("TeamPage");
+                                }
+                                //if user is not currently in said team, he gets added
+                                else
+                                {
+                                    // the user is added to the group
+                                    UserTeam model2 = new UserTeam();
+                                    model2.UserID = currentUserID;
+                                    model2.Team = TeamCode;
+                                    model2.Role = "member";
+                                    _UserTeam.Add(model2);
+                                    return RedirectToAction("TeamPage");
+                                }
+                            }
+                            //if user is not in any groups, he gets added to the team with the provided code
+                            else
+                            {
+                                // the user is added to the group
+                                UserTeam model2 = new UserTeam();
+                                model2.UserID = currentUserID;
+                                model2.Team = TeamCode;
+                                model2.Role = "member";
+                                _UserTeam.Add(model2);
+                                return RedirectToAction("TeamPage");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("TEAM DOES NOT EXIST");
+                    return RedirectToAction("TeamPage");
+                }
+            }
+            return RedirectToAction("TeamPage");
+        }
+
+        [HttpPost]
         public IActionResult Create(User model)
         {
             // used for the sign up button. when you click on that button,
@@ -162,7 +259,7 @@ namespace sqeudulerApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult TeamPage(Teams model)
+        public IActionResult CreateTeam(Teams model)
         {
             if (ModelState.IsValid)
             {
@@ -184,25 +281,28 @@ namespace sqeudulerApp.Controllers
                 using SqlCommand comm = new SqlCommand(query, conn);
                 conn.Open();
                 SqlDataReader sqlResultReader = comm.ExecuteReader();
-                sqlResultReader.Read();
 
-                // the top result of the above query is saved as team owner in the teams table, and the reader is closed
-                int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
-                model.TeamOwner = currentUserID;
-                conn.Close();
+                //checks if the query actually returned any data
+                if (sqlResultReader.Read())
+                {
+                    // the top result of the above query is saved as team owner in the teams table, and the reader is closed
+                    int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
+                    model.TeamOwner = currentUserID;
+                    conn.Close();
 
-                //the new team is added to the database
-                _Teams.Add(model);
+                    //the new team is added to the database
+                    _Teams.Add(model);
 
-                //adds current user to the correct team (userteam table)
-                UserTeam model2 = new UserTeam();
-                model2.UserID = currentUserID;
-                model2.Team = teamCode;
-                model2.Role = "admin";
-                _UserTeam.Add(model2);
+                    //adds current user to the correct team (userteam table)
+                    UserTeam model2 = new UserTeam();
+                    model2.UserID = currentUserID;
+                    model2.Team = teamCode;
+                    model2.Role = "admin";
+                    _UserTeam.Add(model2);
 
-                //opens teampage again
-                return RedirectToAction("TeamPage");
+                    //opens teampage again
+                    return RedirectToAction("TeamPage");
+                }
             }
             return View();
         }
@@ -268,7 +368,7 @@ namespace sqeudulerApp.Controllers
             }
             else { return RedirectToAction("Index", "User"); }
         }
-        public IActionResult SignOut()
+        public ActionResult SignOut()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index");

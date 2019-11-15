@@ -10,8 +10,8 @@ namespace sqeudulerApp.Services
     {
         IEnumerable<Teams> GetTeams { get; }
 
-        Teams GetTeam(int id);
+        Teams GetTeam(string id);
         void Add(Teams _Teams);
-        void Remove(int id);
+        void Remove(string id);
     }
 }
