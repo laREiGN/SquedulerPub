@@ -232,7 +232,6 @@ namespace sqeudulerApp.Controllers
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("TEAM DOES NOT EXIST");
                     return RedirectToAction("TeamPage");
                 }
             }
@@ -266,7 +265,23 @@ namespace sqeudulerApp.Controllers
                 // generates a random code, later used to connect to team
                 //TODO - MAKE SURE CODE IS UNIQUE
                 string teamCode = Generate_Random_String(10);
-                model.TeamCode = teamCode;
+
+                string queryTC = "SELECT [TeamCode] FROM [dbo].[Tables] WHERE [TeamCode] = '" + teamCode + "';" ;
+                using SqlConnection conn3 = new SqlConnection(strCon);
+                using SqlCommand comm3 = new SqlCommand(queryTC, conn3);
+                conn3.Open();
+                SqlDataReader sqlResultReader2 = comm3.ExecuteReader();
+                if (sqlResultReader2.Read())
+                {
+
+                }
+
+
+
+                    //MAKE NEW CLASS, INSERT BOTH INTO NEW CLASS
+
+
+
 
                 // takes current session user id (email in this case)
                 string currentUser = HttpContext.Session.GetString("Uid");
