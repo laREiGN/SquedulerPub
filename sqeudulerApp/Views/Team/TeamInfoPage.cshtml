@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<sqeudulerApp.Models.User>
 
 @{
-    ViewData["Title"] = "Forgot Password";
+    ViewData["Title"] = @ViewBag.teamcontext.Item1[0];
     Layout = null;
 }
 
@@ -47,6 +47,34 @@
     @* end of JS to open modal popup *@
 
     <style>
+
+        /* Split the screen in half */
+        .split {
+          height: 100%;
+          width: 50%;
+          position: absolute;
+          overflow-x: hidden;
+        }
+
+        /* Control the left side */
+        .left {
+          left: 0;
+        }
+
+        /* Control the right side */
+        .right {
+          right: 0;
+        }
+
+        /* If you want the content centered horizontally and vertically */
+        .centered {
+          position: absolute;
+          top: 25%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+
         .form {
             padding: 25px;
         }
@@ -79,7 +107,7 @@
 
         /* Style the tab */
         .tab {
-            overflow: hidden;
+            overflow: visible;
             border: 1px solid #ccc;
             background-color: #f1f1f1;
             width: 100%;
@@ -97,6 +125,7 @@
             cursor: pointer;
             padding: 14px 16px;
             transition: 0.3s;
+            z-index: 1;
         }
 
         /* Change background color of buttons on hover */
@@ -113,14 +142,13 @@
         .tabcontent {
             display: none;
             padding: 6px 12px;
-            border: 1px solid #ccc;
             border-top: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container-fluid h-100">
         <div class="row top-row border rounded">
             <div class="col-2 text-center top-logo">
                 <h3 class="logo">Squeduler</h3>
@@ -131,57 +159,75 @@
 
             </div>
         </div>
-
-        <div class="tab">
-            <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
-            <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
-            <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
-            <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
+        <div class="row">
+            <div class="tab col">
+                <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
+                <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
+                <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
+                <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
+            </div>
         </div>
 
-        @if (ViewBag.teamcontext.Item3 == "member")
+
+       @if (ViewBag.teamcontext.Item3 == "member")
         {
-            <!-- Tab content -->
-            <div id="Main" class="tabcontent">
-                <h3>Main MEMBER PAGE</h3>
-                <p>Recent activities and requests</p>
-            </div>
+        <!-- Tab content -->
+        <div id="Main" class="tabcontent">
+            <h3>Main MEMBER PAGE</h3>
+            <p>Recent activities and requests</p>
+        </div>
 
-            <div id="Personal" class="tabcontent">
-                <h3>Personal MEMBER PAGE</h3>
-                <p>Total hours and availability</p>
-            </div>
+        <div id="Personal" class="tabcontent">
+            <h3>Personal MEMBER PAGE</h3>
+            <p>Total hours and availability</p>
+        </div>
 
-            <div id="Schedule" class="tabcontent">
-                <h3>Schedule MEMBER PAGE</h3>
-                <p>Team schedule and request buttons</p>
+        <div id="Schedule" class="tabcontent">
+            <h3>Schedule MEMBER PAGE</h3>
+            <p>Team schedule and request buttons</p>
+        </div>
+        <div id="TeamInfo" class="tabcontent">
+            <div class="split left">
+                <div class="centered">
+                    <h5>Team Info </h5>
+                </div>
             </div>
-            <div id="TeamInfo" class="tabcontent">
-                <h3>TeamInfo MEMBER PAGE</h3>
-                <p>Team information and team members</p>
+            <div class="split right">
+                <div class="centered">
+                    <h5>Team Members</h5>
+                </div>
             </div>
+        </div>
         }
         else
         {
-            <!-- Tab content -->
-            <div id="Main" class="tabcontent">
-                <h3>Main BAWS PAGE</h3>
-                <p>Recent activities and requests</p>
-            </div>
+        <!-- Tab content -->
+        <div id="Main" class="tabcontent">
+            <h3>Main BAWS PAGE</h3>
+            <p>Recent activities and requests</p>
+        </div>
 
-            <div id="Personal" class="tabcontent">
-                <h3>Personal RATATATAAT</h3>
-                <p>Total hours and availability</p>
-            </div>
+        <div id="Personal" class="tabcontent">
+            <h3>Personal RATATATAAT</h3>
+            <p>Total hours and availability</p>
+        </div>
 
-            <div id="Schedule" class="tabcontent">
-                <h3>Schedule HANDGRANAAT</h3>
-                <p>Team schedule and request buttons</p>
+        <div id="Schedule" class="tabcontent">
+            <h3>Schedule HANDGRANAAT</h3>
+            <p>Team schedule and request buttons</p>
+        </div>
+        <div id="TeamInfo" class="tabcontent">
+            <div class="split left">
+                <div class="centered">
+                    <h5>Team Info </h5>
+                </div>
             </div>
-            <div id="TeamInfo" class="tabcontent">
-                <h3>TeamInfo BAM</h3>
-                <p>Team information and team members</p>
+            <div class="split right">
+                <div class="centered">
+                    <h5>Team Members</h5>
+                </div>
             </div>
+        </div>
         }
 
 
