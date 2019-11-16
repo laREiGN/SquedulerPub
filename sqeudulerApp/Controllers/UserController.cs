@@ -258,7 +258,7 @@ namespace sqeudulerApp.Controllers
                             {
                                 sqlResultReader.Close();
                                 conn.Close();
-                                return RedirectToAction("Index", "User");
+                                return View("Index");
                             }
                         }
                         else { return RedirectToAction("Index", "User"); }
@@ -273,5 +273,11 @@ namespace sqeudulerApp.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
+
+        public IActionResult GoToTeam(string team)
+        {
+            return RedirectToAction("TeamInfoPage", "Team", new { t = team});
+        }
+
     }
 }

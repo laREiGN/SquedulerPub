@@ -129,9 +129,11 @@
                             </div>
                         </form>
                         <br />
-                        <a class="dropdown-item" href="#">Blokker 1</a>
-                        <a class="dropdown-item" href="#">Blokker 2</a>
-                        <a class="dropdown-item" href="#">Blokker 3</a>
+                        @foreach (var teaminfo in ViewBag.teams_of_current_user)
+                        {
+                            <a class="dropdown-item" asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item2">@teaminfo.Item1</a>
+                        }
+                    
                     </div>
                 </div>
             </div>
@@ -156,7 +158,7 @@
                         <img src="http://lorempixel.com/600/120/">
                         <div class="top-left">Name: @teaminfo.Item1</div>
                         <div class="top-right">Code: @teaminfo.Item2</div>
-                        <a href="http://www.google.com">
+                        <a asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item2">
                             <div class="pre-info">
                                 <h4>@teaminfo.Item1: description</h4>
                                 <span class="btn btn-light">Select team</span>

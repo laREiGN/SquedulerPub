@@ -1,0 +1,164 @@
+﻿@model IEnumerable<sqeudulerApp.Models.User>
+
+@{
+    ViewData["Title"] = "Forgot Password";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <link rel="stylesheet" a href="~/css/bootstrap.css" />
+    <script src="~/js/bootstrap.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <title>Home | Password Reset</title>
+
+    @* JS to open modal popup *@
+    <script src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+        function switchTab(evt, tabName) {
+          // Declare all variables
+          var i, tabcontent, tablinks;
+
+          // Get all elements with class="tabcontent" and hide them
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+
+          // Show the current tab, and add an "active" class to the button that opened the tab
+          document.getElementById(tabName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+
+    </script>
+    @* end of JS to open modal popup *@
+
+    <style>
+        .form {
+            padding: 25px;
+        }
+
+        .top-row {
+            background-color: #e6e6e6;
+            padding: 10px;
+        }
+
+        .loginForm {
+            padding: 5%;
+        }
+
+        .logo {
+            height: 100%;
+            width: 150px;
+            background-color: grey;
+            color: white;
+            border: 1px solid grey;
+            border-radius: 3px;
+        }
+
+        .header {
+            padding-top: 5%;
+        }
+
+        .btn {
+            text-align: center;
+        }
+
+        /* Style the tab */
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            width: 100%;
+            display: inline-flex;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+            flex: 1 100%;
+            display: inline-block;
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row top-row border rounded">
+            <div class="col-2 text-center top-logo">
+                <h3 class="logo">Squeduler</h3>
+            </div>
+            <div class="col-10 text-right">
+                <button type="button" class="btn btn-outline-secondary">Login</button>
+                <button type="button" class="btn btn-light">Sign up</button>
+
+            </div>
+        </div>
+
+        <div class="tab">
+            <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
+            <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
+            <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
+            <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
+        </div>
+
+        <!-- Tab content -->
+        <div id="Main" class="tabcontent">
+            <h3>Main</h3>
+            <p>Recent activities and requests</p>
+        </div>
+
+        <div id="Personal" class="tabcontent">
+            <h3>Personal</h3>
+            <p>Total hours and availability</p>
+        </div>
+
+        <div id="Schedule" class="tabcontent">
+            <h3>Schedule</h3>
+            <p>Team schedule and request buttons</p>
+        </div>
+        <div id="TeamInfo" class="tabcontent">
+            <h3>TeamInfo</h3>
+            <p>Team information and team members</p>
+        </div>
+
+    </div>
+</body>
+</html>
