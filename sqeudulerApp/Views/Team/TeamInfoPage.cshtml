@@ -16,7 +16,7 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <title>Home | Password Reset</title>
+    <title>Home | @ViewBag.teamcontext.Item1[0]</title>
 
     @* JS to open modal popup *@
     <script src="~/js/bootstrap.min.js"></script>
@@ -139,25 +139,51 @@
             <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
         </div>
 
-        <!-- Tab content -->
-        <div id="Main" class="tabcontent">
-            <h3>Main</h3>
-            <p>Recent activities and requests</p>
-        </div>
+        @if (ViewBag.teamcontext.Item3 == "member")
+        {
+            <!-- Tab content -->
+            <div id="Main" class="tabcontent">
+                <h3>Main MEMBER PAGE</h3>
+                <p>Recent activities and requests</p>
+            </div>
 
-        <div id="Personal" class="tabcontent">
-            <h3>Personal</h3>
-            <p>Total hours and availability</p>
-        </div>
+            <div id="Personal" class="tabcontent">
+                <h3>Personal MEMBER PAGE</h3>
+                <p>Total hours and availability</p>
+            </div>
 
-        <div id="Schedule" class="tabcontent">
-            <h3>Schedule</h3>
-            <p>Team schedule and request buttons</p>
-        </div>
-        <div id="TeamInfo" class="tabcontent">
-            <h3>TeamInfo</h3>
-            <p>Team information and team members</p>
-        </div>
+            <div id="Schedule" class="tabcontent">
+                <h3>Schedule MEMBER PAGE</h3>
+                <p>Team schedule and request buttons</p>
+            </div>
+            <div id="TeamInfo" class="tabcontent">
+                <h3>TeamInfo MEMBER PAGE</h3>
+                <p>Team information and team members</p>
+            </div>
+        }
+        else
+        {
+            <!-- Tab content -->
+            <div id="Main" class="tabcontent">
+                <h3>Main BAWS PAGE</h3>
+                <p>Recent activities and requests</p>
+            </div>
+
+            <div id="Personal" class="tabcontent">
+                <h3>Personal RATATATAAT</h3>
+                <p>Total hours and availability</p>
+            </div>
+
+            <div id="Schedule" class="tabcontent">
+                <h3>Schedule HANDGRANAAT</h3>
+                <p>Team schedule and request buttons</p>
+            </div>
+            <div id="TeamInfo" class="tabcontent">
+                <h3>TeamInfo BAM</h3>
+                <p>Team information and team members</p>
+            </div>
+        }
+
 
     </div>
 </body>

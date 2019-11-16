@@ -100,12 +100,14 @@ namespace sqeudulerApp.Controllers
             string userEmail = HttpContext.Session.GetString("Uid");
             using SqlConnection conn = new SqlConnection(strCon);
             {
-                //sql query. The result is basically the team name first and the teamcode second
-                //note: I use parameters for security reasons
-                string query = "SELECT [Teams].[Teamname], [UserTeam].[Team] FROM [dbo].[UserTeam] " +
-                    "JOIN [dbo].[User] ON [UserTeam].[UserID] = [User].[UserId]" +
-                    "JOIN [dbo].[Teams] ON [UserTeam].[Team] = [Teams].[TeamCode]" +
-                    " WHERE [User].[Email]= @userEmail;";
+                //sql query. The result is basically the team name first and the team owner second
+                //note: I use parameters for security reasons 
+                string query = "SELECT [Teams].[Teamname], concat([owner].[FirstName], ' ' ,[owner].[LastName]), [Teams].[Description], [UserTeam].[Team] " +
+                    "FROM [dbo].[UserTeam] " +
+                    "JOIN [dbo].[Teams] ON [UserTeam].[Team] = [Teams].[TeamCode] " +
+                    "JOIN [dbo].[User] AS owner ON [Teams].[TeamOwner] = [owner].[UserId] " +
+                    "JOIN [dbo].[User] AS usermember ON [UserTeam].[UserID] = [usermember].[UserId] " +
+                    "WHERE [usermember].[Email]= @userEmail;";
 
                 //create a sql command with the new sql query and the original connection string
                 using SqlCommand comm = new SqlCommand(query, conn);
@@ -121,13 +123,13 @@ namespace sqeudulerApp.Controllers
                     SqlDataReader sqlResultReader = comm.ExecuteReader();
 
                     // Create a new list that will contain the results of the query
-                    List<Tuple<string, string>> teams_of_current_user = new List<Tuple<string, string>>();
+                    List<Tuple<string, string, string, string>> teams_of_current_user = new List<Tuple<string, string, string, string>>();
 
                     // Iterate through the results of the query a row per itteration
                     while (sqlResultReader.Read())
                     {
                         // add the first item of the current column to the list
-                        Tuple<string, string> teaminfo = new Tuple<string, string>(sqlResultReader[0].ToString(), sqlResultReader[1].ToString());
+                        Tuple<string, string, string, string> teaminfo = new Tuple<string, string, string, string>(sqlResultReader[0].ToString(), sqlResultReader[1].ToString(), sqlResultReader[2].ToString(), sqlResultReader[3].ToString());
                         teams_of_current_user.Add(teaminfo);
                     }
                     // add the list to the viewbag dictionary which we can refer to in our html code
