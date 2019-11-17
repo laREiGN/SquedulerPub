@@ -69,9 +69,7 @@
         /* If you want the content centered horizontally and vertically */
         .centered {
           position: absolute;
-          top: 25%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          left: 10%;
           text-align: center;
         }
 
@@ -144,6 +142,54 @@
             padding: 6px 12px;
             border-top: none;
         }
+
+        .pre-inner {
+            position: relative;
+            overflow-y: scroll;
+            overflow-x: visible;
+            width: 600px;
+            height: 500px;
+            margin: 0px auto 0px;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .teamimage {
+            width: 70%;
+            height: 60%;
+        }
+
+        .memberinfocontainer {
+            width: 300px;
+            height: auto;
+            display: inline-block;
+        }
+
+        .memberinfo {
+            margin: 0px;
+            padding: 2px;
+        }
+
+        .transformer {
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .memberinfocontainer:hover{
+            width: 500px;
+            height: auto;
+            background-color: #ddd;
+        }
+
+        .memberinfocontainer:hover .HiddenText{
+            display: block;
+            margin: 0px;
+            padding: 2px;
+        }
+
+        .HiddenText {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -190,11 +236,37 @@
             <div class="split left">
                 <div class="centered">
                     <h5>Team Info </h5>
+                    <div class="rounded border pre-inner">
+                        <!--pushes the header up for some reason-->
+                        <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                        <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                        <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                        <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                        <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                        <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                        <p>Team code: @ViewBag.teamcontext.Item1[2]</p> 
+                    </div>
                 </div>
             </div>
             <div class="split right">
                 <div class="centered">
                     <h5>Team Members</h5>
+                    <div class="rounded border pre-inner">
+
+                       @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                        {
+                        <div class="rounded border memberinfocontainer transformer">
+                            <p class="memberinfo">@member[0] @member[1]</p>
+                            <p class="memberinfo">@member[2]</p>
+                            <div class="HiddenText">
+                                <p class="memberinfo">@member[3]</p>
+                                <p class="memberinfo">@member[4]</p>
+                            </div>
+                        </div>
+                        }
+
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -220,11 +292,37 @@
             <div class="split left">
                 <div class="centered">
                     <h5>Team Info </h5>
+                    <div class="rounded border pre-inner">
+                        <!--pushes the header up for some reason-->
+                        <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                        <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                        <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                        <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                        <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                        <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                        <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+                    </div>
                 </div>
             </div>
             <div class="split right">
                 <div class="centered">
                     <h5>Team Members</h5>
+                    <div class="rounded border pre-inner">
+
+                        @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                        {
+                            <div class="rounded border memberinfocontainer transformer">
+                                <p class="memberinfo">@member[0] @member[1]</p>
+                                <p class="memberinfo">@member[2]</p>
+                                <div class="HiddenText">
+                                    <p class="memberinfo">@member[3]</p>
+                                    <p class="memberinfo">@member[4]</p>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
                 </div>
             </div>
         </div>

@@ -36,11 +36,12 @@ namespace sqeudulerApp.Controllers
             
             using SqlConnection conn = new SqlConnection(strCon);
             {
-                //sql query. The result  in order is TeamName, City, Code, Address, ZipCode, Owner
+                //sql query. The result  in order is 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner
                 //note: I use parameters for security reasons
                 string teamquery = "SELECT [Teams].[Teamname], [Teams].[TeamCity], [Teams].[TeamCode], [Teams].[TeamAddress]," +
-                    "[Teams].[TeamZipCode], [Teams].[TeamOwner]" +
+                    "[Teams].[TeamZipCode], concat([User].[FirstName], ' ' ,[User].[LastName])" +
                     "FROM [dbo].[Teams] " +
+                    "JOIN [dbo].[User] ON [Teams].[TeamOwner] = [User].[UserId]" +
                     "WHERE [Teams].[TeamCode]= @TeamCode;";
 
                 string membersquery = "SELECT [User].[FirstName], [User].[LastName], [UserTeam].[Role], [User].[PhoneNr]," +
