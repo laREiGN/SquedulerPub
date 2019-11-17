@@ -281,5 +281,22 @@ namespace sqeudulerApp.Controllers
             return RedirectToAction("TeamInfoPage", "Team", new { t = team});
         }
 
+        public IActionResult DeleteTeam(string TeamId)
+        {
+            if (HttpContext.Session.GetString("Uid") == null)
+            {
+                return Redirect("Index");
+            }
+            string Email = HttpContext.Session.GetString("Uid");
+            int UserID = _User.EmailToID(Email);
+            bool check = _UserTeam.CheckAdminOrNot(UserID);
+            if (check == true)
+            {
+                _Teams.Remove(TeamId);
+                return Redirect("TeamPage");
+            }
+            return Redirect("TeamPage");
+        }
+
     }
 }

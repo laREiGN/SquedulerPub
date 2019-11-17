@@ -35,5 +35,12 @@ namespace sqeudulerApp.Repository
             db.Teams.Remove(dbEntity);
             db.SaveChanges();
         }
+
+        public void Remove(string TeamCode)
+        {
+            Teams dbEntity = db.Teams.Find(TeamCode);
+            db.Teams.Remove(dbEntity);
+            db.SaveChanges();
+        }
     }
 }

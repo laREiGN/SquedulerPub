@@ -151,21 +151,22 @@
     <div class="row justify-content-center form">
         <div class="col-6">
 
-            @foreach (var teaminfo in ViewBag.teams_of_current_user)
+           @foreach (var teaminfo in ViewBag.teams_of_current_user)
             {
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <div class="top-left">Name: @teaminfo.Item1</div>
-                        <div class="top-right">Owner: @teaminfo.Item2</div>
-                        <a asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item4">
-                            <div class="pre-info">
-                                <h4>@teaminfo.Item1: @teaminfo.Item3</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
+            <div class="col-12">
+                <div class="pre-inner">
+                    <img src="http://lorempixel.com/600/120/">
+                    <div class="top-left">Name: @teaminfo.Item1</div>
+                    <div class="top-right">Owner: @teaminfo.Item2</div>
+                    <a asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item4">
+                        <div class="pre-info">
+                            <h4>@teaminfo.Item1: @teaminfo.Item3</h4>
+                            <span class="btn btn-light">Select team</span>
+                        </div>
+                    </a>
                 </div>
+                <a asp-action="DeleteTeam" asp-controller="User" asp-route-Teamid="@teaminfo.Item4">Delete Team</a>
+            </div>
                 <br />
             }
 

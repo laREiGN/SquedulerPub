@@ -13,5 +13,6 @@ namespace sqeudulerApp.Services
         Teams GetTeam(int id);
         void Add(Teams _Teams);
         void Remove(int id);
+        void Remove(string id);
     }
 }

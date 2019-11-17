@@ -35,5 +35,18 @@ namespace sqeudulerApp.Repository
             db.UserTeam.Remove(dbEntity);
             db.SaveChanges();
         }
+
+        public bool CheckAdminOrNot(int id)
+        {
+            UserTeam info = GetUserTeam(id);
+            if (info.Role == "admin")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

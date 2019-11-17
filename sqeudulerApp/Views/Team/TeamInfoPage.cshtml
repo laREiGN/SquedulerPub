@@ -190,6 +190,17 @@
             display: none;
         }
 
+        #kickButton{width: 100%;}
+
+        .modal-footer {
+            display: inline;
+            text-align: center;
+        }
+
+        .confirmationbutton {
+            width: 45%;
+        }
+
     </style>
 </head>
 
@@ -200,9 +211,7 @@
                 <h3 class="logo">Squeduler</h3>
             </div>
             <div class="col-10 text-right">
-                <button type="button" class="btn btn-outline-secondary">Login</button>
-                <button type="button" class="btn btn-light">Sign up</button>
-
+                <button type="button" class="btn btn-outline-secondary" onclick="location.href='javascript:history.go(-1)'">Go to your teams</button>
             </div>
         </div>
         <div class="row">
@@ -215,120 +224,150 @@
         </div>
 
 
-       @if (ViewBag.teamcontext.Item3 == "member")
+        @if (ViewBag.teamcontext.Item3 == "member")
         {
-        <!-- Tab content -->
-        <div id="Main" class="tabcontent">
-            <h3>Main MEMBER PAGE</h3>
-            <p>Recent activities and requests</p>
-        </div>
-
-        <div id="Personal" class="tabcontent">
-            <h3>Personal MEMBER PAGE</h3>
-            <p>Total hours and availability</p>
-        </div>
-
-        <div id="Schedule" class="tabcontent">
-            <h3>Schedule MEMBER PAGE</h3>
-            <p>Team schedule and request buttons</p>
-        </div>
-        <div id="TeamInfo" class="tabcontent">
-            <div class="split left">
-                <div class="centered">
-                    <h5>Team Info </h5>
-                    <div class="rounded border pre-inner">
-                        <!--pushes the header up for some reason-->
-                        <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
-                        <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
-                        <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
-                        <p>Address: @ViewBag.teamcontext.Item1[3]</p>
-                        <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
-                        <p>City: @ViewBag.teamcontext.Item1[1]</p>
-                        <p>Team code: @ViewBag.teamcontext.Item1[2]</p> 
-                    </div>
-                </div>
+            <!-- Tab content -->
+            <div id="Main" class="tabcontent">
+                <h3>Main MEMBER PAGE</h3>
+                <p>Recent activities and requests</p>
             </div>
-            <div class="split right">
-                <div class="centered">
-                    <h5>Team Members</h5>
-                    <div class="rounded border pre-inner">
 
-                       @foreach (List<string> member in ViewBag.teamcontext.Item2)
-                        {
-                        <div class="rounded border memberinfocontainer transformer">
-                            <p class="memberinfo">@member[0] @member[1]</p>
-                            <p class="memberinfo">@member[2]</p>
-                            <div class="HiddenText">
-                                <p class="memberinfo">@member[3]</p>
-                                <p class="memberinfo">@member[4]</p>
-                            </div>
+            <div id="Personal" class="tabcontent">
+                <h3>Personal MEMBER PAGE</h3>
+                <p>Total hours and availability</p>
+            </div>
+
+            <div id="Schedule" class="tabcontent">
+                <h3>Schedule MEMBER PAGE</h3>
+                <p>Team schedule and request buttons</p>
+            </div>
+            <div id="TeamInfo" class="tabcontent">
+                <div class="split left">
+                    <div class="centered">
+                        <h5>Team Info </h5>
+                        <div class="rounded border pre-inner">
+                            <!--pushes the header up for some reason-->
+                            <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                            <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                            <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                            <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                            <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                            <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                            <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
                         </div>
-                        }
+                    </div>
+                </div>
+                <div class="split right">
+                    <div class="centered">
+                        <h5>Team Members</h5>
+                        <div class="rounded border pre-inner">
+
+                            @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                            {
+                                <div class="rounded border memberinfocontainer transformer">
+                                    <p class="memberinfo">@member[0] @member[1]</p>
+                                    <p class="memberinfo">@member[2]</p>
+                                    <div class="HiddenText">
+                                        <p class="memberinfo">@member[3]</p>
+                                        <p class="memberinfo">@member[4]</p>
+                                    </div>
+                                </div>
+                            }
 
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         }
         else
         {
-        <!-- Tab content -->
-        <div id="Main" class="tabcontent">
-            <h3>Main BAWS PAGE</h3>
-            <p>Recent activities and requests</p>
-        </div>
+            <!-- Tab content -->
+            <div id="Main" class="tabcontent">
+                <h3>Main BAWS PAGE</h3>
+                <p>Recent activities and requests</p>
+            </div>
 
-        <div id="Personal" class="tabcontent">
-            <h3>Personal RATATATAAT</h3>
-            <p>Total hours and availability</p>
-        </div>
+            <div id="Personal" class="tabcontent">
+                <h3>Personal RATATATAAT</h3>
+                <p>Total hours and availability</p>
+            </div>
 
-        <div id="Schedule" class="tabcontent">
-            <h3>Schedule HANDGRANAAT</h3>
-            <p>Team schedule and request buttons</p>
-        </div>
-        <div id="TeamInfo" class="tabcontent">
-            <div class="split left">
-                <div class="centered">
-                    <h5>Team Info </h5>
-                    <div class="rounded border pre-inner">
-                        <!--pushes the header up for some reason-->
-                        <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
-                        <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
-                        <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
-                        <p>Address: @ViewBag.teamcontext.Item1[3]</p>
-                        <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
-                        <p>City: @ViewBag.teamcontext.Item1[1]</p>
-                        <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+            <div id="Schedule" class="tabcontent">
+                <h3>Schedule HANDGRANAAT</h3>
+                <p>Team schedule and request buttons</p>
+            </div>
+            <div id="TeamInfo" class="tabcontent">
+                <div class="split left">
+                    <div class="centered">
+                        <h5>Team Info </h5>
+                        <div class="rounded border pre-inner">
+                            <!--pushes the header up for some reason-->
+                            <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                            <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                            <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                            <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                            <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                            <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                            <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="split right">
-                <div class="centered">
-                    <h5>Team Members</h5>
-                    <div class="rounded border pre-inner">
+                <div class="split right">
+                    <div class="centered">
+                        <h5>Team Members</h5>
+                        <div class="rounded border pre-inner">
 
-                        @foreach (List<string> member in ViewBag.teamcontext.Item2)
-                        {
-                            <div class="rounded border memberinfocontainer transformer">
-                                <p class="memberinfo">@member[0] @member[1]</p>
-                                <p class="memberinfo">@member[2]</p>
-                                <div class="HiddenText">
-                                    <p class="memberinfo">@member[3]</p>
-                                    <p class="memberinfo">@member[4]</p>
+                            @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                            {
+                                <div class="rounded border memberinfocontainer transformer">
+                                    <p class="memberinfo">@member[0] @member[1]</p>
+                                    <p class="memberinfo">@member[2]</p>
+                                    <div class="HiddenText">
+                                        <p class="memberinfo">@member[3]</p>
+                                        <p class="memberinfo">@member[4]</p>
+                                        @if (member[2] == "member")
+                                        {
+                                            <button type="button" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
+                                        }
+                                        else {
+                                            <button type="button" id="kickButton" class="btn btn-danger disabled button">REMOVE MEMBER FROM TEAM</button>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        }
+                            }
 
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         }
 
 
     </div>
+
+    @* design of the popup *@
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="ConfirmRmvMember" data-keyboard="false" data-backdrop="static" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Are you sure?</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>They might start hating you for this >:(</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger confirmationbutton" data-dismiss="modal">YES</button>
+                        <button type="button" class="btn btn-outline-dark confirmationbutton" data-dismiss="modal">NO!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* end of the design of the popup *@
+
 </body>
 </html>
