@@ -143,9 +143,9 @@ namespace sqeudulerApp.Controllers
         public ActionResult JoinTeam(Teams model)
         {
             string TeamCode = model.TeamCode;
-            if (string.IsNullOrEmpty(TeamCode))
+            if (string.IsNullOrEmpty(TeamCode) || string.IsNullOrEmpty(model.TeamCode))
             {
-                return RedirectToAction("TeamPage");
+                ModelState.AddModelError("UnexistantCode", "This team doesn't exist");
             }
             else
             {
@@ -232,6 +232,8 @@ namespace sqeudulerApp.Controllers
                 }
                 else
                 {
+                    // TODO: ADD ERROR MESSAGE OR NOTIFICATION THAT TEAM DOES NOT EXIST
+                    System.Diagnostics.Debug.WriteLine("TEAM DOES NOT EXIST");
                     return RedirectToAction("TeamPage");
                 }
             }
@@ -265,23 +267,7 @@ namespace sqeudulerApp.Controllers
                 // generates a random code, later used to connect to team
                 //TODO - MAKE SURE CODE IS UNIQUE
                 string teamCode = Generate_Random_String(10);
-
-                string queryTC = "SELECT [TeamCode] FROM [dbo].[Tables] WHERE [TeamCode] = '" + teamCode + "';" ;
-                using SqlConnection conn3 = new SqlConnection(strCon);
-                using SqlCommand comm3 = new SqlCommand(queryTC, conn3);
-                conn3.Open();
-                SqlDataReader sqlResultReader2 = comm3.ExecuteReader();
-                if (sqlResultReader2.Read())
-                {
-
-                }
-
-
-
-                    //MAKE NEW CLASS, INSERT BOTH INTO NEW CLASS
-
-
-
+                model.TeamCode = teamCode;
 
                 // takes current session user id (email in this case)
                 string currentUser = HttpContext.Session.GetString("Uid");
@@ -319,7 +305,7 @@ namespace sqeudulerApp.Controllers
                     return RedirectToAction("TeamPage");
                 }
             }
-            return View();
+            return RedirectToAction("TeamPage");
         }
 
         [HttpPost]
