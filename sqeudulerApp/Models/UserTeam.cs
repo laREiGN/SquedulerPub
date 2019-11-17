@@ -9,9 +9,8 @@ namespace sqeudulerApp.Models
     public class UserTeam
     {
 
-        [Key]
         public int UserID { get; set; }
-
+        [Key]
         public string Team { get; set; }
 
         public string Role { get; set; }
