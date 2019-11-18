@@ -23,9 +23,9 @@ namespace sqeudulerApp.Repository
             db.SaveChanges();
         }
 
-        public UserTeam GetUserTeam(int id)
+        public UserTeam GetUserTeam(int id, string TeamId)
         {
-            UserTeam dbEntity = db.UserTeam.Find(id);
+            UserTeam dbEntity = db.UserTeam.Where(x => x.UserID == id && x.Team == TeamId).SingleOrDefault();
             return dbEntity;
         }
 
@@ -36,9 +36,9 @@ namespace sqeudulerApp.Repository
             db.SaveChanges();
         }
 
-        public bool CheckAdminOrNot(int id)
+        public bool CheckAdminOrNot(int id, string TeamId)
         {
-            UserTeam info = GetUserTeam(id);
+            UserTeam info = GetUserTeam(id, TeamId);
             if (info.Role == "admin")
             {
                 return true;

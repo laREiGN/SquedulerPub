@@ -10,10 +10,10 @@ namespace sqeudulerApp.Services
     {
         IEnumerable<UserTeam> GetUserTeams { get; }
 
-        UserTeam GetUserTeam(int id);
+        UserTeam GetUserTeam(int id, string TeamId);
         void Add(UserTeam _UserTeam);
         void Remove(int id);
-        bool CheckAdminOrNot(int id);
+        bool CheckAdminOrNot(int id, string TeamId);
 
     }
 }

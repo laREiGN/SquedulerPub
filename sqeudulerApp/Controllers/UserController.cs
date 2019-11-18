@@ -289,7 +289,7 @@ namespace sqeudulerApp.Controllers
             }
             string Email = HttpContext.Session.GetString("Uid");
             int UserID = _User.EmailToID(Email);
-            bool check = _UserTeam.CheckAdminOrNot(UserID);
+            bool check = _UserTeam.CheckAdminOrNot(UserID, TeamId);
             if (check == true)
             {
                 _Teams.Remove(TeamId);
