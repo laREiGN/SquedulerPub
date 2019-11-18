@@ -294,7 +294,7 @@ namespace sqeudulerApp.Controllers
                     //the new team is added to the database
                     _Teams.Add(model);
 
-                    //adds current user to the correct team (userteam table)
+                    //adds current user to the new team (userteam table)
                     UserTeam model2 = new UserTeam();
                     model2.UserID = currentUserID;
                     model2.Team = teamCode;
