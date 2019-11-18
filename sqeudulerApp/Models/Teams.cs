@@ -8,12 +8,12 @@ namespace sqeudulerApp.Models
 {
     public class Teams
     {
-
         public string Teamname { get; set; }
 
         public string TeamCity { get; set; }
 
         public string Description { get; set; }
+
         [Key]
         public string TeamCode { get; set; }
 
