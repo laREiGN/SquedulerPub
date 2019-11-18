@@ -50,11 +50,10 @@ namespace sqeudulerApp.Controllers
             {
                 Email em = new Email();
                 // for (int i = 1; i < _User.GetUsers.Count(); i++) better solution? ~ Tom
-                for (int i = 0; i < _User.GetUsers.Count() - 1; i++)
+                foreach(User usr in _User.GetUsers)
                 {
-                    User user = _User.GetUser(i);
-                    if (user != null){
-                        if (user.Email == Email)
+                    if (usr != null){
+                        if (usr.Email == Email)
                         {
                             //generate new random temp password
                             string New_password = Generate_Random_String(8);
