@@ -12,7 +12,7 @@ namespace sqeudulerApp.Services
 
         UserTeam GetUserTeam(int id, string TeamId);
         void Add(UserTeam _UserTeam);
-        void Remove(int id);
+        void Remove(int id, string TeamId);
         bool CheckAdminOrNot(int id, string TeamId);
 
     }

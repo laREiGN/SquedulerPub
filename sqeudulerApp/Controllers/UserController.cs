@@ -384,17 +384,25 @@ namespace sqeudulerApp.Controllers
 
         public IActionResult DeleteTeam(string TeamId)
         {
+            //check if session extist
             if (HttpContext.Session.GetString("Uid") == null)
             {
                 return Redirect("Index");
             }
+            //put session in string var Email
             string Email = HttpContext.Session.GetString("Uid");
+            //call method EmailToID with email to retrieve user id
             int UserID = _User.EmailToID(Email);
+            //call CheckAdminOrNot method with parameters id and teamcode and check if user is admin or member
             bool check = _UserTeam.CheckAdminOrNot(UserID, TeamId);
             if (check == true)
             {
                 _Teams.Remove(TeamId);
                 return Redirect("TeamPage");
+            }
+            else
+            {
+                _UserTeam.Remove(UserID, TeamId);
             }
             return Redirect("TeamPage");
         }

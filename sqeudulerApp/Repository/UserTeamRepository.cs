@@ -29,9 +29,9 @@ namespace sqeudulerApp.Repository
             return dbEntity;
         }
 
-        public void Remove(int id)
+        public void Remove(int id, string TeamId)
         {
-            UserTeam dbEntity = db.UserTeam.Find(id);
+            UserTeam dbEntity = GetUserTeam(id, TeamId);
             db.UserTeam.Remove(dbEntity);
             db.SaveChanges();
         }
