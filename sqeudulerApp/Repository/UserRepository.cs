@@ -35,5 +35,12 @@ namespace sqeudulerApp.Repository
             db.User.Remove(dbEntity);
             db.SaveChanges();
         }
+
+        public int EmailToID(string email)
+        {
+            int Result = db.User.Where(x => x.Email == email).Select(x => x.UserId).SingleOrDefault();
+            return Result;
+        }
+
     }
 }

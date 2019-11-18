@@ -22,6 +22,8 @@ namespace sqeudulerApp.Scripts
             }
             return New_pass;
         }
+
+        
         /// <summary>
         ///  /// Sents a email to target mail
         /// </summary>

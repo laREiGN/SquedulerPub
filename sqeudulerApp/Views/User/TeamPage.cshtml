@@ -1,4 +1,5 @@
-﻿
+﻿@model sqeudulerApp.Models.Teams
+
 @{
     ViewData["Title"] = "TeamPage";
     Layout = null;
@@ -14,6 +15,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script type="text/javascript" src="~/js/bootstrap.js"></script>
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
+
+    @* JS to open modal popup *@
+    <script src="~/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#CreateTeamButton").click(function () {
+                $("#CreateTeamPopup").modal('show');
+            });
+            $("#btnCancelCreate").click(function () {
+                $("#CreateTeamPopup").modal('hide');
+            });
+        });
+    </script>
+    @* end of JS to open modal popup *@
+
 
     <title>Teamspage | Teams</title>
     <style>
@@ -55,40 +71,38 @@
         }
 
         .pre-info {
-           position: absolute;
-           padding-top: 10px;
-           padding-left: 20px;
-           padding-bottom: 20px;
-           bottom: -187px;
-           transition: all 0.5s ease;
-           background-color: rgba(57, 68, 97, 0.65);
-           left: 0;
-           right: 0;
+            position: absolute;
+            padding-top: 10px;
+            padding-left: 20px;
+            padding-bottom: 20px;
+            bottom: -187px;
+            transition: all 0.5s ease;
+            background-color: rgba(57, 68, 97, 0.65);
+            left: 0;
+            right: 0;
         }
 
         .pre-inner:hover .pre-info {
-           background-color: rgba(57, 68, 97, 0.65);
-           bottom: 0; 
-           height: 100%;
-           width: 100%;
-           color: #fff; 
-
+            background-color: rgba(57, 68, 97, 0.65);
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+            color: #fff;
         }
 
         .top-left {
-          position: absolute;
-          top: 8px;
-          left: 16px;
-          color: white;
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            color: white;
         }
 
         .top-right {
-          position: absolute;
-          top: 8px;
-          right: 16px;
-          color: white;
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            color: white;
         }
-
     </style>
 </head>
 <body>
@@ -99,13 +113,15 @@
             </div>
             <div class="col-9 text-right">
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Teams:
+                    <button class="btn btn-outline-secondary" type="button" id="CreateTeamButton">Create Team</button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        My Teams:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <form class="Team">
                             <div class="form-group">
-                                <label>Team code: </label><input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HF">
+                                <label>Team code: </label>
+                                <input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HFCT4H">
                             </div>
 
                             <div class="btnGroup">
@@ -113,74 +129,102 @@
                             </div>
                         </form>
                         <br />
-                        <a class="dropdown-item" href="#">Blokker 1</a>
-                        <a class="dropdown-item" href="#">Blokker 2</a>
-                        <a class="dropdown-item" href="#">Blokker 3</a>
+                        @foreach (var teaminfo in ViewBag.teams_of_current_user)
+                        {
+                            <a class="dropdown-item" asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item4">@teaminfo.Item1</a>
+                        }
+                    
                     </div>
                 </div>
             </div>
-                <button type="button" class="btn btn-outline-secondary">Logout</button>
-
-
-            </div>
+            <button type="button" id="btnLogOut" onclick="location.href='@Url.Action("SignOut", "User")'" class="btn btn-outline-secondary">Logout</button>
         </div>
-        <div class="row header">
-            <div class="col text-center">
-                <h3>Teampage</h3>
-                <br />
-                <h4>Create or join a team</h4>
-                <p>To join a team: Press on the "Teams" button and type in the teamcode</p>
-            </div>
+    </div>
+    <div class="row header">
+        <div class="col text-center">
+            <h3>Teampage</h3>
+            <br />
+            <h4>Create or join a team</h4>
+            <p>To join a team: Press on the "Teams" button and type in the teamcode</p>
         </div>
-        <div class="row justify-content-center form">
-            <div class="col-6">
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <div class="top-left">Name: Blokker 1</div>
-                        <div class="top-right">Code: ABCDEF</div>
-                        <a href="http://www.google.com">
-                            <div class="pre-info">
-                                <h4>Blokker 1: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
+    </div>
+    <div class="row justify-content-center form">
+        <div class="col-6">
+
+           @foreach (var teaminfo in ViewBag.teams_of_current_user)
+            {
+            <div class="col-12">
+                <div class="pre-inner">
+                    <img src="http://lorempixel.com/600/120/">
+                    <div class="top-left">Name: @teaminfo.Item1</div>
+                    <div class="top-right">Owner: @teaminfo.Item2</div>
+                    <a asp-controller="User" asp-action="GoToTeam" asp-route-team="@teaminfo.Item4">
+                        <div class="pre-info">
+                            <h4>@teaminfo.Item1: @teaminfo.Item3</h4>
+                            <span class="btn btn-light">Select team</span>
+                        </div>
+                    </a>
                 </div>
-                <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 2</div>
-                            <div class="top-right">Code: QWERTY</div>
-                            <div class="pre-info">
-                                <h4>Blokker 2: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <br />
-                <div class="col-12">
-                    <div class="pre-inner">
-                        <img src="http://lorempixel.com/600/120/">
-                        <a href="http://www.google.com">
-                            <div class="top-left">Name: Blokker 3</div>
-                            <div class="top-right">Code: ASDFGH</div>
-                            <div class="pre-info">
-                                <h4>Bokker 3: description</h4>
-                                <span class="btn btn-light">Select team</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                <a asp-action="DeleteTeam" asp-controller="User" asp-route-Teamid="@teaminfo.Item4">Delete Team</a>
             </div>
+                <br />
+            }
+
+        </div>
         <div class="row footer">
             <div class="col text-center">
-              
+
             </div>
         </div>
     </div>
+
+    @* design of the create team popup *@
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="CreateTeamPopup" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Team:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="TeamPage">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <br />
+                                <label asp-for="Teamname" class="control-label">Team Name:</label>
+                                <input asp-for="Teamname" class="form-control" placeholder="Enter a team name here:" />
+                                <span asp-validation-for="Teamname" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TeamCity" class="control-label">Team City:</label>
+                                <input asp-for="TeamCity" class="form-control" placeholder="Enter a city here:" />
+                                <span asp-validation-for="TeamCity" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TeamAddress" class="control-label">Team Address:</label>
+                                <input asp-for="TeamAddress" class="form-control" placeholder="Enter an address here:" />
+                                <span asp-validation-for="TeamAddress" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TeamZipCode" class="control-label">Team Zip-code:</label>
+                                <input asp-for="TeamZipCode" class="form-control" placeholder="Enter a zip code here:" />
+                                <span asp-validation-for="TeamZipCode" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label">Team Description:</label>
+                                <input asp-for="Description" class="form-control" placeholder="Enter a description here:" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" id="btnCreate" class="btn btn-primary button button4">Create</button>
+                                <button type="button" id="btnCancelCreate" class="btn btn-primary button">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* end of the design of the create team popup *@
 </body>
 </html>
