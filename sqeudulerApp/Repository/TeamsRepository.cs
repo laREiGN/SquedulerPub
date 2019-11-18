@@ -23,15 +23,16 @@ namespace sqeudulerApp.Repository
             db.SaveChanges();
         }
 
-        public Teams GetTeam(int id)
+        public Teams GetTeam(string id)
         {
             Teams dbEntity = db.Teams.Find(id);
             return dbEntity;
         }
 
-        public void Remove(string TeamCode)
+        public void Remove(string id)
+
         {
-            Teams dbEntity = db.Teams.Find(TeamCode);
+            Teams dbEntity = db.Teams.Find(id);
             db.Teams.Remove(dbEntity);
             db.SaveChanges();
         }
