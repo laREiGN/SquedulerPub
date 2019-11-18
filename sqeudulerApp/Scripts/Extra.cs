@@ -14,7 +14,7 @@ namespace sqeudulerApp.Scripts
             //new empty temp password
             string New_pass = "";
             Random rng = new Random();
-            
+
             for (int i = 0; i < length; i++)
             {
                 //Add a new random character to newpassword
@@ -23,7 +23,7 @@ namespace sqeudulerApp.Scripts
             return New_pass;
         }
 
-        
+
         /// <summary>
         ///  /// Sents a email to target mail
         /// </summary>
@@ -39,10 +39,10 @@ namespace sqeudulerApp.Scripts
         {
             //                                    
             SmtpClient smtpClient = new SmtpClient(Stmp_host, Port);
-            
+
             MailMessage msg = new MailMessage();
             SmtpClient client = new SmtpClient();
-           try
+            try
             {
                 //adds subject to email
                 msg.Subject = Subject;
@@ -71,7 +71,7 @@ namespace sqeudulerApp.Scripts
             }
             catch (Exception ex)
             {
-                 Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
     }

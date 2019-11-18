@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace sqeudulerApp.Models
 {
     public class Teams
-    { 
+    {
         public string Teamname { get; set; }
 
         public string TeamCity { get; set; }

@@ -118,14 +118,14 @@
                         My Teams:
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <form class="Team">
+                        <form class="Teams" asp-action="JoinTeam">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
-                                <label>Team code: </label>
-                                <input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HFCT4H">
-                            </div>
-
-                            <div class="btnGroup">
-                                <button type="button" class="btn btn-outline-secondary btn-sm">Join</button>
+                                <br />
+                                <label asp-for="TeamCode" class="control-label">Team Code:</label>
+                                <input asp-for="TeamCode" required class="form-control" placeholder="Example: FGT24HFCT4H" />
+                                <span asp-validation-for="TeamCode" class="text-danger"></span>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Join</button>
                             </div>
                         </form>
                         <br />
@@ -187,32 +187,32 @@
                         <h4 class="modal-title">Create Team:</h4>
                     </div>
                     <div class="modal-body">
-                        <form asp-action="TeamPage">
+                        <form asp-action="CreateTeam">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
                                 <br />
                                 <label asp-for="Teamname" class="control-label">Team Name:</label>
-                                <input asp-for="Teamname" class="form-control" placeholder="Enter a team name here:" />
+                                <input asp-for="Teamname" required class="form-control" placeholder="Enter a team name here:" />
                                 <span asp-validation-for="Teamname" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="TeamCity" class="control-label">Team City:</label>
-                                <input asp-for="TeamCity" class="form-control" placeholder="Enter a city here:" />
+                                <input asp-for="TeamCity" required class="form-control" placeholder="Enter a city here:" />
                                 <span asp-validation-for="TeamCity" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="TeamAddress" class="control-label">Team Address:</label>
-                                <input asp-for="TeamAddress" class="form-control" placeholder="Enter an address here:" />
+                                <input asp-for="TeamAddress" required class="form-control" placeholder="Enter an address here:" />
                                 <span asp-validation-for="TeamAddress" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="TeamZipCode" class="control-label">Team Zip-code:</label>
-                                <input asp-for="TeamZipCode" class="form-control" placeholder="Enter a zip code here:" />
+                                <input asp-for="TeamZipCode" required class="form-control" placeholder="Enter a zip code here:" />
                                 <span asp-validation-for="TeamZipCode" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Description" class="control-label">Team Description:</label>
-                                <input asp-for="Description" class="form-control" placeholder="Enter a description here:" />
+                                <input asp-for="Description" required class="form-control" placeholder="Enter a description here:" />
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="modal-footer">
