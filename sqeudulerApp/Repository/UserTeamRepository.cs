@@ -23,12 +23,20 @@ namespace sqeudulerApp.Repository
             db.SaveChanges();
         }
 
+        // Tom: De parameter TeamId is eigenlijk de team code
         public UserTeam GetUserTeam(int id, string TeamId)
         {
             UserTeam dbEntity = db.UserTeam.Where(x => x.UserID == id && x.Team == TeamId).SingleOrDefault();
             return dbEntity;
         }
 
+        public void PromoteUserInTeam(int UserId, string TeamCode) 
+        {
+            UserTeam dbEntity = GetUserTeam(UserId, TeamCode);
+            dbEntity.Role = "admin";
+            db.SaveChanges();
+        }
+        
         public void Remove(int id, string TeamId)
         {
             UserTeam dbEntity = GetUserTeam(id, TeamId);

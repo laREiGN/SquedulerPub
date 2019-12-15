@@ -5,14 +5,44 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using sqeudulerApp.Services;
 
 
 namespace sqeudulerApp.Controllers
 {
+    [Route("[controller]")]
     public class TeamController : Controller
     {
+        private readonly IUser _User;
+        private readonly ITeams _Teams;
+        private readonly IUserTeam _UserTeam;
+
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
+        public TeamController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam)
+        {
+            _User = _IUser;
+            _Teams = _ITeams;
+            _UserTeam = _IUserTeam;
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult RemoveUserFromTeam(string Email, string TeamCode) 
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.Remove(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult PromoteUserInTeam(string Email, string TeamCode)
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.PromoteUserInTeam(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+        }
 
         public IActionResult MainPage()
         {
@@ -30,6 +60,7 @@ namespace sqeudulerApp.Controllers
         }
 
         // t is de unique code of the team
+        [Route("[action]/{t}")]
         public IActionResult TeamInfoPage(string t)
         {
             string teamcode = t;
@@ -112,7 +143,6 @@ namespace sqeudulerApp.Controllers
                         List<string> member = new List<string>();
 
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner in that exact order
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             member.Add(sqlResultReader.GetValue(i).ToString());
