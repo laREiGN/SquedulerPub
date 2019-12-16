@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace sqeudulerApp.Services
 {
-    public interface IUser
+    public interface IScheduleFinal
     {
-        //get all users
-        IEnumerable<User> GetUsers { get; }
-        User GetUser(int id);
-        void Add(User _User);
+        IEnumerable<ScheduleFinal> GetSchedules { get; }
+
+        ScheduleFinal GetSchedule(int id);
+        void Add(ScheduleFinal _ScheduleFinal);
         void Remove(int id);
-        int EmailToID(string email);
     }
 }

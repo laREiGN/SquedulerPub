@@ -140,7 +140,6 @@ namespace sqeudulerApp.Controllers
         }
 
         [HttpPost]
-        //  TODO:   ADD ELSE PATH FOR UNEXISTING TEAMCODE
         public ActionResult JoinTeam(Teams model)
         {
             string TeamCode = model.TeamCode;
