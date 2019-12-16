@@ -21,7 +21,7 @@ namespace sqeudulerApp.Controllers
         private readonly IUser _User;
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
-        
+
 
         public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam)
         {
@@ -50,30 +50,30 @@ namespace sqeudulerApp.Controllers
             {
                 Email em = new Email();
                 // for (int i = 1; i < _User.GetUsers.Count(); i++) better solution? ~ Tom
-                foreach(User usr in _User.GetUsers)
+                foreach (User usr in _User.GetUsers)
                 {
-                    if (usr != null){
+                    if (usr != null) {
                         if (usr.Email == Email)
                         {
                             //generate new random temp password
                             string New_password = Generate_Random_String(8);
                             //if a account was found in the sql connection
 
-                                //sql query where we chance the old password to the new temp_password, where a user email is the same as the post email
-                                String sql2 = "UPDATE [dbo].[User] SET [Password]='" + New_password + "' WHERE [Email]='" + Email.ToString() + "';";
-                                //create a sql connection with the connection string
-                                SqlConnection conn = new SqlConnection(strCon);
-                                //create a sql command with the new sql query and the original connection string
-                                SqlCommand comm = new SqlCommand(sql2, conn);
-                                //open the connection
-                                conn.Open();
-                                //úse the original sql datareader and execute the new sql command
-                                SqlDataReader nwReader = comm.ExecuteReader();
-                                //close sql reader
-                                nwReader.Close();
-                                //close sql connection
-                                conn.Close();
-                                //sent email to user with the new temp password
+                            //sql query where we chance the old password to the new temp_password, where a user email is the same as the post email
+                            String sql2 = "UPDATE [dbo].[User] SET [Password]='" + New_password + "' WHERE [Email]='" + Email.ToString() + "';";
+                            //create a sql connection with the connection string
+                            SqlConnection conn = new SqlConnection(strCon);
+                            //create a sql command with the new sql query and the original connection string
+                            SqlCommand comm = new SqlCommand(sql2, conn);
+                            //open the connection
+                            conn.Open();
+                            //úse the original sql datareader and execute the new sql command
+                            SqlDataReader nwReader = comm.ExecuteReader();
+                            //close sql reader
+                            nwReader.Close();
+                            //close sql connection
+                            conn.Close();
+                            //sent email to user with the new temp password
 
 
                             string body1 = "Your password is ";
@@ -304,6 +304,16 @@ namespace sqeudulerApp.Controllers
                     //opens teampage again
                     return RedirectToAction("TeamPage");
                 }
+            }
+            return RedirectToAction("TeamPage");
+        }
+
+        [HttpPost]
+        public IActionResult ProvideAvailability(Availability model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("TeamPage");
             }
             return RedirectToAction("TeamPage");
         }
