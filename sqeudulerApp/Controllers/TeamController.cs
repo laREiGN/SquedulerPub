@@ -66,16 +66,7 @@ namespace sqeudulerApp.Controllers
                 string rolequery = "SELECT [UserTeam].[Role] " +
                     "FROM [dbo].[UserTeam] " +
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
-                    "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
-                // Get session and create query for retrieving userid that is allocated to the email(session)
-                string userEmail = HttpContext.Session.GetString("Uid");
-                string userIdQuery = "SELECT UserId FROM [dbo].[User] WHERE [User].[Email] =  '"+userEmail+"'";
-                // Run query to get userid
-                SqlCommand com = new SqlCommand(userIdQuery);
-                com.Connection = conn;
-                com.Connection.Open();
-                string userId = com.ExecuteScalar().ToString();
-                com.Connection.Close();
+                    "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail"
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
