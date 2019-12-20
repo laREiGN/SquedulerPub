@@ -5,14 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using sqeudulerApp.Repository;
+using sqeudulerApp.Services;
+using sqeudulerApp.Models;
 
 namespace sqeudulerApp.Controllers
 {
     public class TeamController : Controller
     {
+        //Add interfaces to controller
+        private readonly ICalendar _Calendar;
+        private readonly ITeams _Teams;
+        private readonly IUser _User;
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-
+        //Setup interfaces in constructor
+        public TeamController(ICalendar _ICalendar , ITeams _ITeams, IUser _IUser)
+        {
+            _Calendar = _ICalendar;
+            _Teams = _ITeams;
+            _User = _IUser;
+        }
 
         public IActionResult MainPage()
         {
@@ -28,6 +40,7 @@ namespace sqeudulerApp.Controllers
         {
             return View();
         }
+
 
         // t is de unique code of the team
         public IActionResult TeamInfoPage(string t)
@@ -54,10 +67,19 @@ namespace sqeudulerApp.Controllers
                     "FROM [dbo].[UserTeam] " +
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
+                // Get session and create query for retrieving userid that is allocated to the email(session)
+                string userEmail = HttpContext.Session.GetString("Uid");
+                string userIdQuery = "SELECT UserId FROM [dbo].[User] WHERE [User].[Email] =  '"+userEmail+"'";
+                // Run query to get userid
+                SqlCommand com = new SqlCommand(userIdQuery);
+                com.Connection = conn;
+                com.Connection.Open();
+                string userId = com.ExecuteScalar().ToString();
+                com.Connection.Close();
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
-
+ 
                 //create a sql command with the team sql query and the original connection string
                 using SqlCommand teamcomm = new SqlCommand(teamquery, conn);
                 {
@@ -162,6 +184,14 @@ namespace sqeudulerApp.Controllers
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
+                //Create list from ScheduleFinal table (get all schedules where teamcode matches) to list()
+                List<Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
+                //Add list to ViewBag.Calendar
+                ViewBag.Calendar = list;
+                //Get amount of rows in list and add to ViewBag.CalCount. (i couldnt use count in ViewBag.Calendar in TeamInfoPage, so i came up with this)
+                ViewBag.CalCount = list.Count();
+
+
             }
             return View();
         }

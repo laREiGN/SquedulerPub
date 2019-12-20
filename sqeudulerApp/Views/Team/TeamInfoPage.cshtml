@@ -14,9 +14,11 @@
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/core/main.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/daygrid/main.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/timegrid/main.css" />
     <script src="~/js/bootstrap.js"></script>
     <script src="~/fullcalendar/packages/core/main.js"></script>
     <script src="~/fullcalendar/packages/daygrid/main.js"></script>
+    <script src="~/fullcalendar/packages/timegrid/main.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -25,11 +27,56 @@
     @* JS to open modal popup *@
     <script src="~/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+        //initialize calendar api
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
 
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                //setup view for calendar
+                plugins: ['dayGrid', 'timeGrid'],
+                height: 550,
+                header: {
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
+                    center: 'title',
+                    right: 'prev,next'
+                },
+                timeZone: 'CET',
+
+                events: [
+                    //loop through the ViewBag.Calendar for each row, set values to FullCalendar
+                             @for (int i = 0; i < ViewBag.CalCount; i++)
+                             {
+                                @:{
+                                @: title: '@ViewBag.Calendar[i].Title',
+                                @: start: '@ViewBag.Calendar[i].StartTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")',
+                                @: end: '@ViewBag.Calendar[i].EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")'
+                                //Check rows, if it is at the end, dont and , to the event format
+                                if ((ViewBag.CalCount -1) != i)
+                                {
+                                    @:},
+                                }
+                                else
+                                {
+                                    @:}
+                                }
+                            }                      
+
+                        ],
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false
+                }
+            });
+            document.getElementById("test").addEventListener("click", myFunction);
+            function myFunction() {
+                calendar.render();
+            }
+            calendar.render();
+        });
         function switchTab(evt, tabName) {
             // Declare all variables
             var i, tabcontent, tablinks;
-
             // Get all elements with class="tabcontent" and hide them
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
@@ -45,70 +92,8 @@
             // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-          var calendarEl = document.getElementById('calendar');
-
-          var calendar = new FullCalendar.Calendar(calendarEl, {
-              //setup for calender view, can be modified, see https://fullcalendar.io/docs/plugin-index for plugin options
-              plugins: ['interaction', 'dayGrid', 'timeGrid'],
-              defaultView: 'dayGridMonth',
-              defaultDate: '2019-11-07',
-              events: [
-                //format for handling calender dates, loop through and parse results from db into the title, start, end etc..
-                //https://fullcalendar.io/docs/eventClick for eventhandling onclick date, might be useful for scheduling dates for work etc..
-              {
-                title: 'All Day Event',
-                start: '2019-11-01'
-              },
-              {
-                title: 'Long Event',
-                start: '2019-11-07',
-                end: '2019-11-10'
-              },
-              {
-                groupId: '999',
-                title: 'Repeating Event',
-                start: '2019-11-09T16:00:00'
-              },
-              {
-                groupId: '999',
-                title: 'Repeating Event',
-                start: '2019-11-16T16:00:00'
-              },
-              {
-                title: 'Conference',
-                start: '2019-11-11',
-                end: '2019-11-13'
-              },
-              {
-                title: 'Meeting',
-                start: '2019-11-12T10:30:00',
-                end: '2019-11-12T12:30:00'
-              },
-              {
-                title: 'Lunch',
-                start: '2019-11-12T12:00:00'
-              },
-              {
-                title: 'Meeting',
-                start: '2019-11-12T14:30:00'
-              },
-              {
-                title: 'Birthday Party',
-                start: '2019-11-13T07:00:00'
-              },
-              {
-                title: 'Click for Google',
-                url: 'http://google.com/',
-                start: '2019-11-28'
-              }
-            ]
-          });
-
-          calendar.render();
-        });
 
     </script>
     @* end of JS to open modal popup *@
@@ -286,7 +271,7 @@
             <div class="tab col">
                 <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
                 <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
-                <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
+                <button id="test" class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
                 <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
             </div>
         </div>
@@ -306,8 +291,6 @@
             </div>
 
             <div id="Schedule" class="tabcontent">
-                <h3>Schedule MEMBER PAGE</h3>
-                <p>Team schedule and request buttons</p>
                 <div id="calendar"></div>
             </div>
             <div id="TeamInfo" class="tabcontent">
@@ -323,6 +306,7 @@
                             <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
                             <p>City: @ViewBag.teamcontext.Item1[1]</p>
                             <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+
                         </div>
                     </div>
                 </div>
@@ -341,9 +325,7 @@
                                         <p class="memberinfo">@member[4]</p>
                                     </div>
                                 </div>
-                            }
-
-
+                            } 
                         </div>
                     </div>
                 </div>
@@ -355,6 +337,7 @@
             <div id="Main" class="tabcontent">
                 <h3>Main BAWS PAGE</h3>
                 <p>Recent activities and requests</p>
+
             </div>
 
             <div id="Personal" class="tabcontent">
@@ -363,8 +346,7 @@
             </div>
 
             <div id="Schedule" class="tabcontent">
-                <h3>Schedule HANDGRANAAT</h3>
-                <p>Team schedule and request buttons</p>
+                <div id="calendar"></div>
             </div>
             <div id="TeamInfo" class="tabcontent">
                 <div class="split left">
