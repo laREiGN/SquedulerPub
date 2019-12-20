@@ -66,7 +66,8 @@ namespace sqeudulerApp.Controllers
                 string rolequery = "SELECT [UserTeam].[Role] " +
                     "FROM [dbo].[UserTeam] " +
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
-                    "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail"
+                    "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
+
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
