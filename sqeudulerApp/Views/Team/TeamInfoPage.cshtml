@@ -15,10 +15,12 @@
     <link rel="stylesheet" a href="~/fullcalendar/packages/core/main.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/daygrid/main.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/timegrid/main.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/list/main.css" />
     <script src="~/js/bootstrap.js"></script>
     <script src="~/fullcalendar/packages/core/main.js"></script>
     <script src="~/fullcalendar/packages/daygrid/main.js"></script>
     <script src="~/fullcalendar/packages/timegrid/main.js"></script>
+    <script src="~/fullcalendar/packages/list/main.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -33,10 +35,10 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 //setup view for calendar
-                plugins: ['dayGrid', 'timeGrid'],
+                plugins: ['dayGrid', 'timeGrid','list'],
                 height: 550,
                 header: {
-                    left: 'dayGridMonth,timeGridWeek,timeGridDay',
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
                     center: 'title',
                     right: 'prev,next'
                 },
@@ -48,8 +50,12 @@
                              {
                                 @:{
                                 @: title: '@ViewBag.Calendar[i].Title',
+                                 //doesnt seem to work?
+                                @: description: 'bgefesg',
+                                 //convert given datetime type to iso standard to string
                                 @: start: '@ViewBag.Calendar[i].StartTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")',
-                                @: end: '@ViewBag.Calendar[i].EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")'
+                                @: end: '@ViewBag.Calendar[i].EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")',
+                                @: textColor: 'white'
                                 //Check rows, if it is at the end, dont and , to the event format
                                 if ((ViewBag.CalCount -1) != i)
                                 {
@@ -59,7 +65,7 @@
                                 {
                                     @:}
                                 }
-                            }                      
+                            }
 
                         ],
                 eventTimeFormat: { // like '14:30:00'
