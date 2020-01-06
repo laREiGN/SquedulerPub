@@ -1,4 +1,4 @@
-﻿@model sqeudulerApp.Models.Availability
+﻿@model sqeudulerApp.Models.UserAvailability
 
 @{
     ViewData["Title"] = @ViewBag.teamcontext.Item1[0];
@@ -50,10 +50,6 @@
                 $("#AvailabilityPopup").modal('hide');
             });
         });
-        $(function () {
-        //initialise the datepicker with the date format specified
-        $(".datepicker").datepicker();
-    });
 
     </script>
     @* end of JS to open modal popup *@
@@ -304,7 +300,7 @@
             <div id="Personal" class="tabcontent">
                 <h3>Personal RATATATAAT</h3>
                 <p>Total hours and availability</p>
-                <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Create Team</button>
+                <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
             </div>
 
             <div id="Schedule" class="tabcontent">
@@ -395,10 +391,25 @@
                         <form asp-action="ProvideAvailability">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="md-form">
+                                <label asp-for="availability.work_date" class="control-label">Date:</label>
+                                <input asp-for="availability.work_date" type="date" class="form-control datepicker" placeholder="Selected date">
+                                <span asp-validation-for="availability.work_date" class="text-danger"></span>
+                            </div>
+                            <div class="md-form">
                                 <br />
-                                <label asp-for="work_date" class="control-label">Date:</label>
-                                <input runat="server" id= "datepicker" asp-for="work_date" type="text" class="form-control datepicker" placeholder="Selected date">
-                                <span asp-validation-for="work_date" class="text-danger"></span>
+                                <label asp-for="availability.start_work_hour" class="control-label">Start Time:</label>
+                                <input asp-for="availability.start_work_hour" type="time" step="60" class="form-control datepicker" placeholder="Start Time">
+                                <span asp-validation-for="availability.start_work_hour" class="text-danger"></span>
+                            </div>
+                            <div class="md-form">
+                                <br />
+                                <label asp-for="availability.end_work_hour" class="control-label">End Time:</label>
+                                <input asp-for="availability.end_work_hour" type="time" step="60" class="form-control datepicker" placeholder="End Time">
+                                <span asp-validation-for="availability.end_work_hour" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <br />
+                                <button type="submit" class="btn btn-outline-secondary">Submit</button>
                             </div>
                         </form>
                     </div>
