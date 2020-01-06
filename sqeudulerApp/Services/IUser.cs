@@ -14,5 +14,6 @@ namespace sqeudulerApp.Services
         User GetUser(int id);
         void Add(User _User);
         void Remove(int id);
+        int EmailToID(string email);
     }
 }

@@ -1,0 +1,731 @@
+﻿@model sqeudulerApp.Models.TeamPageModel
+    @{ 
+    ViewData["Title"] = @ViewBag.teamcontext.Item1[0];
+
+    Layout = null;
+    }
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale-1.0">
+        <link rel="stylesheet" a href="~/css/bootstrap.css" />
+        <script src="~/js/bootstrap.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <title>Home | @ViewBag.teamcontext.Item1[0]</title>
+
+        @* JS to open modal popup *@
+        <script src="~/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+
+            function switchTab(evt, tabName) {
+                // Declare all variables
+                var i, tabcontent, tablinks;
+
+                // Get all elements with class="tabcontent" and hide them
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+
+                // Get all elements with class="tablinks" and remove the class "active"
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+
+        </script>
+        @* end of JS to open modal popup *@
+
+        <style>
+
+            /* Split the screen in half */
+            .split {
+                height: 100%;
+                width: 50%;
+                position: absolute;
+                overflow-x: hidden;
+            }
+
+            /* Control the left side */
+            .left {
+                left: 0;
+            }
+
+            /* Control the right side */
+            .right {
+                right: 0;
+            }
+
+            /* If you want the content centered horizontally and vertically */
+            .centered {
+                position: absolute;
+                left: 10%;
+                text-align: center;
+            }
+
+            .form {
+                padding: 25px;
+            }
+
+            .top-row {
+                background-color: #e6e6e6;
+                padding: 10px;
+            }
+
+            .loginForm {
+                padding: 5%;
+            }
+
+            .logo {
+                height: 100%;
+                width: 150px;
+                background-color: grey;
+                color: white;
+                border: 1px solid grey;
+                border-radius: 3px;
+            }
+
+            .header {
+                padding-top: 5%;
+            }
+
+            .btn {
+                text-align: center;
+            }
+
+            /* Style the tab */
+            .tab {
+                overflow: visible;
+                border: 1px solid #ccc;
+                background-color: #f1f1f1;
+                width: 100%;
+                display: inline-flex;
+            }
+
+                /* Style the buttons that are used to open the tab content */
+                .tab button {
+                    flex: 1 100%;
+                    display: inline-block;
+                    background-color: inherit;
+                    float: left;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                    padding: 14px 16px;
+                    transition: 0.3s;
+                    z-index: 1;
+                }
+
+                    /* Change background color of buttons on hover */
+                    .tab button:hover {
+                        background-color: #ddd;
+                    }
+
+                    /* Create an active/current tablink class */
+                    .tab button.active {
+                        background-color: #ccc;
+                    }
+
+            /* Style the tab content */
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border-top: none;
+            }
+
+            .pre-inner {
+                position: relative;
+                overflow-y: scroll;
+                overflow-x: visible;
+                width: 600px;
+                height: 500px;
+                margin: 0px auto 0px;
+                padding: 10px 20px;
+                text-align: center;
+            }
+
+            .teamimage {
+                width: 70%;
+                height: 60%;
+            }
+
+            .memberinfocontainer {
+                width: 300px;
+                height: auto;
+                display: inline-block;
+            }
+
+            .memberinfo {
+                margin: 0px;
+                padding: 2px;
+            }
+
+            .transformer {
+                transition: width 0.5s, height 0.5s;
+            }
+
+            .memberinfocontainer:hover {
+                width: 500px;
+                height: auto;
+                background-color: #ddd;
+            }
+
+                .memberinfocontainer:hover .HiddenText {
+                    display: block;
+                    margin: 0px;
+                    padding: 2px;
+                }
+
+            .HiddenText {
+                display: none;
+            }
+
+            #kickButton {
+                width: 100%;
+            }
+
+            .modal-footer {
+                display: inline;
+                text-align: center;
+            }
+
+            .confirmationbutton {
+                width: 45%;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        
+        <div class="container-fluid h-100">
+            <div class="row top-row border rounded">
+                <div class="col-2 text-center top-logo">
+                    <h3 class="logo">Squeduler</h3>
+                </div>
+                <div class="col-10 text-right">
+                    <button type="button" class="btn btn-outline-secondary" onclick="location.href='javascript:history.go(-1)'">Go to your teams</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="tab col">
+                    <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
+                    <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
+                    <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
+                    <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
+                </div>
+            </div>
+
+
+            @if (ViewBag.teamcontext.Item3 == "member")
+            {
+                <!-- Tab content -->
+                <div id="Main" class="tabcontent">
+                    <h3>Main BAWS PAGE</h3>
+                    <p>Recent activities and requests</p>
+                    <div class="row">
+                        <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                            <h4>Requests for: @ViewBag.Username</h4>
+                            <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                                <div class="container">
+                                    <div class="row">
+                                        @foreach (TeamPageModel.Requests_Site request in ViewBag.Requests)
+                                        {
+
+                                            <div id="Model_request_detail_@request.Mssg_ID" class="modal fade" role="dialog">
+                                                <div class="modal-dialog">
+
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            
+                                                        </div>
+                                                        <h4 class="modal-title">Title: @request.Title</h4>
+                                                        <div class="modal-body">
+                                                            <h6>Description:</h6>
+                                                            <p>@request.Text.</p>
+
+                                                            <input type="date" placeholder="@request.Date" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
+                                                <div class="container">
+                                                    <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
+                                                        <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                                    </div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Requester</b>: @request.Name_Sender
+                                                        </div>
+                                                        @{
+                                                            if (request.Co_Receiver_ID >= 0)
+                                                            {
+                                                                <div class="col-md-12 mt-2">
+                                                                    <b>Co_Reciever</b>: @request.Name_Co_Receiver
+                                                                </div>
+                                                                <div class="col-md-12 mt-2">
+                                                                    @{
+                                                                        string name = request.Name_Co_Receiver;
+                                                                        if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                                        {
+                                                                            name = "You";
+                                                                        }
+                                                                        if (request.Co_Recvr_Approved)
+                                                                        {
+                                                                            <div class="col">
+                                                                                <button style="width: 100%" class="btn btn-warning">Approved by @name</button>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="col">
+                                                                                <button style="width: 100%" class="btn btn-danger">Not Approved by @name</button>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        }
+                                                        <div class="col-md-12 mt-2">
+                                                            @Html.DisplayFor(modelItem => request.Date)
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>                   
+                                                        </div>
+                                                    </div>
+                                                    @{
+                                                        if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                        {
+                                                            <div class="row align-items-end">
+                                                                @{
+                                                                    if (!request.Co_Recvr_Approved)
+                                                                    {
+                                                                        <div class="col">
+                                                                            <a asp-action="Approve_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"> <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve Request</button></a>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="col">
+                                                                            <a asp-action="Disapprove_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Disapprove Request</button></a>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        }
+                                                        if (request.Sender_ID == ViewBag.UserID)
+                                                        {
+                                                            <div class="row align-items-end">
+                                                                <div class="col">
+                                                                    <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Personal" class="tabcontent">
+                    <h3>Personal</h3>
+                    <p>Total hours and availability</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            -------
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-4">
+                            <form asp-action="Create" asp-controller="Requests">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Title" class="control-label"></label>
+                                    <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" />
+                                    <span asp-validation-for="Requests.Title" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Text" class="control-label"></label>
+                                    <input asp-for="Requests.Text" placeholder="Request..." class="form-control" />
+                                    <span asp-validation-for="Requests.Text" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
+                                    <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1">
+                                        <option value=-1>Nobody</option>
+                                        @{
+                                            @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                            {
+                                                if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
+                                                {
+                                                    <option value=@member[5]>@member[0] @member[1]</option>
+
+
+
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Create" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Schedule" class="tabcontent">
+                    <h3>Schedule MEMBER PAGE</h3>
+                    <p>Team schedule and request buttons</p>
+                    <div class="row">
+                        <div class="col-md-4">
+
+                        </div>
+
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="TeamInfo" class="tabcontent">
+                    <div class="split left">
+                        <div class="centered">
+                            <h5>Team Info </h5>
+                            <div class="rounded border pre-inner">
+                                <!--pushes the header up for some reason-->
+                                <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                                <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                                <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                                <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                                <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                                <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                                <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="split right">
+                        <div class="centered">
+                            <h5>Team Members</h5>
+                            <div class="rounded border pre-inner">
+
+                                @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                {
+                                    <div class="rounded border memberinfocontainer transformer">
+                                        <p class="memberinfo">@member[0] @member[1]</p>
+                                        <p class="memberinfo">@member[2]</p>
+                                        <div class="HiddenText">
+                                            <p class="memberinfo">@member[3]</p>
+                                            <p class="memberinfo">@member[4]</p>
+                                        </div>
+                                    </div>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Tab content -->
+                <div id="Main" class="tabcontent">
+                    <h3>Main BAWS PAGE</h3>
+                    <p>Recent activities and requests</p>
+                    <div class="row">
+                        <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                            <h4>Requests for: @ViewBag.Username</h4>
+                            <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                                <div class="container">
+                                    <div class="row">
+                                        @foreach (TeamPageModel.Requests_Site request in ViewBag.AllRequests)
+                                        {
+
+                                            <div id="Model_request_detail_@request.Mssg_ID" class="modal fade" role="dialog">
+                                                <div class="modal-dialog">
+
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                                        </div>
+                                                        <h4 class="modal-title">Title: @request.Title</h4>
+                                                        <div class="modal-body">
+                                                            <h6>Description:</h6>
+                                                            <p>@request.Text.</p>
+
+                                                            <input type="date" placeholder="@request.Date" />
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
+                                                <div class="container">
+                                                    <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
+                                                        <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                                    </div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Requester</b>: @request.Name_Sender
+                                                        </div>
+                                                        @{
+                                                            if (request.Co_Receiver_ID >= 0)
+                                                            {
+                                                                <div class="col-md-12 mt-2">
+                                                                    <b>Co_Reciever</b>: @request.Name_Co_Receiver
+                                                                </div>
+                                                                <div class="col-md-12 mt-2">
+                                                                    @{
+                                                                        if (request.Co_Recvr_Approved)
+                                                                        {
+                                                                            <div class="col">
+                                                                                <button style="width: 100%" class="btn btn-warning">Approved by co-reciever</button>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="col">
+                                                                                <button style="width: 100%" class="btn btn-danger">Not Approved by co-reciever</button>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        }
+                                                        Date:
+                                                        <div class="col-md-12 mt-2">
+                                                            @Html.DisplayFor(modelItem => request.Date)
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row align-items-end">
+                                                        <div class="col">
+                                                            @{
+                                                                //has co reciever
+                                                                if (request.Co_Receiver_ID >= 0)
+                                                                {
+                                                                    //is approved by co reciever
+                                                                    if (request.Co_Recvr_Approved)
+                                                                    {
+                                                                        <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept</button>
+                                                                    }
+                                                                    //not approved by co reciever
+                                                                    else
+                                                                    {
+                                                                        <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
+                                                                    }
+                                                                }
+                                                                //has no co reciever
+                                                                else
+                                                                {
+                                                                    <a asp-action="Accept_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
+                                                                }
+                                                            }
+                                                        </div>
+
+                                                        <div class="row align-items-end">
+                                                            <div class="col">
+                                                                <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Personal" class="tabcontent">
+                    <h3>Personal</h3>
+                    <p>Total hours and availability</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            -------
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-4">
+                            <form asp-action="Create" asp-controller="Requests">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Title" class="control-label"></label>
+                                    <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" />
+                                    <span asp-validation-for="Requests.Title" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Text" class="control-label"></label>
+                                    <input asp-for="Requests.Text" placeholder="Request..." class="form-control" />
+                                    <span asp-validation-for="Requests.Text" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
+                                    <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1">
+                                        @{
+                                            <option value=-1>Nobody</option>
+                                            @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                            {
+                                                if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
+                                                {
+                                                    <option value=@member[5]>@member[0] @member[1]</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Create" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Schedule" class="tabcontent">
+                    <h3>Schedule HANDGRANAAT</h3>
+                    <p>Team schedule and request buttons</p>
+                    <table style="width:100%;"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
+                </div>
+
+                <div id="TeamInfo" class="tabcontent">
+                    <div class="split left">
+                        <div class="centered">
+                            <h5>Team Info </h5>
+                            <div class="rounded border pre-inner">
+                                <!--pushes the header up for some reason-->
+                                <!----<img class="teamimage" src="http://lorempixel.com/600/120/"/>--->
+                                <p>Owner: @ViewBag.teamcontext.Item1[5]</p>
+                                <p>Team name: @ViewBag.teamcontext.Item1[0]</p>
+                                <p>Address: @ViewBag.teamcontext.Item1[3]</p>
+                                <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
+                                <p>City: @ViewBag.teamcontext.Item1[1]</p>
+                                <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="split right">
+                        <div class="centered">
+                            <h5>Team Members</h5>
+                            <div class="rounded border pre-inner">
+
+                                @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                {
+                                    <div class="rounded border memberinfocontainer transformer">
+                                        <p class="memberinfo">@member[0] @member[1]</p>
+                                        <p class="memberinfo">@member[2]</p>
+                                        <div class="HiddenText">
+                                            <p class="memberinfo">@member[3]</p>
+                                            <p class="memberinfo">@member[4]</p>
+                                            @if (member[2] == "member")
+                                            {
+                                                <button type="button" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" id="kickButton" class="btn btn-danger disabled button">REMOVE MEMBER FROM TEAM</button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+
+        @* design of the popup *@
+        <div class="container">
+            <div class="modal fade" tabindex="-1" id="ConfirmRmvMember" data-keyboard="false" data-backdrop="static" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Are you sure?</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>They might start hating you for this >:(</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger confirmationbutton" data-dismiss="modal">YES</button>
+                            <button type="button" class="btn btn-outline-dark confirmationbutton" data-dismiss="modal">NO!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* end of the design of the popup *@
+
+    </body>
+</html>

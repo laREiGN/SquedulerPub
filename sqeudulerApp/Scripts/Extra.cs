@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -7,19 +7,14 @@ using System.Threading.Tasks;
 namespace sqeudulerApp.Scripts
 {
     public class Extra
-    {
-        /// <summary>
-        /// Generates a random string with numbers and letters
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
+    {    
         public static string Generate_Random_String(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             //new empty temp password
             string New_pass = "";
             Random rng = new Random();
-            
+
             for (int i = 0; i < length; i++)
             {
                 //Add a new random character to newpassword
@@ -27,6 +22,8 @@ namespace sqeudulerApp.Scripts
             }
             return New_pass;
         }
+
+
         /// <summary>
         ///  /// Sents a email to target mail
         /// </summary>
@@ -42,7 +39,7 @@ namespace sqeudulerApp.Scripts
         {
             //                                    
             SmtpClient smtpClient = new SmtpClient(Stmp_host, Port);
-            
+
             MailMessage msg = new MailMessage();
             SmtpClient client = new SmtpClient();
             try
@@ -74,7 +71,7 @@ namespace sqeudulerApp.Scripts
             }
             catch (Exception ex)
             {
-                 Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
     }
