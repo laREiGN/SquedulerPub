@@ -21,13 +21,15 @@ namespace sqeudulerApp.Controllers
         private readonly IUser _User;
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
+        private readonly IAvailability _Availability;
 
 
-        public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam)
+        public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, IAvailability _IAvailability)
         {
             _User = _IUser;
             _Teams = _ITeams;
             _UserTeam = _IUserTeam;
+            _Availability = _IAvailability;
         }
 
         public IActionResult Index()
@@ -265,7 +267,6 @@ namespace sqeudulerApp.Controllers
             if (ModelState.IsValid)
             {
                 // generates a random code, later used to connect to team
-                //TODO - MAKE SURE CODE IS UNIQUE
                 string teamCode = Generate_Random_String(10);
                 model.TeamCode = teamCode;
 
@@ -308,15 +309,6 @@ namespace sqeudulerApp.Controllers
             return RedirectToAction("TeamPage");
         }
 
-        [HttpPost]
-        public IActionResult ProvideAvailability(Availability model)
-        {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction("TeamPage");
-            }
-            return RedirectToAction("TeamPage");
-        }
 
         [HttpPost]
         public IActionResult Login(User model)

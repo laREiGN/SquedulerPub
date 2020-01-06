@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using sqeudulerApp.Models;
+using sqeudulerApp.Services;
+using System.Net;
+using System.Net.Mail;
+using System.Drawing;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using static sqeudulerApp.Scripts.Extra;
+
 
 
 namespace sqeudulerApp.Controllers
@@ -13,6 +20,19 @@ namespace sqeudulerApp.Controllers
     {
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
+        private readonly IUser _User;
+        private readonly ITeams _Teams;
+        private readonly IUserTeam _UserTeam;
+        private readonly IAvailability _Availability;
+
+
+        public TeamController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, IAvailability _IAvailability)
+        {
+            _User = _IUser;
+            _Teams = _ITeams;
+            _UserTeam = _IUserTeam;
+            _Availability = _IAvailability;
+        }
 
         public IActionResult MainPage()
         {
@@ -164,6 +184,42 @@ namespace sqeudulerApp.Controllers
                 ViewBag.teamcontext = teamcontext;
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult ProvideAvailability(UserAvailability model)
+        {
+            if (ModelState.IsValid)
+            {
+                // takes current session user id (email in this case)
+                string currentUser = HttpContext.Session.GetString("Uid");
+
+                //connection opened to database
+                using SqlConnection conn = new SqlConnection(strCon);
+
+                // sql query, that reads userid's associated to the current users email
+                string query = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
+
+                // block of code, that ready the results of the above query
+                using SqlCommand comm = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader sqlResultReader = comm.ExecuteReader();
+
+                //checks if the query actually returned any data
+                if (sqlResultReader.Read())
+                {
+                    // the top result of the above query is saved as team owner in the teams table, and the reader is closed
+                    int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
+                    model.availability.UserId = currentUserID;
+                    conn.Close();
+
+                    _Availability.Add(model.availability);
+
+                    //opens teampage again
+                    return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
+                }
+            }
+            return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
         }
     }
 }
