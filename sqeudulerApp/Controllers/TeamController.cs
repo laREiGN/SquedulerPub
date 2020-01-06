@@ -41,6 +41,7 @@ namespace sqeudulerApp.Controllers
 
         public IActionResult PersonalPage()
         {
+
             return View();
         }
 
@@ -74,6 +75,13 @@ namespace sqeudulerApp.Controllers
                     "FROM [dbo].[UserTeam] " +
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
+
+                string availabilityquery = "SELECT [Availability].[work_date], [Availability].[start_work_hour], " +
+                    "[Availability].[end_work_hour]" +
+                    "FROM [dbo].[Availability]" +
+                    "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
+                    "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
+
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
@@ -177,8 +185,43 @@ namespace sqeudulerApp.Controllers
                     conn.Close();
                 }
 
+                // Create a new list that will contain the availability information aka results of the teamquery
+                List<string> availability = new List<string>();
+
+                //create a sql command with the team sql query and the original connection string
+                using SqlCommand availabilityconn = new SqlCommand(availabilityquery, conn);
+                {
+                    //here you can give the parameters
+                    availabilityconn.Parameters.Add("@TeamCode", System.Data.SqlDbType.VarChar);
+                    availabilityconn.Parameters["@TeamCode"].Value = teamcode;
+
+                    //open the connection
+                    conn.Open();
+
+                    //use the original sql datareader and execute the new sql command
+                    SqlDataReader sqlResultReader = availabilityconn.ExecuteReader();
+
+                    // Iterate through the results of the query a row per itteration
+                    while (sqlResultReader.Read())
+                    {
+                        // for each column in the current row (there should only be one row) add the column info which is in this case
+                        // 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner in that exact order
+                        for (int i = 0; i < sqlResultReader.FieldCount; i++)
+                        {
+                            availability.Add(sqlResultReader.GetValue(i).ToString());
+                        }
+                    }
+
+                    //close sql reader
+                    sqlResultReader.Close();
+                    //close sql connection
+                    conn.Close();
+
+
+                }
+
                 // create a team context tuple which contains 1. the team information and 2. the members of the team including their information
-                Tuple<List<string>, List<List<string>>, string> teamcontext = new Tuple<List<string>, List<List<string>>, string>(teaminfo, teammembers, userrole);
+                Tuple<List<string>, List<List<string>>, string, List<string>> teamcontext = new Tuple<List<string>, List<List<string>>, string, List<string>>(teaminfo, teammembers, userrole, availability);
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
@@ -215,7 +258,7 @@ namespace sqeudulerApp.Controllers
 
                     _Availability.Add(model.availability);
 
-                    //opens teampage again
+                    //opens correct teampage again
                     return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
                 }
             }
