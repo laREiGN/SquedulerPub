@@ -67,10 +67,11 @@
                     var TeamCode = event.target.getAttribute("data-bag-TC");
                     var confirmRmv = document.getElementById("confirmRemove");
                     var confirmPrmt = document.getElementById("confirmPromote");
-                    var currentRoute = confirmRmv.getAttribute("href")
+                    var currentRouteRmv = confirmRmv.getAttribute("href");
+                    var currentRoutePrmt = confirmPrmt.getAttribute("href");
 
-                    confirmRmv.setAttribute("href", currentRoute + "/" + UserEmail + "/" + TeamCode);
-                    confirmPrmt.setAttribute("href", currentRoute + "/" + UserEmail + "/" + TeamCode);
+                    confirmRmv.setAttribute("href", currentRouteRmv + "/" + UserEmail + "/" + TeamCode);
+                    confirmPrmt.setAttribute("href", currentRoutePrmt + "/" + UserEmail + "/" + TeamCode);
                 }
             });
 
@@ -366,7 +367,6 @@
                                         <p class="memberinfo">@member[4]</p>
                                         @if (member[2] == "member")
                                         {
-                                            // needs <a data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton">
                                             <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
                                             <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmPrmtMember" id="promoteButton" class="btn btn-info button">PROMOTE</button>
                                         }
