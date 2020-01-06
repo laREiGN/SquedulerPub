@@ -11,8 +11,7 @@ using System.Drawing;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
-
-
+using System.Globalization;
 
 namespace sqeudulerApp.Controllers
 {
@@ -186,7 +185,7 @@ namespace sqeudulerApp.Controllers
                 }
 
                 // Create a new list that will contain the availability information aka results of the teamquery
-                List<string> availability = new List<string>();
+                List<List<string>> availability = new List<List<string>>();
 
                 //create a sql command with the team sql query and the original connection string
                 using SqlCommand availabilityconn = new SqlCommand(availabilityquery, conn);
@@ -204,12 +203,22 @@ namespace sqeudulerApp.Controllers
                     // Iterate through the results of the query a row per itteration
                     while (sqlResultReader.Read())
                     {
+                        List<string> singleavailability = new List<string>();
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner in that exact order
+                        // 0. date, 1. start time, 2. end time
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
-                            availability.Add(sqlResultReader.GetValue(i).ToString());
+                            singleavailability.Add(sqlResultReader.GetValue(i).ToString());
                         }
+                        DateTime date1 = DateTime.ParseExact(singleavailability[0], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        DateTime time1 = DateTime.ParseExact(singleavailability[1], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        DateTime time2 = DateTime.ParseExact(singleavailability[2], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                        List<string> singleavailabilityupdate = new List<string>();
+                        singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
+                        singleavailabilityupdate.Add(time1.ToString("HH:mm"));
+                        singleavailabilityupdate.Add(time2.ToString("HH:mm"));
+                        availability.Add(singleavailabilityupdate);
                     }
 
                     //close sql reader
@@ -221,7 +230,7 @@ namespace sqeudulerApp.Controllers
                 }
 
                 // create a team context tuple which contains 1. the team information and 2. the members of the team including their information
-                Tuple<List<string>, List<List<string>>, string, List<string>> teamcontext = new Tuple<List<string>, List<List<string>>, string, List<string>>(teaminfo, teammembers, userrole, availability);
+                Tuple<List<string>, List<List<string>>, string, List<List<string>>> teamcontext = new Tuple<List<string>, List<List<string>>, string, List<List<string>>>(teaminfo, teammembers, userrole, availability);
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
