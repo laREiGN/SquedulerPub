@@ -239,9 +239,9 @@ namespace sqeudulerApp.Controllers
                         }
                         if (singleavailability[0] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[1] == teamcode)
                         {
-                            DateTime date1 = DateTime.ParseExact(singleavailability[2], "M/d/yyyy HH:mm:ss", null);
-                            DateTime time1 = DateTime.ParseExact(singleavailability[3], "M/d/yyyy HH:mm:ss", null);
-                            DateTime time2 = DateTime.ParseExact(singleavailability[4], "M/d/yyyy HH:mm:ss", null);
+                            DateTime date1 = DateTime.Parse(singleavailability[2]);
+                            DateTime time1 = DateTime.Parse(singleavailability[3]);
+                            DateTime time2 = DateTime.Parse(singleavailability[4]);
 
                             List<string> singleavailabilityupdate = new List<string>();
                             singleavailabilityupdate.Add(singleavailability[0]);
