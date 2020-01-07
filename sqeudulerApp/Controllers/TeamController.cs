@@ -12,25 +12,52 @@ using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
 using System.Globalization;
+using sqeudulerApp.Repository;
+using static sqeudulerApp.Models.TeamPageModel;
+
 
 namespace sqeudulerApp.Controllers
 {
+    [Route("[controller]")]
     public class TeamController : Controller
     {
-        string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
+        private readonly ICalendar _Calendar;
         private readonly IUser _User;
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
+        private readonly DB_Context _context;
         private readonly IAvailability _Availability;
 
+        string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        public TeamController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, IAvailability _IAvailability)
+        public TeamController(IAvailability _IAvailability, ICalendar _ICalendar , IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
         {
+            _Calendar = _ICalendar;
             _User = _IUser;
             _Teams = _ITeams;
             _UserTeam = _IUserTeam;
+            _context = context;
             _Availability = _IAvailability;
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult RemoveUserFromTeam(string Email, string TeamCode) 
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.Remove(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult PromoteUserInTeam(string Email, string TeamCode)
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.PromoteUserInTeam(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+
         }
 
         public IActionResult MainPage()
@@ -49,7 +76,9 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
+
         // t is de unique code of the team
+        [Route("[action]/{t}")]
         public IActionResult TeamInfoPage(string t)
         {
             string teamcode = t;
@@ -65,7 +94,7 @@ namespace sqeudulerApp.Controllers
                     "WHERE [Teams].[TeamCode]= @TeamCode;";
 
                 string membersquery = "SELECT [User].[FirstName], [User].[LastName], [UserTeam].[Role], [User].[PhoneNr]," +
-                    "[User].[Email]" +
+                    "[User].[Email], [User].[UserId]" +
                     "FROM [dbo].[UserTeam] " +
                     "JOIN [dbo].[User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode;";
@@ -81,10 +110,9 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
                     "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
 
-
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
-
+ 
                 //create a sql command with the team sql query and the original connection string
                 using SqlCommand teamcomm = new SqlCommand(teamquery, conn);
                 {
@@ -139,7 +167,6 @@ namespace sqeudulerApp.Controllers
                         List<string> member = new List<string>();
 
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner in that exact order
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             member.Add(sqlResultReader.GetValue(i).ToString());
@@ -234,6 +261,129 @@ namespace sqeudulerApp.Controllers
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
+
+                //Create list from ScheduleFinal table (get all schedules where teamcode matches) to list()
+                List<Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
+                //Add list to ViewBag.Calendar
+                ViewBag.Calendar = list;
+                //Get amount of rows in list and add to ViewBag.CalCount. (i couldnt use count in ViewBag.Calendar in TeamInfoPage, so i came up with this)
+                ViewBag.CalCount = list.Count();
+
+                ///////////Get messages for user
+                //List of requests_site, where all the requests are shown
+                List<Requests_Site> Requests = new List<Requests_Site>();
+
+                List<Requests_Site> Requests_all = new List<Requests_Site>();
+
+
+                //get user ID from login session
+                int USRID = (int)HttpContext.Session.GetInt32("ID");
+
+                using (_context)
+                {
+
+                    var requests_raw = from row in _context.Requests.Where(
+                        row => row.Sender_ID == USRID || row.Co_Receiver_ID == USRID)
+                                       select row;
+
+                    var requests_all_raw = from row in _context.Requests select row;
+
+                    foreach (var req_raw in requests_raw)
+                    {
+                        Requests_Site temp_req = new Requests_Site();
+                        temp_req.Mssg_ID = req_raw.Mssg_ID;
+                        temp_req.Title = req_raw.Title;
+                        temp_req.Text = req_raw.Text;
+                        temp_req.Sender_ID = req_raw.Sender_ID;
+                        //temp_req.Receiver_ID = req_raw.Receiver_ID;
+                        temp_req.Team_Code = req_raw.Team_Code;
+                        temp_req.Co_Receiver_ID = req_raw.Co_Receiver_ID;
+                        temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
+                        //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
+                        temp_req.Date = req_raw.Date;
+
+                        Requests.Add(temp_req);
+                    }
+
+                    //temp forall
+                    foreach (var req_raw in requests_all_raw)
+                    {
+                        Requests_Site temp_req = new Requests_Site();
+                        temp_req.Mssg_ID = req_raw.Mssg_ID;
+                        temp_req.Title = req_raw.Title;
+                        temp_req.Text = req_raw.Text;
+                        temp_req.Sender_ID = req_raw.Sender_ID;
+                        //temp_req.Receiver_ID = req_raw.Receiver_ID;
+                        temp_req.Team_Code = req_raw.Team_Code;
+                        temp_req.Co_Receiver_ID = req_raw.Co_Receiver_ID;
+                        temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
+                        //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
+                        temp_req.Date = req_raw.Date;
+
+                        Requests_all.Add(temp_req);
+                    }
+
+                    //Linq query for getting team member names
+                    var team_members = from usr in _context.User
+                                       from usrtm in _context.UserTeam
+                                       where usrtm.Team == teamcode && usr.UserId == usrtm.UserID
+                                       select new { usr.FirstName, usr.LastName, usrtm.Role, usr.UserId, usrtm.Team };
+
+
+                    //Looping through members and request, to assign names to requests
+                    foreach (var memb in team_members)
+                    {
+                        //assign name for logged in user
+                        if (memb.UserId == USRID)
+                        {
+                            ViewBag.Username = memb.FirstName + " " + memb.LastName;
+                        }
+                        //loop through requests and assign member names
+                        foreach (Requests_Site site in Requests)
+                        {
+                            //assign name for receiver
+                            //if (site.Receiver_ID == memb.UserId)
+                            //{
+                            //    site.Name_Receiver = memb.FirstName + " " + memb.LastName;
+                            //}
+                            //assign name for co reciever
+                            if (site.Co_Receiver_ID == memb.UserId)
+                            {
+                                site.Name_Co_Receiver = memb.FirstName + " " + memb.LastName;
+                            }
+                            //assign name to sender
+                            if (site.Sender_ID == memb.UserId)
+                            {
+                                site.Name_Sender = memb.FirstName + " " + memb.LastName;
+                            }
+                        }
+
+                        foreach (Requests_Site site in Requests_all)
+                        {
+                            //assign name for receiver
+                            //if (site.Receiver_ID == memb.UserId)
+                            //{
+                            //    site.Name_Receiver = memb.FirstName + " " + memb.LastName;
+                            //}
+                            //assign name for co reciever
+                            if (site.Co_Receiver_ID == memb.UserId)
+                            {
+                                site.Name_Co_Receiver = memb.FirstName + " " + memb.LastName;
+                            }
+                            //assign name to sender
+                            if (site.Sender_ID == memb.UserId)
+                            {
+                                site.Name_Sender = memb.FirstName + " " + memb.LastName;
+                            }
+                        }
+                    }
+
+
+                    ViewBag.UserID = USRID;
+                    ViewBag.AllRequests = Requests_all;
+                    ViewBag.Teamcode = teamcode;
+                    ViewBag.Requests = Requests;
+                }
             }
             return View();
         }

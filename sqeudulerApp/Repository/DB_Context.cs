@@ -10,7 +10,9 @@ namespace sqeudulerApp.Repository
     public class DB_Context : DbContext
     {
         public DB_Context(DbContextOptions<DbContext> options) : base(options)
-        { 
+        {  //var optionsBuilder = new DbContextOptionsBuilder<DB_Context>();
+            //optionsBuilder.UseSqlServer("Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+
         }
         public DB_Context()
         {
@@ -30,6 +32,8 @@ namespace sqeudulerApp.Repository
 
         public DbSet<ScheduleFinal> ScheduleFinal { get; set; }
 
+        public DbSet<Calendar> ScheduleFinal { get; set; }
 
+        public DbSet<Requests> Requests { get; set; }
     }
 }

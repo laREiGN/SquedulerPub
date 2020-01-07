@@ -1,4 +1,7 @@
-﻿@model sqeudulerApp.Models.UserAvailability
+
+/* @model sqeudulerApp.Models.UserAvailability */
+﻿@model sqeudulerApp.Models.TeamPageModel
+
 
 @{
     ViewData["Title"] = @ViewBag.teamcontext.Item1[0];
@@ -9,38 +12,96 @@
 <html>
 <head>
 
+    <title>Home | @ViewBag.teamcontext.Item1[0]</title>
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/core/main.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/daygrid/main.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/timegrid/main.css" />
+    <link rel="stylesheet" a href="~/fullcalendar/packages/list/main.css" />
     <script src="~/js/bootstrap.js"></script>
+    <script src="~/fullcalendar/packages/core/main.js"></script>
+    <script src="~/fullcalendar/packages/daygrid/main.js"></script>
+    <script src="~/fullcalendar/packages/timegrid/main.js"></script>
+    <script src="~/fullcalendar/packages/list/main.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <title>Home | @ViewBag.teamcontext.Item1[0]</title>
-
-    @* JS to open modal popup *@
     <script src="~/js/bootstrap.min.js"></script>
     <script type="text/javascript">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>       
+    <script>
+//initialize calendar api
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
 
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                //setup view for calendar
+                plugins: ['dayGrid', 'timeGrid','list'],
+                height: 550,
+                header: {
+                    left: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+                    center: 'title',
+                    right: 'prev,next'
+                },
+                timeZone: 'CET',
+
+                events: [
+                    //loop through the ViewBag.Calendar for each row, set values to FullCalendar
+                             @for (int i = 0; i < ViewBag.CalCount; i++)
+                             {
+                                @:{
+                                @: title: '@ViewBag.Calendar[i].Title',
+                                 //doesnt seem to work?
+                                @: description: 'bgefesg',
+                                 //convert given datetime type to iso standard to string
+                                @: start: '@ViewBag.Calendar[i].StartTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")',
+                                @: end: '@ViewBag.Calendar[i].EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss")',
+                                @: textColor: 'white'
+                                //Check rows, if it is at the end, dont and , to the event format
+                                if ((ViewBag.CalCount -1) != i)
+                                {
+                                    @:},
+                                }
+                                else
+                                {
+                                    @:}
+                                }
+                            }
+
+                        ],
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    meridiem: false
+                }
+            });
+            document.getElementById("test").addEventListener("click", myFunction);
+            function myFunction() {
+                calendar.render();
+            }
+            calendar.render();
+        });
         function switchTab(evt, tabName) {
-          // Declare all variables
-          var i, tabcontent, tablinks;
+            // Declare all variables
+            var i, tabcontent, tablinks;
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
 
-          // Get all elements with class="tabcontent" and hide them
-          tabcontent = document.getElementsByClassName("tabcontent");
-          for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-          }
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
 
-          // Get all elements with class="tablinks" and remove the class "active"
-          tablinks = document.getElementsByClassName("tablinks");
-          for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-          }
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
 
-          // Show the current tab, and add an "active" class to the button that opened the tab
-          document.getElementById(tabName).style.display = "block";
-          evt.currentTarget.className += " active";
         }
         $(document).ready(function () {
             $("#TESTProvideHoursBtn").click(function () {
@@ -51,34 +112,58 @@
             });
         });
 
+    @* start JQ to pass data to model *@
+    /*        $(document).on(
+    "click",
+    ".memberControl",
+    function () {
+    var UserEmail = $(this).attr("data-bag-email");
+    var TeamCode  = $(this).attr("data-bag-TC");
+    $(".modal-footer #confirmRemove").attr("asp-route-TeamCode") = TeamCode;
+    $(".modal-footer #confirmRemove").attr("asp-route-Email") = UserEmail;
+    $(".modal-footer #confirmPromote").attr("asp-route-TeamCode") = TeamCode;
+    $(".modal-footer #confirmPromote").attr("asp-route-Email") = UserEmail;
+    });*/
+    // JS version
+    document.addEventListener('click', function(event) {
+    if (event.target.id == "kickButton" || event.target.id == "promoteButton")
+    {
+    var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
+    var TeamCode = event.target.getAttribute("data-bag-TC");
+    var confirmRmv = document.getElementById("confirmRemove");
+    var confirmPrmt = document.getElementById("confirmPromote");
+    var currentRouteRmv = confirmRmv.getAttribute("href");
+    var currentRoutePrmt = confirmPrmt.getAttribute("href");
+    confirmRmv.setAttribute("href", currentRouteRmv + "/" + UserEmail + "/" + TeamCode);
+    confirmPrmt.setAttribute("href", currentRoutePrmt + "/" + UserEmail + "/" + TeamCode);
+    }
+    });
+
+    @* end of JQ to pass data to model *@
     </script>
-    @* end of JS to open modal popup *@
+
 
     <style>
-
         /* Split the screen in half */
         .split {
-          height: 100%;
-          width: 50%;
-          position: absolute;
-          overflow-x: hidden;
+            height: 100%;
+            width: 50%;
+            position: absolute;
+            overflow-x: hidden;
         }
-
         /* Control the left side */
         .left {
-          left: 0;
+            left: 0;
         }
-
         /* Control the right side */
         .right {
-          right: 0;
+            right: 0;
         }
-
         /* If you want the content centered horizontally and vertically */
         .centered {
-          position: absolute;
-          left: 10%;
-          text-align: center;
+            position: absolute;
+            left: 10%;
+            text-align: center;
         }
 
         .form {
@@ -110,7 +195,6 @@
         .btn {
             text-align: center;
         }
-
         /* Style the tab */
         .tab {
             overflow: visible;
@@ -182,23 +266,25 @@
             transition: width 0.5s, height 0.5s;
         }
 
-        .memberinfocontainer:hover{
+        .memberinfocontainer:hover {
             width: 500px;
             height: auto;
             background-color: #ddd;
         }
 
-        .memberinfocontainer:hover .HiddenText{
-            display: block;
-            margin: 0px;
-            padding: 2px;
-        }
+            .memberinfocontainer:hover .HiddenText {
+                display: block;
+                margin: 0px;
+                padding: 2px;
+            }
 
         .HiddenText {
             display: none;
         }
 
-        #kickButton{width: 100%;}
+        #kickButton {
+            width: 100%;
+        }
 
         .modal-footer {
             display: inline;
@@ -208,7 +294,6 @@
         .confirmationbutton {
             width: 45%;
         }
-
     </style>
 </head>
 
@@ -226,7 +311,7 @@
             <div class="tab col">
                 <button class="tablinks" onclick="switchTab(event, 'Main')">Main</button>
                 <button class="tablinks" onclick="switchTab(event, 'Personal')">Personal</button>
-                <button class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
+                <button id="test" class="tablinks" onclick="switchTab(event, 'Schedule')">Schedule</button>
                 <button class="tablinks" onclick="switchTab(event, 'TeamInfo')">TeamInfo</button>
             </div>
         </div>
@@ -236,24 +321,211 @@
         {
             <!-- Tab content -->
             <div id="Main" class="tabcontent">
-                <h3>Main MEMBER PAGE</h3>
+                <h3>Main BAWS PAGE</h3>
                 <p>Recent activities and requests</p>
+                <div class="row">
+                    <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                        <h4>Requests for: @ViewBag.Username</h4>
+                        <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                            <div class="container">
+                                <div class="row">
+                                    @foreach (TeamPageModel.Requests_Site request in ViewBag.Requests)
+                                    {
+
+                                        <div id="Model_request_detail_@request.Mssg_ID" class="modal fade" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                                    </div>
+                                                    <h4 class="modal-title">Title: @request.Title</h4>
+                                                    <div class="modal-body">
+                                                        <h6>Description:</h6>
+                                                        <p>@request.Text.</p>
+
+                                                        <input type="date" placeholder="@request.Date" />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
+                                            <div class="container">
+                                                <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
+                                                    <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                                </div>
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-12 mt-2">
+                                                        <b>Requester</b>: @request.Name_Sender
+                                                    </div>
+                                                    @{
+                                                        if (request.Co_Receiver_ID >= 0)
+                                                        {
+                                                            <div class="col-md-12 mt-2">
+                                                                <b>Co_Reciever</b>: @request.Name_Co_Receiver
+                                                            </div>
+                                                            <div class="col-md-12 mt-2">
+                                                                @{
+                                                                    string name = request.Name_Co_Receiver;
+                                                                    if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                                    {
+                                                                        name = "You";
+                                                                    }
+                                                                    if (request.Co_Recvr_Approved)
+                                                                    {
+                                                                        <div class="col">
+                                                                            <button style="width: 100%" class="btn btn-warning">Approved by @name</button>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="col">
+                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by @name</button>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        }
+                                                    }
+                                                    <div class="col-md-12 mt-2">
+                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
+                                                    </div>
+                                                </div>
+                                                @{
+                                                    if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                    {
+                                                        <div class="row align-items-end">
+                                                            @{
+                                                                if (!request.Co_Recvr_Approved)
+                                                                {
+                                                                    <div class="col">
+                                                                        <a asp-action="Approve_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"> <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve Request</button></a>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col">
+                                                                        <a asp-action="Disapprove_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Disapprove Request</button></a>
+                                                                    </div>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    }
+                                                    if (request.Sender_ID == ViewBag.UserID)
+                                                    {
+                                                        <div class="row align-items-end">
+                                                            <div class="col">
+                                                                <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
             </div>
 
             <div id="Personal" class="tabcontent">
-                <h3>Personal RATATATAAT</h3>
+              
+                <h3>Personal</h3>
                 <p>Total hours and availability</p>
+                      
+                /*Girtys*/
+                
                 <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
                 @foreach (List<string> availability in ViewBag.teamcontext.Item4)
                 {
                     @: <p class="availability">@availability[0] </p>
                     @: <p class="availability">@availability[1] @availability[2]</p>
                 }
+      
+                /*Gerdwin*/
+      
+                <div class="row">
+                    <div class="col-md-6">
+                        -------
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                        <form asp-action="Create" asp-controller="Requests">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Title" class="control-label"></label>
+                                <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" />
+                                <span asp-validation-for="Requests.Title" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Text" class="control-label"></label>
+                                <input asp-for="Requests.Text" placeholder="Request..." class="form-control" />
+                                <span asp-validation-for="Requests.Text" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
+                                <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1">
+                                    <option value=-1>Nobody</option>
+                                    @{
+                                        @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                        {
+                                            if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
+                                            {
+                                                <option value=@member[5]>@member[0] @member[1]</option>
+
+
+
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12">
+                    </div>
+                </div>
             </div>
 
             <div id="Schedule" class="tabcontent">
-                <h3>Schedule MEMBER PAGE</h3>
-                <p>Team schedule and request buttons</p>
+                <div id="calendar"></div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                    </div>
+                        <div class="col-md-2">
+                    </div>
+                </div>
             </div>
 
             <div id="TeamInfo" class="tabcontent">
@@ -269,6 +541,7 @@
                             <p>Zipcode: @ViewBag.teamcontext.Item1[4]</p>
                             <p>City: @ViewBag.teamcontext.Item1[1]</p>
                             <p>Team code: @ViewBag.teamcontext.Item1[2]</p>
+
                         </div>
                     </div>
                 </div>
@@ -287,9 +560,7 @@
                                         <p class="memberinfo">@member[4]</p>
                                     </div>
                                 </div>
-                            }
-
-
+                            } 
                         </div>
                     </div>
                 </div>
@@ -301,22 +572,198 @@
             <div id="Main" class="tabcontent">
                 <h3>Main BAWS PAGE</h3>
                 <p>Recent activities and requests</p>
+                <div class="row">
+                    <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                        <h4>Requests for: @ViewBag.Username</h4>
+                        <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                            <div class="container">
+                                <div class="row">
+                                    @foreach (TeamPageModel.Requests_Site request in ViewBag.AllRequests)
+                                    {
+
+                                        <div id="Model_request_detail_@request.Mssg_ID" class="modal fade" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                                    </div>
+                                                    <h4 class="modal-title">Title: @request.Title</h4>
+                                                    <div class="modal-body">
+                                                        <h6>Description:</h6>
+                                                        <p>@request.Text.</p>
+
+                                                        <input type="date" placeholder="@request.Date" />
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
+                                            <div class="container">
+                                                <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
+                                                    <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                                </div>
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-12 mt-2">
+                                                        <b>Requester</b>: @request.Name_Sender
+                                                    </div>
+                                                    @{
+                                                        if (request.Co_Receiver_ID >= 0)
+                                                        {
+                                                            <div class="col-md-12 mt-2">
+                                                                <b>Co_Reciever</b>: @request.Name_Co_Receiver
+                                                            </div>
+                                                            <div class="col-md-12 mt-2">
+                                                                @{
+                                                                    if (request.Co_Recvr_Approved)
+                                                                    {
+                                                                        <div class="col">
+                                                                            <button style="width: 100%" class="btn btn-warning">Approved by co-reciever</button>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="col">
+                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by co-reciever</button>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        }
+                                                    }
+                                                    Date:
+                                                    <div class="col-md-12 mt-2">
+                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-end">
+                                                    <div class="col">
+                                                        @{
+                                                            //has co reciever
+                                                            if (request.Co_Receiver_ID >= 0)
+                                                            {
+                                                                //is approved by co reciever
+                                                                if (request.Co_Recvr_Approved)
+                                                                {
+                                                                    <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept</button>
+                                                                }
+                                                                //not approved by co reciever
+                                                                else
+                                                                {
+                                                                    <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
+                                                                }
+                                                            }
+                                                            //has no co reciever
+                                                            else
+                                                            {
+                                                                <a asp-action="Accept_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
+                                                            }
+                                                        }
+                                                    </div>
+
+                                                    <div class="row align-items-end">
+                                                        <div class="col">
+                                                            <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
             </div>
 
             <div id="Personal" class="tabcontent">
-                <h3>Personal RATATATAAT</h3>
+                <h3>Personal</h3>
                 <p>Total hours and availability</p>
+              
+             /*Girts*/
                 <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
                 @foreach (List<string> availability in ViewBag.teamcontext.Item4)
                 {
                     @: <p class="availability">@availability[0] </p>
                     @: <p class="availability">@availability[1] @availability[2]</p>
                 }
+
+              /*Gerdwin*/
+              
+                <div class="row">
+                    <div class="col-md-6">
+                        -------
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-4">
+                        <form asp-action="Create" asp-controller="Requests">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Title" class="control-label"></label>
+                                <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" />
+                                <span asp-validation-for="Requests.Title" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Text" class="control-label"></label>
+                                <input asp-for="Requests.Text" placeholder="Request..." class="form-control" />
+                                <span asp-validation-for="Requests.Text" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
+                                <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1">
+                                    @{
+                                        <option value=-1>Nobody</option>
+                                        @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                        {
+                                            if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
+                                            {
+                                                <option value=@member[5]>@member[0] @member[1]</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12">
+                    </div>
+                </div>
             </div>
 
             <div id="Schedule" class="tabcontent">
-                <h3>Schedule MEMBER PAGE</h3>
-                <p>Team schedule and request buttons</p>
+
+                <div id="calendar"></div>
+                <table style="width:100%;"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
+
             </div>
 
             <div id="TeamInfo" class="tabcontent">
@@ -350,11 +797,13 @@
                                         <p class="memberinfo">@member[4]</p>
                                         @if (member[2] == "member")
                                         {
-                                            <button type="button" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
+                                            <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
+                                            <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmPrmtMember" id="promoteButton" class="btn btn-info button">PROMOTE</button>
                                         }
                                         else
                                         {
                                             <button type="button" id="kickButton" class="btn btn-danger disabled button">REMOVE MEMBER FROM TEAM</button>
+                                            <button type="button" id="promoteButton" class="btn btn-info disabled button">PROMOTE</button>
                                         }
                                     </div>
                                 </div>
@@ -383,7 +832,35 @@
                         <p>They might start hating you for this >:(</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger confirmationbutton" data-dismiss="modal">YES</button>
+                        <a id="confirmRemove" href="/Team/RemoveUserFromTeam">
+                            <div class="pre-info">
+                                <span class="btn btn-outline-danger confirmationbutton">YES</span>
+                            </div>
+                        </a>
+                        <button type="button" class="btn btn-outline-dark confirmationbutton" data-dismiss="modal">NO!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="ConfirmPrmtMember" data-keyboard="false" data-backdrop="static" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Are you sure?</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Promotions cannot me reversed!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="confirmPromote" href="/Team/PromoteUserInTeam">
+                            <div class="pre-info">
+                                <span class="btn btn-outline-danger confirmationbutton">YES</span>
+                            </div>
+                        </a>
                         <button type="button" class="btn btn-outline-dark confirmationbutton" data-dismiss="modal">NO!</button>
                     </div>
                 </div>

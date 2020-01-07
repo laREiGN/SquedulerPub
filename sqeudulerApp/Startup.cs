@@ -35,6 +35,8 @@ namespace sqeudulerApp
             services.AddTransient<ITeams, TeamsRepository>();
             services.AddTransient<IUserTeam, UserTeamRepository>();
             services.AddTransient<IAvailability, AvailabilityRepository>();
+            services.AddTransient<ICalendar, CalendarRepository>();
+            //services.AddTransient<IRequests, RequestsRepository>();
             services.AddDistributedMemoryCache();
             services.AddSession();
         }
