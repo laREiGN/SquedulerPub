@@ -1,6 +1,5 @@
-
-/* @model sqeudulerApp.Models.UserAvailability */
-﻿@model sqeudulerApp.Models.TeamPageModel
+﻿﻿@model sqeudulerApp.Models.TeamPageModel
+@* @model sqeudulerApp.Models.UserAvailability *@
 
 
 @{
@@ -13,7 +12,7 @@
 <head>
 
     <title>Home | @ViewBag.teamcontext.Item1[0]</title>
-    
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
@@ -30,7 +29,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <script type="text/javascript">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>       
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
 //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
@@ -204,29 +203,29 @@
             display: inline-flex;
         }
 
-        /* Style the buttons that are used to open the tab content */
-        .tab button {
-            flex: 1 100%;
-            display: inline-block;
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            z-index: 1;
-        }
+            /* Style the buttons that are used to open the tab content */
+            .tab button {
+                flex: 1 100%;
+                display: inline-block;
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                z-index: 1;
+            }
 
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-            background-color: #ddd;
-        }
+                /* Change background color of buttons on hover */
+                .tab button:hover {
+                    background-color: #ddd;
+                }
 
-        /* Create an active/current tablink class */
-        .tab button.active {
-            background-color: #ccc;
-        }
+                /* Create an active/current tablink class */
+                .tab button.active {
+                    background-color: #ccc;
+                }
 
         /* Style the tab content */
         .tabcontent {
@@ -448,21 +447,21 @@
             </div>
 
             <div id="Personal" class="tabcontent">
-              
+
                 <h3>Personal</h3>
                 <p>Total hours and availability</p>
-                      
-                /*Girtys*/
-                
+
+                @*Girtys*@
+
                 <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
                 @foreach (List<string> availability in ViewBag.teamcontext.Item4)
                 {
                     @: <p class="availability">@availability[0] </p>
                     @: <p class="availability">@availability[1] @availability[2]</p>
                 }
-      
-                /*Gerdwin*/
-      
+
+                @*Gerdwin*@
+
                 <div class="row">
                     <div class="col-md-6">
                         -------
@@ -520,10 +519,10 @@
             <div id="Schedule" class="tabcontent">
                 <div id="calendar"></div>
 
-                    <div class="row">
-                        <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">
                     </div>
-                        <div class="col-md-2">
+                    <div class="col-md-2">
                     </div>
                 </div>
             </div>
@@ -560,7 +559,7 @@
                                         <p class="memberinfo">@member[4]</p>
                                     </div>
                                 </div>
-                            } 
+                            }
                         </div>
                     </div>
                 </div>
@@ -697,8 +696,8 @@
             <div id="Personal" class="tabcontent">
                 <h3>Personal</h3>
                 <p>Total hours and availability</p>
-              
-             /*Girts*/
+
+                @*Girts*@
                 <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
                 @foreach (List<string> availability in ViewBag.teamcontext.Item4)
                 {
@@ -706,8 +705,8 @@
                     @: <p class="availability">@availability[1] @availability[2]</p>
                 }
 
-              /*Gerdwin*/
-              
+                @*Gerdwin*@
+
                 <div class="row">
                     <div class="col-md-6">
                         -------

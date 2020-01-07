@@ -263,7 +263,7 @@ namespace sqeudulerApp.Controllers
                 ViewBag.teamcontext = teamcontext;
 
                 //Create list from ScheduleFinal table (get all schedules where teamcode matches) to list()
-                List<Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
+                List<Models.Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
                 //Add list to ViewBag.Calendar
                 ViewBag.Calendar = list;
                 //Get amount of rows in list and add to ViewBag.CalCount. (i couldnt use count in ViewBag.Calendar in TeamInfoPage, so i came up with this)

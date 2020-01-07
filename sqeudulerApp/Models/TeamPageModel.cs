@@ -11,6 +11,7 @@ namespace sqeudulerApp.Models
         public Teams Teams { get; set; }
         public Requests Requests { get; set; }
         public Requests_Site Requests_On_Site { get; set; }
+        public Availability availability { get; set; }
         public IEnumerable<User> Users { get; }
         public IEnumerable<Requests> GetAllRequests_Site { get; }
 
