@@ -14,6 +14,7 @@ namespace sqeudulerApp.Models
         public IEnumerable<User> Users { get; }
         public IEnumerable<Requests> GetAllRequests_Site { get; }
 
+
         //Custom Model for showing user names with requests 
         public class Requests_Site
         {
@@ -35,7 +36,8 @@ namespace sqeudulerApp.Models
             [Required]
             [DataType(DataType.Date)]
             public DateTime Date { get; set; }
-
+            
+            public string Target_Date { get; set; }
             public string Name_Sender { get; set; }
             public string Name_Receiver { get; set; }
             public string Name_Co_Receiver { get; set; }
@@ -58,7 +60,11 @@ namespace sqeudulerApp.Models
             [Required]
             public string Team_Code { get; set; }
             public string Co_Receiver_ID { get; set; }
-                   
+            [DataType(DataType.Date)]
+            public DateTime Target_Date { get; set; }
+            //todo
+            //public string start_time { get; set; }
+            //public string stop_time { get; set; }
         }
     }
 }

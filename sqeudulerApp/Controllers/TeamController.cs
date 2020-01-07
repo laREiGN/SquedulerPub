@@ -205,7 +205,7 @@ namespace sqeudulerApp.Controllers
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
-
+                        temp_req.Target_Date = req_raw.Target_Date;
                         Requests.Add(temp_req);
                     }
 
@@ -223,7 +223,7 @@ namespace sqeudulerApp.Controllers
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
-
+                        temp_req.Target_Date = req_raw.Target_Date;
                         Requests_all.Add(temp_req);
                     }
 

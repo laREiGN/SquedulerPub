@@ -40,6 +40,7 @@ namespace sqeudulerApp.Models
         //The date of when the message was made
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
-
+        //[DataType(DataType.Date)]
+        public string Target_Date { get; set; }
     }
 }
