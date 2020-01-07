@@ -50,11 +50,10 @@ namespace sqeudulerApp.Controllers
             {
                 Email em = new Email();
                 // for (int i = 1; i < _User.GetUsers.Count(); i++) better solution? ~ Tom
-                for (int i = 0; i < _User.GetUsers.Count() - 1; i++)
+                foreach(User usr in _User.GetUsers)
                 {
-                    User user = _User.GetUser(i);
-                    if (user != null){
-                        if (user.Email == Email)
+                    if (usr != null){
+                        if (usr.Email == Email)
                         {
                             //generate new random temp password
                             string New_password = Generate_Random_String(8);
@@ -76,7 +75,6 @@ namespace sqeudulerApp.Controllers
                                 conn.Close();
                                 //sent email to user with the new temp password
 
-
                             string body1 = "Your password is ";
                             string password = New_password;
                             string body2 = " . \nPlease change it right away to prevent further log in problems.";
@@ -88,9 +86,7 @@ namespace sqeudulerApp.Controllers
                 }
                 return RedirectToAction("Index");
             }
-
         }
-
         public IActionResult TeamPage()
         {
             string userEmail = HttpContext.Session.GetString("Uid");
@@ -322,7 +318,7 @@ namespace sqeudulerApp.Controllers
                 {
                     //sql query where we search for the email address in the database with the associated password. Only 1 result should be found.
                     //note: I use parameters for security reasons
-                    string query = "SELECT [Email], [Password] FROM [dbo].[User] WHERE [Email]= @email;";
+                    string query = "SELECT [Email], [Password], [UserId] FROM [dbo].[User] WHERE [Email]= @email;";
 
                     //create a sql command with the new sql query and the original connection string
                     using SqlCommand comm = new SqlCommand(query, conn);
@@ -338,11 +334,13 @@ namespace sqeudulerApp.Controllers
 
                         //use the original sql datareader and execute the new sql command
                         SqlDataReader sqlResultReader = comm.ExecuteReader();
-                        if (sqlResultReader.Read() && sqlResultReader.VisibleFieldCount == 2)
+                        if (sqlResultReader.Read() && sqlResultReader.VisibleFieldCount == 3)
                         {
                             // There should be 1 row and 2 columns meaning 2 fields (row * columns)
                             if (sqlResultReader[0].ToString() == Email && sqlResultReader[1].ToString() == Password)
                             {
+                                //Gets user ID
+                                int ID = (int)sqlResultReader[2];
                                 //close sql reader
                                 sqlResultReader.Close();
                                 //close sql connection
@@ -354,7 +352,8 @@ namespace sqeudulerApp.Controllers
                                 // it accepts a key and returns the string value
                                 // you can also use a viewbag to transport values to html views
                                 HttpContext.Session.SetString("Uid", Email);
-
+                                //Save User ID in session
+                                HttpContext.Session.SetInt32("ID", ID);
                                 return RedirectToAction("TeamPage", "User");
                             }
                             else
@@ -371,6 +370,7 @@ namespace sqeudulerApp.Controllers
             }
             else { return RedirectToAction("Index", "User"); }
         }
+        
         public ActionResult SignOut()
         {
             HttpContext.Session.Clear();
