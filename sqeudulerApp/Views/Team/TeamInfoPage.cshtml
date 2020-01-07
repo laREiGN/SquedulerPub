@@ -655,36 +655,28 @@
                                                             //has co reciever
                                                             if (request.Co_Receiver_ID >= 0)
                                                             {
-                                                                //is approved by co reciever
-                                                                if (request.Co_Recvr_Approved)
-                                                                {
-                                                                    <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button>
-                                                                }
-                                                                //not approved by co reciever
-                                                                else
-                                                                {
-                                                                    <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
-                                                                }
-
                                                                 if (request.Co_Receiver_ID == ViewBag.UserID)
                                                                 {
                                                                     <div class="row align-items-end">
                                                                         @{
-                                                                            if (!request.Co_Recvr_Approved)
-                                                                            {
-                                                                                <div class="col">
-                                                                                    <a asp-action="Approve_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"> <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve Request</button></a>
-                                                                                </div>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <div class="col">
-                                                                                    <a asp-action="Disapprove_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Disapprove Request</button></a>
-                                                                                </div>
-                                                                            }
+                                                                            <a asp-action="Accept_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
                                                                         }
                                                                     </div>
                                                                 }
+                                                                else
+                                                                {
+                                                                    //is approved by co reciever
+                                                                    if (request.Co_Recvr_Approved)
+                                                                    {
+                                                                        <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button>
+                                                                    }
+                                                                    //not approved by co reciever
+                                                                    else
+                                                                    {
+                                                                        <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
+                                                                    }
+                                                                }
+
                                                             }
                                                             //has no co reciever
                                                             else
@@ -694,7 +686,7 @@
 
                                                         }
                                                     </div>
-
+                                                    
                                                     <div class="row align-items-end">
                                                         <div class="col">
                                                             <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
