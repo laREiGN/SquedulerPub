@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using sqeudulerApp.Models;
+using sqeudulerApp.Services;
+using System.Net;
+using System.Net.Mail;
+using System.Drawing;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using static sqeudulerApp.Scripts.Extra;
+using System.Globalization;
 using sqeudulerApp.Repository;
-using sqeudulerApp.Services;
-using sqeudulerApp.Models;
 using static sqeudulerApp.Models.TeamPageModel;
+
 
 namespace sqeudulerApp.Controllers
 {
@@ -21,16 +27,18 @@ namespace sqeudulerApp.Controllers
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
         private readonly DB_Context _context;
+        private readonly IAvailability _Availability;
 
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        public TeamController(ICalendar _ICalendar , IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
+        public TeamController(IAvailability _IAvailability, ICalendar _ICalendar , IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
         {
             _Calendar = _ICalendar;
             _User = _IUser;
             _Teams = _ITeams;
             _UserTeam = _IUserTeam;
             _context = context;
+            _Availability = _IAvailability;
         }
 
         [Route("[action]/{Email}/{TeamCode}")]
@@ -49,6 +57,7 @@ namespace sqeudulerApp.Controllers
             int UserID = _User.EmailToID(Email);
             _UserTeam.PromoteUserInTeam(UserID, TeamCode);
             return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+
         }
 
         public IActionResult MainPage()
@@ -58,6 +67,7 @@ namespace sqeudulerApp.Controllers
 
         public IActionResult PersonalPage()
         {
+
             return View();
         }
 
@@ -94,6 +104,11 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
+                string availabilityquery = "SELECT [Availability].[work_date], [Availability].[start_work_hour], " +
+                    "[Availability].[end_work_hour]" +
+                    "FROM [dbo].[Availability]" +
+                    "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
+                    "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
@@ -196,8 +211,53 @@ namespace sqeudulerApp.Controllers
                     conn.Close();
                 }
 
+                // Create a new list that will contain the availability information aka results of the teamquery
+                List<List<string>> availability = new List<List<string>>();
+
+                //create a sql command with the team sql query and the original connection string
+                using SqlCommand availabilityconn = new SqlCommand(availabilityquery, conn);
+                {
+                    //here you can give the parameters
+                    availabilityconn.Parameters.Add("@TeamCode", System.Data.SqlDbType.VarChar);
+                    availabilityconn.Parameters["@TeamCode"].Value = teamcode;
+
+                    //open the connection
+                    conn.Open();
+
+                    //use the original sql datareader and execute the new sql command
+                    SqlDataReader sqlResultReader = availabilityconn.ExecuteReader();
+
+                    // Iterate through the results of the query a row per itteration
+                    while (sqlResultReader.Read())
+                    {
+                        List<string> singleavailability = new List<string>();
+                        // for each column in the current row (there should only be one row) add the column info which is in this case
+                        // 0. date, 1. start time, 2. end time
+                        for (int i = 0; i < sqlResultReader.FieldCount; i++)
+                        {
+                            singleavailability.Add(sqlResultReader.GetValue(i).ToString());
+                        }
+                        DateTime date1 = DateTime.ParseExact(singleavailability[0], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        DateTime time1 = DateTime.ParseExact(singleavailability[1], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        DateTime time2 = DateTime.ParseExact(singleavailability[2], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+                        List<string> singleavailabilityupdate = new List<string>();
+                        singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
+                        singleavailabilityupdate.Add(time1.ToString("HH:mm"));
+                        singleavailabilityupdate.Add(time2.ToString("HH:mm"));
+                        availability.Add(singleavailabilityupdate);
+                    }
+
+                    //close sql reader
+                    sqlResultReader.Close();
+                    //close sql connection
+                    conn.Close();
+
+
+                }
+
                 // create a team context tuple which contains 1. the team information and 2. the members of the team including their information
-                Tuple<List<string>, List<List<string>>, string> teamcontext = new Tuple<List<string>, List<List<string>>, string>(teaminfo, teammembers, userrole);
+                Tuple<List<string>, List<List<string>>, string, List<List<string>>> teamcontext = new Tuple<List<string>, List<List<string>>, string, List<List<string>>>(teaminfo, teammembers, userrole, availability);
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
@@ -326,6 +386,42 @@ namespace sqeudulerApp.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult ProvideAvailability(UserAvailability model)
+        {
+            if (ModelState.IsValid)
+            {
+                // takes current session user id (email in this case)
+                string currentUser = HttpContext.Session.GetString("Uid");
+
+                //connection opened to database
+                using SqlConnection conn = new SqlConnection(strCon);
+
+                // sql query, that reads userid's associated to the current users email
+                string query = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
+
+                // block of code, that ready the results of the above query
+                using SqlCommand comm = new SqlCommand(query, conn);
+                conn.Open();
+                SqlDataReader sqlResultReader = comm.ExecuteReader();
+
+                //checks if the query actually returned any data
+                if (sqlResultReader.Read())
+                {
+                    // the top result of the above query is saved as team owner in the teams table, and the reader is closed
+                    int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
+                    model.availability.UserId = currentUserID;
+                    conn.Close();
+
+                    _Availability.Add(model.availability);
+
+                    //opens correct teampage again
+                    return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
+                }
+            }
+            return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
         }
     }
 }

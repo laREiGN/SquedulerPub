@@ -28,6 +28,10 @@ namespace sqeudulerApp.Repository
 
         public DbSet<UserTeam> UserTeam { get; set; }
 
+        public DbSet<Availability> Availability { get; set; }
+
+        public DbSet<ScheduleFinal> ScheduleFinal { get; set; }
+
         public DbSet<Calendar> ScheduleFinal { get; set; }
 
         public DbSet<Requests> Requests { get; set; }

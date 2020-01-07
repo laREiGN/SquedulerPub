@@ -1,4 +1,7 @@
+
+/* @model sqeudulerApp.Models.UserAvailability */
 ﻿@model sqeudulerApp.Models.TeamPageModel
+
 
 @{
     ViewData["Title"] = @ViewBag.teamcontext.Item1[0];
@@ -100,6 +103,14 @@
             evt.currentTarget.className += " active";
 
         }
+        $(document).ready(function () {
+            $("#TESTProvideHoursBtn").click(function () {
+                $("#AvailabilityPopup").modal('show');
+            });
+            $("#btnCancel").click(function () {
+                $("#AvailabilityPopup").modal('hide');
+            });
+        });
 
     @* start JQ to pass data to model *@
     /*        $(document).on(
@@ -437,8 +448,21 @@
             </div>
 
             <div id="Personal" class="tabcontent">
+              
                 <h3>Personal</h3>
                 <p>Total hours and availability</p>
+                      
+                /*Girtys*/
+                
+                <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                @foreach (List<string> availability in ViewBag.teamcontext.Item4)
+                {
+                    @: <p class="availability">@availability[0] </p>
+                    @: <p class="availability">@availability[1] @availability[2]</p>
+                }
+      
+                /*Gerdwin*/
+      
                 <div class="row">
                     <div class="col-md-6">
                         -------
@@ -673,6 +697,17 @@
             <div id="Personal" class="tabcontent">
                 <h3>Personal</h3>
                 <p>Total hours and availability</p>
+              
+             /*Girts*/
+                <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                @foreach (List<string> availability in ViewBag.teamcontext.Item4)
+                {
+                    @: <p class="availability">@availability[0] </p>
+                    @: <p class="availability">@availability[1] @availability[2]</p>
+                }
+
+              /*Gerdwin*/
+              
                 <div class="row">
                     <div class="col-md-6">
                         -------
@@ -728,7 +763,7 @@
 
                 <div id="calendar"></div>
                 <table style="width:100%;"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
-            
+
             </div>
 
             <div id="TeamInfo" class="tabcontent">
@@ -833,6 +868,47 @@
         </div>
     </div>
     @* end of the design of the popup *@
+    @* design of the availability popup *@
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="AvailabilityPopup" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Provide Availability:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form asp-action="ProvideAvailability">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="md-form">
+                                <label asp-for="availability.work_date" class="control-label">Date:</label>
+                                <input asp-for="availability.work_date" type="date" class="form-control datepicker" placeholder="Selected date">
+                                <span asp-validation-for="availability.work_date" class="text-danger"></span>
+                            </div>
+                            <div class="md-form">
+                                <br />
+                                <label asp-for="availability.start_work_hour" class="control-label">Start Time:</label>
+                                <input asp-for="availability.start_work_hour" type="time" step="60" class="form-control datepicker" placeholder="Start Time">
+                                <span asp-validation-for="availability.start_work_hour" class="text-danger"></span>
+                            </div>
+                            <div class="md-form">
+                                <br />
+                                <label asp-for="availability.end_work_hour" class="control-label">End Time:</label>
+                                <input asp-for="availability.end_work_hour" type="time" step="60" class="form-control datepicker" placeholder="End Time">
+                                <span asp-validation-for="availability.end_work_hour" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <br />
+                                <input asp-for="availability.team_id" type="hidden" value="@ViewBag.teamcontext.Item1[2]">
+                                <button type="submit" class="btn btn-outline-secondary">Submit</button>
+                                <button type="button" id="btnCancel" class="btn btn-primary button">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* end of the design of the availability popup *@
 
 </body>
 </html>
