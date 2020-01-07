@@ -26,8 +26,9 @@ namespace sqeudulerApp.Repository
 
         public DbSet<Teams> Teams { get; set; }
 
-
         public DbSet<UserTeam> UserTeam { get; set; }
+
+        public DbSet<Calendar> ScheduleFinal { get; set; }
 
         public DbSet<Requests> Requests { get; set; }
     }

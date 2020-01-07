@@ -5,15 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using sqeudulerApp.Services;
-using static sqeudulerApp.Models.TeamPageModel;
 using sqeudulerApp.Repository;
+using sqeudulerApp.Services;
+using sqeudulerApp.Models;
+using static sqeudulerApp.Models.TeamPageModel;
 
 namespace sqeudulerApp.Controllers
 {
     [Route("[controller]")]
     public class TeamController : Controller
     {
+
+        private readonly ICalendar _Calendar;
         private readonly IUser _User;
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
@@ -21,8 +24,9 @@ namespace sqeudulerApp.Controllers
 
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        public TeamController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
+        public TeamController(ICalendar _ICalendar , IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
         {
+            _Calendar = _ICalendar;
             _User = _IUser;
             _Teams = _ITeams;
             _UserTeam = _IUserTeam;
@@ -62,6 +66,7 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
+
         // t is de unique code of the team
         [Route("[action]/{t}")]
         public IActionResult TeamInfoPage(string t)
@@ -89,9 +94,10 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
+
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
-
+ 
                 //create a sql command with the team sql query and the original connection string
                 using SqlCommand teamcomm = new SqlCommand(teamquery, conn);
                 {
@@ -195,6 +201,13 @@ namespace sqeudulerApp.Controllers
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
+
+                //Create list from ScheduleFinal table (get all schedules where teamcode matches) to list()
+                List<Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
+                //Add list to ViewBag.Calendar
+                ViewBag.Calendar = list;
+                //Get amount of rows in list and add to ViewBag.CalCount. (i couldnt use count in ViewBag.Calendar in TeamInfoPage, so i came up with this)
+                ViewBag.CalCount = list.Count();
 
                 ///////////Get messages for user
                 //List of requests_site, where all the requests are shown
