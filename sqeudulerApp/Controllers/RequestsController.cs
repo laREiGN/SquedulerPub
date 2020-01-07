@@ -57,7 +57,7 @@ namespace sqeudulerApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Mssg_ID,Title,Text,Sender_ID,Receiver_ID,Team_Code,Co_Receiver_ID,Co_Recvr_Approved,Receiver_Approved,Date,Target_Date")] Requests_Site_Post requests)
+        public async Task<IActionResult> Create([Bind("Mssg_ID,Title,Text,Sender_ID,Receiver_ID,Team_Code,Co_Receiver_ID,Co_Recvr_Approved,Receiver_Approved,Date,Target_Date,start_work_hour,end_work_hour")] Requests_Site_Post requests)
         {
             Requests new_req = new Requests();
             new_req.Mssg_ID = requests.Mssg_ID;
@@ -72,7 +72,11 @@ namespace sqeudulerApp.Controllers
             //new_req.Receiver_Approved = false;
             new_req.Date = DateTime.Now;
             //temp will come with start/end date
-            new_req.Target_Date = requests.Target_Date.ToString();
+            new_req.Target_Date = requests.Target_Date;
+            new_req.start_work_hour = requests.start_work_hour;
+            new_req.end_work_hour = requests.end_work_hour;
+            
+            
             if (ModelState.IsValid)
             {
                 _context.Add(new_req);

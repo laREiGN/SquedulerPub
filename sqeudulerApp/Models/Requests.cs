@@ -38,9 +38,15 @@ namespace sqeudulerApp.Models
        // public bool Receiver_Approved { get; set; }
         //NOTE: Both Approved values must be 1/true, in order to accept the request, so that both users agree
         //The date of when the message was made
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
         //[DataType(DataType.Date)]
+        //[DataType(DataType.DateTime)]
         public string Target_Date { get; set; }
+        //todo
+        //[DataType(DataType.DateTime)]
+        public string start_work_hour { get; set; }
+        //[DataType(DataType.DateTime)]
+        public string end_work_hour { get; set; }
     }
 }

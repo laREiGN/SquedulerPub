@@ -205,7 +205,10 @@ namespace sqeudulerApp.Controllers
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
+                        
                         temp_req.Target_Date = req_raw.Target_Date;
+                        temp_req.start_work_hour = req_raw.start_work_hour;
+                        temp_req.end_work_hour = req_raw.end_work_hour;                            
                         Requests.Add(temp_req);
                     }
 
@@ -224,6 +227,8 @@ namespace sqeudulerApp.Controllers
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
                         temp_req.Target_Date = req_raw.Target_Date;
+                        temp_req.start_work_hour = req_raw.start_work_hour;
+                        temp_req.end_work_hour = req_raw.end_work_hour;
                         Requests_all.Add(temp_req);
                     }
 
