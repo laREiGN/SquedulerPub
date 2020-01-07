@@ -72,9 +72,19 @@ namespace sqeudulerApp.Controllers
             //new_req.Receiver_Approved = false;
             new_req.Date = DateTime.Now;
             //temp will come with start/end date
-            new_req.Target_Date = requests.Target_Date;
-            new_req.start_work_hour = requests.start_work_hour;
-            new_req.end_work_hour = requests.end_work_hour;
+            DateTime datevalue;
+
+            //check if string has date time format
+            if (DateTime.TryParse(requests.Target_Date, out datevalue) && DateTime.TryParse(requests.start_work_hour, out datevalue) && DateTime.TryParse(requests.end_work_hour, out datevalue))
+            {
+                new_req.Target_Date = requests.Target_Date;
+                new_req.start_work_hour = requests.start_work_hour;
+                new_req.end_work_hour = requests.end_work_hour;
+            }
+            else
+            {
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
             
             
             if (ModelState.IsValid)

@@ -249,29 +249,39 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-
                                                 </div>
-                                                <h4 class="modal-title">Title: @request.Title</h4>
+                                                <h4 class="modal-title">&nbsp;<b>Title:</b></h4>
+                                                <h5>&nbsp;@request.Title</h5>
                                                 <div class="modal-body">
-                                                    <h6>Description:</h6>
-                                                    <p>@request.Text.</p>
-                                                    <div class="col-md-12 mt-2">
-                                                        <p> Target Date:</p>
-                                                        @{
-                                                            if (request.Target_Date != null)
-                                                            {
-                                                                @Html.DisplayFor(modelItem => request.Target_Date)
-                                                                //<input disabled type="date" value=@DateTime.Parse(request.Target_Date) placeholder=@DateTime.Parse(request.Target_Date) />
-                                                            }
-                                                            else
-                                                            {
-                                                                Html.Raw("No date given");
-                                                            }
-                                                        }
-                                                    </div>
-                                                    <div class="col-md-12 mt-2">
-                                                        <p>Requested on:</p>
-                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                    <div class="row">
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Description:</b>
+                                                            <p>@request.Text.</p>
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Date:</b>
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <p>@request.Target_Date</p>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <b>Start:</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <b>End:</b>
+                                                        </div>
+                                                        <div class="col-md-8"></div>
+                                                        <div class="col-md-2">
+                                                            @request.start_work_hour
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @request.end_work_hour
+                                                        </div>
+                                                        <div class="col-md-8"></div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Requested on:</b>
+                                                            <p>@request.Date</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -299,44 +309,46 @@
                                                             </div>
                                                             <div class="col-md-12 mt-2">
                                                                 @{
-                                                                    string name = request.Name_Co_Receiver;
-                                                                    if (request.Co_Receiver_ID == ViewBag.UserID)
-                                                                    {
-                                                                        name = "You";
-                                                                    }
                                                                     if (request.Co_Recvr_Approved)
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-warning">Approved by @name</button>
+                                                                            <button style="width: 100%" class="btn btn-warning">Approved by co-reciever</button>
                                                                         </div>
                                                                     }
                                                                     else
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by @name</button>
+                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by co-reciever</button>
                                                                         </div>
                                                                     }
                                                                 }
                                                             </div>
                                                         }
                                                     }
-                                                    <div class="col-md-12 mt-2">
-                                                        <p> Target Date:</p>
-                                                        @{
-                                                            if (request.Target_Date != null)
-                                                            {
-                                                                @Html.DisplayFor(modelItem => request.Target_Date)
 
-                                                            }
-                                                            else
-                                                            {
-                                                                Html.Raw("No date given");
-                                                            }
-                                                        }
+                                                    <div class="col-md-12 mt-2">
+                                                        <b>Date:</b>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <p>Requested on:</p>
-                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                        @request.Target_Date
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <b>Start:</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <b>End:</b>
+                                                    </div>
+                                                    <div class="col-md-8"></div>
+                                                    <div class="col-md-2">
+                                                        @request.start_work_hour
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @request.end_work_hour
+                                                    </div>
+                                                    <div class="col-md-8"></div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <b>Requested on:</b>
+                                                        <p>@request.Date</p>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
                                                         <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
@@ -423,12 +435,12 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="Requests.start_work_hour" class="control-label"></label>
-                                <input asp-for="Requests.start_work_hour" type="time" id="appt" name="appt" min="09:00" max="18:00" required>
+                                <input asp-for="Requests.start_work_hour" type="time" min="09:00" max="18:00" required>
                                 <span asp-validation-for="Requests.start_work_hour" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Requests.end_work_hour" class="control-label"></label>
-                                <input asp-for="Requests.end_work_hour" type="time" id="appt" name="appt" min="09:00" max="18:00" required>
+                                <input asp-for="Requests.end_work_hour" type="time" min="09:00" max="18:00" required>
                                 <span asp-validation-for="Requests.end_work_hour" class="text-danger"></span>
                             </div>
                             <div class="form-group">
@@ -532,35 +544,39 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-                                                </div>
-                                                <h4 class="modal-title">Title: @request.Title</h4>
+                                                </div>                                               
+                                                <h4 class="modal-title">&nbsp;<b>Title:</b></h4>
+                                                <h5>&nbsp;@request.Title</h5>
                                                 <div class="modal-body">
-                                                    <h6>Description:</h6>
-                                                    <p>@request.Text.</p>
-                                                    <div class="col-md-12 mt-2">
-                                                        <p> Target Date:</p>
-                                                        @{
-                                                            if (request.Target_Date != null)
-                                                            {
-                                                                @Html.DisplayFor(modelItem => request.Target_Date)
-                                                                //<input disabled type="date" value=@DateTime.Parse(request.Target_Date) placeholder=@DateTime.Parse(request.Target_Date) />
-                                                            }
-                                                            else
-                                                            {
-                                                                Html.Raw("No date given");
-                                                            }
-                                                            <div class="col-md-6">
-                                                                @Html.DisplayFor(modelItem => request.start_work_hour)
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                @Html.DisplayFor(modelItem => request.end_work_hour)
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                    <div class="col-md-12 mt-2">
-                                                        <p>Requested on:</p>
-                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                    <div class="row">
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Description:</b>
+                                                            <p>@request.Text.</p>
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Date:</b>
+                                                        </div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <p>@request.Target_Date</p>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <b>Start:</b>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <b>End:</b>
+                                                        </div>
+                                                        <div class="col-md-8"></div>
+                                                        <div class="col-md-2">
+                                                            @request.start_work_hour
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @request.end_work_hour
+                                                        </div>
+                                                        <div class="col-md-8"></div>
+                                                        <div class="col-md-12 mt-2">
+                                                            <b>Requested on:</b>
+                                                            <p>@request.Date</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -604,15 +620,30 @@
                                                             </div>
                                                         }
                                                     }
-                                                <div class="col-md-12 mt-2">
-                                                    <p> Target Date:</p>
-                                                    @Html.DisplayFor(modelItem => request.Target_Date)
-                                                    @Html.DisplayFor(modelItem => request.start_work_hour)
-                                                    @Html.DisplayFor(modelItem => request.end_work_hour)
-                                                </div>
+                                                    
                                                     <div class="col-md-12 mt-2">
-                                                        <p>Requested on:</p>
-                                                        @Html.DisplayFor(modelItem => request.Date)
+                                                        <b>Date:</b>
+                                                    </div>
+                                                    <div class="col-md-12 mt-2">
+                                                        @request.Target_Date
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <b>Start:</b>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <b>End:</b>
+                                                    </div>
+                                                    <div class="col-md-8"></div>
+                                                    <div class="col-md-2">
+                                                        @request.start_work_hour
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @request.end_work_hour
+                                                    </div>
+                                                    <div class="col-md-8"></div>
+                                                    <div class="col-md-12 mt-2">
+                                                        <b>Requested on:</b>
+                                                        <p>@request.Date</p>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
                                                         <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
@@ -627,12 +658,32 @@
                                                                 //is approved by co reciever
                                                                 if (request.Co_Recvr_Approved)
                                                                 {
-                                                                    <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept</button>
+                                                                    <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button>
                                                                 }
                                                                 //not approved by co reciever
                                                                 else
                                                                 {
                                                                     <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
+                                                                }
+
+                                                                if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                                {
+                                                                    <div class="row align-items-end">
+                                                                        @{
+                                                                            if (!request.Co_Recvr_Approved)
+                                                                            {
+                                                                                <div class="col">
+                                                                                    <a asp-action="Approve_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"> <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve Request</button></a>
+                                                                                </div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="col">
+                                                                                    <a asp-action="Disapprove_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Disapprove Request</button></a>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    </div>
                                                                 }
                                                             }
                                                             //has no co reciever
@@ -640,6 +691,7 @@
                                                             {
                                                                 <a asp-action="Accept_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
                                                             }
+
                                                         }
                                                     </div>
 

@@ -119,6 +119,9 @@ sqeudulerApp/obj/Debug/netcoreapp3.0/sqeudulerApp.Views.pdb
 sqeudulerApp/obj/Release/netcoreapp3.0/sqeudulerApp.AssemblyInfo.cs
 sqeudulerApp/obj/Release/netcoreapp3.0/sqeudulerApp.RazorAssemblyInfo.cs
 sqeudulerApp/obj/sqeudulerApp.csproj.nuget.g.props
+sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.pdb
+sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.Views.pdb
+sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/_ViewImports.cshtml.g.cs
 sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/_ViewStart.cshtml.g.cs
 sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/Home/Index.cshtml.g.cs
 sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/Home/Privacy.cshtml.g.cs
@@ -127,7 +130,3 @@ sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/Shared/_ValidationScriptsPartia
 sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/Shared/Error.cshtml.g.cs
 sqeudulerApp/obj/Debug/netcoreapp3.0/sqeudulerApp.pdb
 sqeudulerApp/obj/Debug/netcoreapp3.0/sqeudulerApp.Views.pdb
-sqeudulerApp/obj/Debug/netcoreapp3.0/Razor/Views/_ViewStart.cshtml.g.cs
-sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.Views.pdb
-sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.pdb
-sqeudulerApp/bin/Debug/netcoreapp3.0/sqeudulerApp.Views.pdb
