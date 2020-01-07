@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -21,6 +23,34 @@ namespace sqeudulerApp.Scripts
                 New_pass += chars[rng.Next(0, chars.Length)];
             }
             return New_pass;
+        }
+
+        public static int GetCurrentUserID(string uid)
+        {
+            string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            // takes current session user id (email in this case)
+            string currentUser = uid;
+
+            //connection opened to database
+            using SqlConnection conn = new SqlConnection(strCon);
+
+            // sql query, that reads userid's associated to the current users email
+            string query = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
+
+            // block of code, that ready the results of the above query
+            using SqlCommand comm = new SqlCommand(query, conn);
+            conn.Open();
+            SqlDataReader sqlResultReader = comm.ExecuteReader();
+
+            //checks if the query actually returned any data
+            if (sqlResultReader.Read())
+            {
+                // the top result of the above query is saved as team owner in the teams table, and the reader is closed
+                int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
+                conn.Close();
+                return currentUserID;
+            }
+            return 0;
         }
 
 

@@ -104,7 +104,7 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
-                string availabilityquery = "SELECT [Availability].[work_date], [Availability].[start_work_hour], " +
+                string availabilityquery = "SELECT [Availability].[UserId], [Availability].[team_id], [Availability].[work_date], [Availability].[start_work_hour], " +
                     "[Availability].[end_work_hour]" +
                     "FROM [dbo].[Availability]" +
                     "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
@@ -232,20 +232,25 @@ namespace sqeudulerApp.Controllers
                     {
                         List<string> singleavailability = new List<string>();
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. date, 1. start time, 2. end time
+                        // 0. userid 1. teamid 2. date, 3. start time, 4. end time
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             singleavailability.Add(sqlResultReader.GetValue(i).ToString());
                         }
-                        DateTime date1 = DateTime.ParseExact(singleavailability[0], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                        DateTime time1 = DateTime.ParseExact(singleavailability[1], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                        DateTime time2 = DateTime.ParseExact(singleavailability[2], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                        if (singleavailability[0] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[1] == teamcode)
+                        {
+                            DateTime date1 = DateTime.ParseExact(singleavailability[2], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                            DateTime time1 = DateTime.ParseExact(singleavailability[3], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                            DateTime time2 = DateTime.ParseExact(singleavailability[4], "M/d/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
-                        List<string> singleavailabilityupdate = new List<string>();
-                        singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
-                        singleavailabilityupdate.Add(time1.ToString("HH:mm"));
-                        singleavailabilityupdate.Add(time2.ToString("HH:mm"));
-                        availability.Add(singleavailabilityupdate);
+                            List<string> singleavailabilityupdate = new List<string>();
+                            singleavailabilityupdate.Add(singleavailability[0]);
+                            singleavailabilityupdate.Add(singleavailability[1]);
+                            singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
+                            singleavailabilityupdate.Add(time1.ToString("HH:mm"));
+                            singleavailabilityupdate.Add(time2.ToString("HH:mm"));
+                            availability.Add(singleavailabilityupdate);
+                        }
                     }
 
                     //close sql reader
@@ -393,32 +398,24 @@ namespace sqeudulerApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // takes current session user id (email in this case)
                 string currentUser = HttpContext.Session.GetString("Uid");
-
-                //connection opened to database
-                using SqlConnection conn = new SqlConnection(strCon);
-
-                // sql query, that reads userid's associated to the current users email
-                string query = "SELECT [UserId] FROM [dbo].[User] WHERE [Email]= '" + currentUser + "';";
-
-                // block of code, that ready the results of the above query
-                using SqlCommand comm = new SqlCommand(query, conn);
-                conn.Open();
-                SqlDataReader sqlResultReader = comm.ExecuteReader();
-
-                //checks if the query actually returned any data
-                if (sqlResultReader.Read())
+                int userid = GetCurrentUserID(currentUser);
+                bool existantdate = false;
+                model.availability.UserId = userid;
+                foreach(Availability availability in _Availability.GetAvailabilities)
                 {
-                    // the top result of the above query is saved as team owner in the teams table, and the reader is closed
-                    int currentUserID = Convert.ToInt32(sqlResultReader[0].ToString());
-                    model.availability.UserId = currentUserID;
-                    conn.Close();
-
+                    if(availability.UserId == userid && availability.team_id == availability.team_id)
+                    {
+                        if(availability.work_date == model.availability.work_date)
+                        {
+                            existantdate = true;
+                            break;
+                        }
+                    }
+                }
+                if(existantdate == false)
+                {
                     _Availability.Add(model.availability);
-
-                    //opens correct teampage again
-                    return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
                 }
             }
             return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
