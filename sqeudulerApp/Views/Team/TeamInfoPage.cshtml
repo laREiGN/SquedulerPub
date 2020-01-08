@@ -26,8 +26,8 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
 //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
@@ -99,7 +99,7 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
 
-        }
+        };
         $(document).ready(function () {
             $("#TESTProvideHoursBtn").click(function () {
                 $("#AvailabilityPopup").modal('show');
@@ -109,40 +109,32 @@
             });
         });
 
-    @* start JQ to pass data to model *@
-    /*        $(document).on(
-    "click",
-    ".memberControl",
-    function () {
-    var UserEmail = $(this).attr("data-bag-email");
-    var TeamCode  = $(this).attr("data-bag-TC");
-    $(".modal-footer #confirmRemove").attr("asp-route-TeamCode") = TeamCode;
-    $(".modal-footer #confirmRemove").attr("asp-route-Email") = UserEmail;
-    $(".modal-footer #confirmPromote").attr("asp-route-TeamCode") = TeamCode;
-    $(".modal-footer #confirmPromote").attr("asp-route-Email") = UserEmail;
-    });*/
-    // JS version
-    document.addEventListener('click', function(event) {
-    if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton")
-    {
-    var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
-    var TeamCode = event.target.getAttribute("data-bag-TC");
-    var avlid = event.target.getAttributes("data-bag-id");
+        document.addEventListener('click', function(event) {
+            if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton"){
+                var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
+                var TeamCode = event.target.getAttribute("data-bag-TC");
 
-    var confirmRmv = document.getElementById("confirmRemove");
-    var confirmPrmt = document.getElementById("confirmPromote");
-    var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
+                var confirmRmv = document.getElementById("confirmRemove");
+                var confirmPrmt = document.getElementById("confirmPromote");
 
-    var currentRouteRmv = confirmRmv.getAttribute("href");
-    var currentRoutePrmt = confirmPrmt.getAttribute("href");
-    var currentRouteRmvAvl = confirmRmvAvl.getAttribute("href");
+                var currentRouteRmv = confirmRmv.getAttribute("href");
+                var currentRoutePrmt = confirmPrmt.getAttribute("href");
 
-    confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
-    confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
-    confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
+                confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
+                confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
+            }
+        });
 
-    }
-    });
+        document.addEventListener('click', function(event) {
+            if (event.target.id == "removeAvlButton"){
+                var TeamCode = event.target.getAttribute("data-bag-TC");
+                var avlid = event.target.getAttributes("data-bag-id");
+                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
+                var currentRouteRmvAvl = confirmRmvAvl.getAttribute("href");
+
+                confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
+            }
+        });
 
     @* end of JQ to pass data to model *@
     </script>
@@ -648,7 +640,7 @@
                 <p>Recent activities and requests</p>
                 <div class="row">
                     <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
-                        <h4>Requests for: @ViewBag.Username</h4>
+                        <h4>All Requests in the Team</h4>
                         <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
                             <div class="container">
                                 <div class="row">
@@ -786,7 +778,8 @@
                                                                     //is approved by co reciever
                                                                     if (request.Co_Recvr_Approved)
                                                                     {
-                                                                        <button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button>
+                                                                        <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
+                                                                       
                                                                     }
                                                                     //not approved by co reciever
                                                                     else
@@ -799,7 +792,8 @@
                                                             //has no co reciever
                                                             else
                                                             {
-                                                                <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
+                                                                <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
+                                                                       
                                                             }
 
                                                         }
