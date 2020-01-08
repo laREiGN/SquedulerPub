@@ -8,13 +8,12 @@ using sqeudulerApp.Services;
 using System.Net;
 using System.Net.Mail;
 using System.Drawing;
-using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
 using System.Globalization;
 using sqeudulerApp.Repository;
 using static sqeudulerApp.Models.TeamPageModel;
-
+using System.Data.SqlClient;
 
 namespace sqeudulerApp.Controllers
 {
@@ -430,5 +429,7 @@ namespace sqeudulerApp.Controllers
             }
             return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
         }
+
+
     }
 }
