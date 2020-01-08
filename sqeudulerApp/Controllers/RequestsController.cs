@@ -65,14 +65,10 @@ namespace sqeudulerApp.Controllers
             new_req.Title = requests.Title;
             new_req.Text = requests.Text;
             new_req.Sender_ID = int.Parse(requests.Sender_ID);
-            //new_req.Receiver_ID = int.Parse(requests.Receiver_ID);
-            //TODO: Save teamcode in sesion, and get it from said session
             new_req.Team_Code = requests.Team_Code;
             new_req.Co_Receiver_ID = int.Parse(requests.Co_Receiver_ID);
             new_req.Co_Recvr_Approved = false;
-            //new_req.Receiver_Approved = false;
             new_req.Date = DateTime.Now;
-            //temp will come with start/end date
             DateTime datevalue;
 
             //check if string has date time format
