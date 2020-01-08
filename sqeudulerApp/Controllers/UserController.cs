@@ -42,27 +42,24 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
-        public IActionResult ForgotPassword(string Email)
+        public IActionResult ForgotPassword(User model)
         {
-            if (string.IsNullOrEmpty(Email))
-            {
-                return View();
-            }
-            else
+            if (model.Email != null)
             {
                 Email em = new Email();
                 // for (int i = 1; i < _User.GetUsers.Count(); i++) better solution? ~ Tom
                 foreach (User usr in _User.GetUsers)
                 {
-                    if (usr != null) {
-                        if (usr.Email == Email)
+                    if (usr != null)
+                    {
+                        if (usr.Email == model.Email)
                         {
                             //generate new random temp password
                             string New_password = Generate_Random_String(8);
                             //if a account was found in the sql connection
 
                             //sql query where we chance the old password to the new temp_password, where a user email is the same as the post email
-                            String sql2 = "UPDATE [dbo].[User] SET [Password]='" + New_password + "' WHERE [Email]='" + Email.ToString() + "';";
+                            String sql2 = "UPDATE [dbo].[User] SET [Password]='" + New_password + "' WHERE [Email]='" + model.Email.ToString() + "';";
                             //create a sql connection with the connection string
                             SqlConnection conn = new SqlConnection(strCon);
                             //create a sql command with the new sql query and the original connection string
@@ -81,13 +78,19 @@ namespace sqeudulerApp.Controllers
                             string password = New_password;
                             string body2 = " . \nPlease change it right away to prevent further log in problems.";
                             string body = body1 + password + body2;
-                            em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", Email, "Password Recovery", body);
-                            return RedirectToAction("Index");
+                            em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", model.Email, "Password Recovery", body);
+                            return View("Index");
                         }
+                        return View();
                     }
+                    return View();
                 }
-                return RedirectToAction("Index");
             }
+            else
+            {
+                return View("ForgotPassword");
+            }
+            return View();
         }
         public IActionResult TeamPage()
         {
@@ -144,7 +147,7 @@ namespace sqeudulerApp.Controllers
             string TeamCode = model.TeamCode;
             if (string.IsNullOrEmpty(TeamCode) || string.IsNullOrEmpty(model.TeamCode))
             {
-                ModelState.AddModelError("UnexistantCode", "This team doesn't exist");
+                ModelState.AddModelError("", "This team doesn't exist");
             }
             else
             {
@@ -198,9 +201,9 @@ namespace sqeudulerApp.Controllers
                                 }
                                 //if user is already in the team with the code supplied, nothing happens
 
-                                //TODO - ADD ERROR MESSAGE OR NOTIFICATION
                                 if (teams.Contains(TeamCode))
                                 {
+                                    ModelState.AddModelError("", "You are already in this team");
                                     return RedirectToAction("TeamPage");
                                 }
                                 //if user is not currently in said team, he gets added
@@ -231,7 +234,7 @@ namespace sqeudulerApp.Controllers
                 }
                 else
                 {
-                    // TODO: ADD ERROR MESSAGE OR NOTIFICATION THAT TEAM DOES NOT EXIST
+                    ModelState.AddModelError("", "This team doesn't exist");
                     System.Diagnostics.Debug.WriteLine("TEAM DOES NOT EXIST");
                     return RedirectToAction("TeamPage");
                 }
@@ -377,19 +380,20 @@ namespace sqeudulerApp.Controllers
                             {
                                 sqlResultReader.Close();
                                 conn.Close();
-                                ModelState.AddModelError("Email", "Email/Password wrong. Please try again.");
+                                ModelState.AddModelError("", "Email/Password wrong. Please try again.");
                                 return View("Index");
 
                             }
                         }
-                        else { return RedirectToAction("Index", "User"); }
+
+                        else { return RedirectToAction("Index"); }
                     }
                 }
 
             }
             else {
-                ModelState.AddModelError("Email", "Please fill in all the fields.");
-                return RedirectToAction("Index", "User"); 
+                ModelState.AddModelError("", "Please fill in all the fields.");
+                return View("Index");
             }
         }
         
@@ -409,7 +413,7 @@ namespace sqeudulerApp.Controllers
             //check if session extist
             if (HttpContext.Session.GetString("Uid") == null)
             {
-                return Redirect("Index");
+                return View("Index");
             }
             //put session in string var Email
             string Email = HttpContext.Session.GetString("Uid");
@@ -420,13 +424,14 @@ namespace sqeudulerApp.Controllers
             if (check == true)
             {
                 _Teams.Remove(TeamId);
-                return Redirect("TeamPage");
+                return View("TeamPage");
             }
             else
             {
                 _UserTeam.Remove(UserID, TeamId);
+                return View("TeamPage");
             }
-            return Redirect("TeamPage");
+            return View("TeamPage");
         }
 
     }
