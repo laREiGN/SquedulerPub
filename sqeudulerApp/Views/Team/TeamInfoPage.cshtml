@@ -137,9 +137,9 @@
     var currentRoutePrmt = confirmPrmt.getAttribute("href");
     var currentRouteRmvAvl = confirmRmvAvl.getAttribute("href");
 
-    confirmRmv.setAttribute("href", currentRouteRmv + "/" + UserEmail + "/" + TeamCode);
-    confirmPrmt.setAttribute("href", currentRoutePrmt + "/" + UserEmail + "/" + TeamCode);
-    confirmRmvAvl.setAttribute("href", currentRouteRmvAvl + "/" + avlid + "/" + TeamCode);
+    confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
+    confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
+    confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
 
     }
     });
