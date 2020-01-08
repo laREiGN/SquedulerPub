@@ -23,11 +23,9 @@ namespace sqeudulerApp.Models
         public DateTime work_date { get; set; }
 
         [DataType(DataType.Time)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public DateTime start_work_hour { get; set; }
 
         [DataType(DataType.Time)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public DateTime end_work_hour { get; set; }
 
 
