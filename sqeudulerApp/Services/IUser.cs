@@ -10,7 +10,6 @@ namespace sqeudulerApp.Services
     {
         //get all users
         IEnumerable<User> GetUsers { get; }
-
         User GetUser(int id);
         void Add(User _User);
         void Remove(int id);

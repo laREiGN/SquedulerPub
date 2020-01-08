@@ -1,26 +1,72 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using sqeudulerApp.Models;
-using sqeudulerApp.Repository;
-using sqeudulerApp.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using sqeudulerApp.Models;
+using sqeudulerApp.Services;
+using System.Net;
+using System.Net.Mail;
+using System.Drawing;
+using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
+using static sqeudulerApp.Scripts.Extra;
+using System.Globalization;
+using sqeudulerApp.Repository;
 using static sqeudulerApp.Models.TeamPageModel;
+
 
 namespace sqeudulerApp.Controllers
 {
+    [Route("[controller]")]
     public class TeamController : Controller
     {
+
+        private readonly ICalendar _Calendar;
+        private readonly IUser _User;
+        private readonly ITeams _Teams;
+        private readonly IUserTeam _UserTeam;
+        private readonly DB_Context _context;
+        private readonly IAvailability _Availability;
+
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
-        private readonly DB_Context _context;
-
-        public TeamController(DB_Context context)
+        public TeamController(IAvailability _IAvailability, ICalendar _ICalendar , IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, DB_Context context)
         {
+            _Calendar = _ICalendar;
+            _User = _IUser;
+            _Teams = _ITeams;
+            _UserTeam = _IUserTeam;
             _context = context;
+            _Availability = _IAvailability;
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult RemoveUserFromTeam(string Email, string TeamCode) 
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.Remove(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+        }
+
+        [Route("[action]/{Email}/{TeamCode}")]
+        public IActionResult PromoteUserInTeam(string Email, string TeamCode)
+        {
+            //call method EmailToID with email to retrieve user id
+            int UserID = _User.EmailToID(Email);
+            _UserTeam.PromoteUserInTeam(UserID, TeamCode);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+
+        }
+
+        [Route("[action]/{avlid}/{TeamCode}")]
+        public IActionResult RemoveAvailability(int avlid, string TeamCode)
+        {
+            int id = avlid;
+            _Availability.Remove(id);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+
         }
 
         public IActionResult MainPage()
@@ -30,6 +76,7 @@ namespace sqeudulerApp.Controllers
 
         public IActionResult PersonalPage()
         {
+
             return View();
         }
 
@@ -38,14 +85,16 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
+
         // t is de unique code of the team
+        [Route("[action]/{t}")]
         public IActionResult TeamInfoPage(string t)
         {
             string teamcode = t;
-
+            
             using SqlConnection conn = new SqlConnection(strCon);
             {
-                //sql query. The result  in order is 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner / 6. UserID
+                //sql query. The result  in order is 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner
                 //note: I use parameters for security reasons
                 string teamquery = "SELECT [Teams].[Teamname], [Teams].[TeamCity], [Teams].[TeamCode], [Teams].[TeamAddress]," +
                     "[Teams].[TeamZipCode], concat([User].[FirstName], ' ' ,[User].[LastName])" +
@@ -64,9 +113,15 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
+                string availabilityquery = "SELECT [Availability].[Id], [Availability].[UserId], [Availability].[team_id], [Availability].[work_date], [Availability].[start_work_hour], " +
+                    "[Availability].[end_work_hour]" +
+                    "FROM [dbo].[Availability]" +
+                    "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
+                    "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
+
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
-
+ 
                 //create a sql command with the team sql query and the original connection string
                 using SqlCommand teamcomm = new SqlCommand(teamquery, conn);
                 {
@@ -121,7 +176,6 @@ namespace sqeudulerApp.Controllers
                         List<string> member = new List<string>();
 
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. TeamName, 1. City, 2. Code, 3. Address, 4. ZipCode, 5. Owner in that exact order
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             member.Add(sqlResultReader.GetValue(i).ToString());
@@ -157,7 +211,7 @@ namespace sqeudulerApp.Controllers
                     // Iterate through the results of the query a row per itteration
                     while (sqlResultReader.Read())
                     {
-                        userrole = sqlResultReader[0].ToString();
+                            userrole = sqlResultReader[0].ToString();
                     }
 
                     //close sql reader
@@ -166,14 +220,70 @@ namespace sqeudulerApp.Controllers
                     conn.Close();
                 }
 
-                // create a team context tuple which contains 1. the team information and 2. the members of the team including their information
+                // Create a new list that will contain the availability information aka results of the teamquery
+                List<List<string>> availability = new List<List<string>>();
 
-                Tuple<List<string>, List<List<string>>, string> teamcontext = new Tuple<List<string>, List<List<string>>, string>(teaminfo, teammembers, userrole);
+                //create a sql command with the team sql query and the original connection string
+                using SqlCommand availabilityconn = new SqlCommand(availabilityquery, conn);
+                {
+                    //here you can give the parameters
+                    availabilityconn.Parameters.Add("@TeamCode", System.Data.SqlDbType.VarChar);
+                    availabilityconn.Parameters["@TeamCode"].Value = teamcode;
+
+                    //open the connection
+                    conn.Open();
+
+                    //use the original sql datareader and execute the new sql command
+                    SqlDataReader sqlResultReader = availabilityconn.ExecuteReader();
+
+                    // Iterate through the results of the query a row per itteration
+                    while (sqlResultReader.Read())
+                    {
+                        List<string> singleavailability = new List<string>();
+                        // for each column in the current row (there should only be one row) add the column info which is in this case
+                        // 0. id 1. userid 2. teamid 3. date, 4. start time, 5. end time
+                        for (int i = 0; i < sqlResultReader.FieldCount; i++)
+                        {
+                            singleavailability.Add(sqlResultReader.GetValue(i).ToString());
+                        }
+                        if (singleavailability[1] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[2] == teamcode)
+                        {
+                            DateTime date1 = DateTime.Parse(singleavailability[3]);
+                            DateTime time1 = DateTime.Parse(singleavailability[4]);
+                            DateTime time2 = DateTime.Parse(singleavailability[5]);
+
+                            List<string> singleavailabilityupdate = new List<string>();
+                            singleavailabilityupdate.Add(singleavailability[0]);
+                            singleavailabilityupdate.Add(singleavailability[1]);
+                            singleavailabilityupdate.Add(singleavailability[2]);
+                            singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
+                            singleavailabilityupdate.Add(time1.ToString("HH:mm"));
+                            singleavailabilityupdate.Add(time2.ToString("HH:mm"));
+                            availability.Add(singleavailabilityupdate);
+                        }
+                    }
+
+                    //close sql reader
+                    sqlResultReader.Close();
+                    //close sql connection
+                    conn.Close();
+
+
+                }
+
+                // create a team context tuple which contains 1. the team information and 2. the members of the team including their information
+                Tuple<List<string>, List<List<string>>, string, List<List<string>>> teamcontext = new Tuple<List<string>, List<List<string>>, string, List<List<string>>>(teaminfo, teammembers, userrole, availability);
 
                 // add the list to the viewbag dictionary which we can refer to in our html code
                 ViewBag.teamcontext = teamcontext;
 
-                
+                //Create list from ScheduleFinal table (get all schedules where teamcode matches) to list()
+                List<Models.Calendar> list = _Calendar.GetCalendar.Where(x => x.TeamId == teamcode).ToList();
+                //Add list to ViewBag.Calendar
+                ViewBag.Calendar = list;
+                //Get amount of rows in list and add to ViewBag.CalCount. (i couldnt use count in ViewBag.Calendar in TeamInfoPage, so i came up with this)
+                ViewBag.CalCount = list.Count();
+
                 ///////////Get messages for user
                 //List of requests_site, where all the requests are shown
                 List<Requests_Site> Requests = new List<Requests_Site>();
@@ -206,10 +316,7 @@ namespace sqeudulerApp.Controllers
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
-                        
-                        temp_req.Target_Date = req_raw.Target_Date;
-                        temp_req.start_work_hour = req_raw.start_work_hour;
-                        temp_req.end_work_hour = req_raw.end_work_hour;                            
+
                         Requests.Add(temp_req);
                     }
 
@@ -227,14 +334,12 @@ namespace sqeudulerApp.Controllers
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
                         //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
-                        temp_req.Target_Date = req_raw.Target_Date;
-                        temp_req.start_work_hour = req_raw.start_work_hour;
-                        temp_req.end_work_hour = req_raw.end_work_hour;
+
                         Requests_all.Add(temp_req);
                     }
 
                     //Linq query for getting team member names
-                    var team_members = from usr in _context.User 
+                    var team_members = from usr in _context.User
                                        from usrtm in _context.UserTeam
                                        where usrtm.Team == teamcode && usr.UserId == usrtm.UserID
                                        select new { usr.FirstName, usr.LastName, usrtm.Role, usr.UserId, usrtm.Team };
@@ -293,242 +398,37 @@ namespace sqeudulerApp.Controllers
                     ViewBag.AllRequests = Requests_all;
                     ViewBag.Teamcode = teamcode;
                     ViewBag.Requests = Requests;
-                }               
+                }
             }
-
             return View();
         }
 
-
-        // POST: Requests1/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Mssg_ID,Title,Text,Sender_ID,Team_Code,Co_Receiver_ID,Co_Recvr_Approved,Date")] Requests_Site_Post requests)
+        public IActionResult ProvideAvailability(UserAvailability model)
         {
-            Requests new_req = new Requests();
-            new_req.Mssg_ID = requests.Mssg_ID;
-            new_req.Title = requests.Title;
-            new_req.Text = requests.Text;
-            new_req.Sender_ID = int.Parse(requests.Sender_ID);
-            //new_req.Receiver_ID = int.Parse(requests.Receiver_ID);
-            //TODO: Save teamcode in sesion, and get it from said session
-            new_req.Team_Code = requests.Team_Code;
-            new_req.Co_Receiver_ID = int.Parse(requests.Co_Receiver_ID);
-            new_req.Co_Recvr_Approved = true;
-            //new_req.Receiver_Approved = false;
-            new_req.Date = DateTime.Now;
             if (ModelState.IsValid)
             {
-                _context.Add(new_req);
-                await _context.SaveChangesAsync();
-                return Redirect(Request.Headers["Referer"].ToString());
+                string currentUser = HttpContext.Session.GetString("Uid");
+                int userid = GetCurrentUserID(currentUser);
+                bool existantdate = false;
+                model.availability.UserId = userid;
+                foreach(Availability availability in _Availability.GetAvailabilities)
+                {
+                    if(availability.UserId == userid && availability.team_id == availability.team_id)
+                    {
+                        if(availability.work_date == model.availability.work_date)
+                        {
+                            existantdate = true;
+                            break;
+                        }
+                    }
+                }
+                if(existantdate == false)
+                {
+                    _Availability.Add(model.availability);
+                }
             }
-            //return to previous page/
-            return Redirect(Request.Headers["Referer"].ToString());
+            return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
         }
-
-        
-        public async Task<IActionResult> Approve_request(int id)
-        {
-            var requests = from row in _context.Requests.Where(
-                        row => row.Mssg_ID == id)
-                           select row;
-            requests.FirstOrDefault().Co_Recvr_Approved = true;
-            _context.Requests.Update(requests.FirstOrDefault());
-            await _context.SaveChangesAsync();
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-
-        
-        public async Task<IActionResult> Disapprove_request(int id)
-        {
-            var requests = from row in _context.Requests.Where(
-                        row => row.Mssg_ID == id)
-                           select row;
-            requests.FirstOrDefault().Co_Recvr_Approved = false;
-            _context.Requests.Update(requests.FirstOrDefault());
-            await _context.SaveChangesAsync();
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-        public async Task<IActionResult> Accept_request(int id)
-        {
-            
-            var requests = from row in _context.Requests.Where(
-                        row => row.Mssg_ID == id)
-                           select row;
-
-            var users = from row in _context.User.Where(
-                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
-                        select row;
-            Email em = new Email();
-
-            string request_title = requests.FirstOrDefault().Title;
-            string request_decription = requests.FirstOrDefault().Text;
-            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
-            string request_date = requests.FirstOrDefault().Date.ToString();
-
-            string sender = "";
-            string co = "";
-            int sender_id = requests.FirstOrDefault().Sender_ID;
-            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
-            foreach (var usr in users)
-            {
-                if (usr.UserId == sender_id)
-                {
-                    sender = usr.FirstName + " " + usr.LastName;
-                }
-                if (usr.UserId == co_id)
-                {
-                    co = usr.FirstName + " " + usr.LastName;
-                }
-            }
-
-            foreach (var usr in users)
-            {
-
-                string body3 = "\n Requester: " + sender;
-                if (co != "")
-                {
-                    body3 = body3 + ".\n Co user: " + co;
-                }
-                string body1 = "Request: " + request_title + " Accepted";
-                string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time +". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
-                
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
-                
-            }
-            
-            _context.Requests.Remove(requests.FirstOrDefault());
-            await _context.SaveChangesAsync();
-            
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-
-        public async Task<IActionResult> Delete_request(int id)
-        {
-            var requests = from row in _context.Requests.Where(
-                        row => row.Mssg_ID == id)
-                           select row;
-
-            var users = from row in _context.User.Where(
-                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
-                        select row;
-            Email em = new Email();
-
-            string request_title = requests.FirstOrDefault().Title;
-            string request_decription = requests.FirstOrDefault().Text;
-            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
-            string request_date = requests.FirstOrDefault().Date.ToString();
-
-            string sender = "";
-            string co = "";
-            int sender_id = requests.FirstOrDefault().Sender_ID;
-            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
-            foreach (var usr in users)
-            {
-                if (usr.UserId == sender_id)
-                {
-                    sender = usr.FirstName + " " + usr.LastName;
-                }
-                if (usr.UserId == co_id)
-                {
-                    co = usr.FirstName + " " + usr.LastName;
-                }
-            }
-
-
-            foreach (var usr in users)
-            {
-                string body3 = "\n Requester: " + sender;
-                if (co != "")
-                {
-                    body3 = body3 + ".\n Co user: " + co;
-                }
-
-                string body1 = "Request: " + request_title + " Denied";
-                string body2 = "\n The request has been Denied. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
-
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
-
-            }
-
-            _context.Requests.Remove(requests.FirstOrDefault());
-            await _context.SaveChangesAsync();
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-
-        public async Task<IActionResult> Delete_request_member(int id)
-        {
-            var requests = from row in _context.Requests.Where(
-                        row => row.Mssg_ID == id)
-                           select row;
-
-            var users = from row in _context.User.Where(
-                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
-                        select row;
-            Email em = new Email();
-
-            string request_title = requests.FirstOrDefault().Title;
-            string request_decription = requests.FirstOrDefault().Text;
-            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
-            string request_date = requests.FirstOrDefault().Date.ToString();
-
-            string sender = "";
-            string co = "";
-            int sender_id = requests.FirstOrDefault().Sender_ID;
-            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
-            foreach (var usr in users)
-            {
-                if(usr.UserId == sender_id)
-                {
-                    sender = usr.FirstName + " " + usr.LastName; 
-                }
-                if (usr.UserId == co_id)
-                {
-                    co = usr.FirstName + " " + usr.LastName;
-                }
-            }
-
-            foreach (var usr in users)
-            {
-                
-                string body1 = "Request: " + request_title + " Deleted";
-                string body3 = "\n Requester: " + sender;
-                if(co != "")
-                {
-                    body3 = body3 + ".\n Co user: " + co;
-                }
-                string body2 = "\n The request has been Deleted by the requester. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
-                
-
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
-
-            }
-
-            _context.Requests.Remove(requests.FirstOrDefault());
-            await _context.SaveChangesAsync();
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-
-        /*
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create_Request([Bind("Mssg_ID,Title,Text,Sender_ID,Reciever_ID,Team_Code,Co_Reciever_ID,Co_Recvr_Approved,Reciever_Approved,Date")] Requests requests)
-        {
-
-            requests.Co_Recvr_Approved = 0;
-            requests.Reciever_Approved = 1;
-            requests.Date = DateTime.Now;
-            if (ModelState.IsValid)
-            {
-                _context.Add(requests);
-                await _context.SaveChangesAsync();
-            }
-            //return View(requests);
-            return Redirect(Request.Headers["Referer"].ToString());
-        }
-        */
     }
 }

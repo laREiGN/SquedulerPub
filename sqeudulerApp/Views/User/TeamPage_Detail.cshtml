@@ -1,0 +1,276 @@
+﻿
+@{
+    ViewData["Title"] = "TeamPage";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <script src="~/js/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="~/js/bootstrap.js"></script>
+    <link rel="stylesheet" a href="~/css/bootstrap.css" />
+
+    <title>Teamspage | Teams</title>
+    <style>
+        .form {
+            padding: 25px;
+        }
+
+        .top-row {
+            background-color: #e6e6e6;
+            padding: 10px;
+        }
+
+        .loginForm {
+            padding: 5%;
+        }
+
+        .logo {
+            height: 100%;
+            width: 150px;
+            background-color: grey;
+            color: white;
+            border: 1px solid grey;
+            border-radius: 3px;
+        }
+
+        .header {
+            padding-top: 5%;
+        }
+
+        .btnGroup {
+            text-align: center;
+        }
+
+        .pre-inner {
+            position: relative;
+            overflow: hidden;
+            width: 600px;
+            margin: 0px auto 0px;
+        }
+
+        .pre-info {
+           position: absolute;
+           padding-top: 10px;
+           padding-left: 20px;
+           padding-bottom: 20px;
+           bottom: -187px;
+           transition: all 0.5s ease;
+           background-color: rgba(57, 68, 97, 0.65);
+           left: 0;
+           right: 0;
+        }
+
+        .pre-inner:hover .pre-info {
+           background-color: rgba(57, 68, 97, 0.65);
+           bottom: 0; 
+           height: 100%;
+           width: 100%;
+           color: #fff; 
+
+        }
+
+        .top-left {
+          position: absolute;
+          top: 8px;
+          left: 16px;
+          color: white;
+        }
+
+        .top-right {
+          position: absolute;
+          top: 8px;
+          right: 16px;
+          color: white;
+        }
+
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="row top-row border rounded">
+            <div class="col-2 text-center top-logo">
+                <h3 class="logo">Squeduler</h3>
+            </div>
+            <div class="col-9 text-right">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Teams:
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <form class="Team">
+                            <div class="form-group">
+                                <label>Team code: </label><input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HF">
+                            </div>
+
+                            <div class="btnGroup">
+                                <button type="button" class="btn btn-outline-secondary btn-sm">Join</button>
+                            </div>
+                        </form>
+                        <br />
+                        <a class="dropdown-item" href="#">Blokker 1</a>
+                        <a class="dropdown-item" href="#">Blokker 2</a>
+                        <a class="dropdown-item" href="#">Blokker 3</a>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-secondary">Logout</button>
+
+
+        </div>
+    </div>
+    <div class="row header">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <div class="col text-center">
+                <h3>[PH]Team_Name</h3>
+                <br />
+
+                <p>[PH] Team_description</p>
+                <h4>Team Members:</h4>
+            </div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+   
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            @{
+                //Debu/test id for logged in user
+                int Cur_user_id = 1;
+
+                List<User> Teamusers = new List<User>();
+                User test1 = new User();
+                test1.UserId = 0;
+                test1.Email = "test@gmail.com";
+                test1.Password = "testpass";
+                test1.FirstName = "john";
+                test1.LastName = "doe";
+                test1.PhoneNr = 0909200538;
+                test1.Role = "User";
+                Teamusers.Add(test1);
+
+
+                User test2 = new User();
+                test2.UserId = 1;
+                test2.Email = "free@gmail.com";
+                test1.Password = "somewww";
+                test2.FirstName = "joe";
+                test2.LastName = "smith";
+                test2.PhoneNr = 456256353;
+                test2.Role = "Admin";
+                Teamusers.Add(test2);
+
+                User test3 = new User();
+                test3.UserId = 2;
+                test3.Email = "tea@gmail.com";
+                test3.Password = "nooooo";
+                test3.FirstName = "robert";
+                test3.LastName = "free";
+                test3.PhoneNr = 56334523;
+                test3.Role = "User";
+                Teamusers.Add(test3);
+
+                int Limit = Teamusers.Count;
+                bool is_admin = false;
+                if(Teamusers[Cur_user_id].Role == "Admin")
+                {
+                    is_admin = true;
+                }
+                for (int i = 0; i < Limit; i++)
+                {
+                    <div class="col-12">
+                        <div class="pre-inner" style="background-image: url('http://lorempixel.com/600/120/')">
+                            <div class="container">
+                                <div class="col3"></div>
+                                <div class="col6" style="background-color: rgba(255, 255, 255, 0.7); border-radius: 25px;">
+                                    <div class="col-12 text-center">Name: @Teamusers[i].FirstName @Teamusers[i].LastName</div>
+                                    <div class="col-12 text-center">Email: @Teamusers[i].Email</div>
+                                    <div class="col-12 text-center">PhoneNr: @Teamusers[i].PhoneNr</div>
+                                    <div class="col-12 text-center">Role: @Teamusers[i].Role</div>
+                                </div>
+                                <div class="col3"></div>
+                            </div>
+                            \@{// Loop user id, is not logged in user ID, And user is not an admin}
+                            }
+                            <div class="pre-info" @{ if (i != Cur_user_id && !is_admin){@Html.Raw("style='Opacity: 0; Width: 0px; Height: 0px;'"); } }>
+                                @{
+                                    //Member edit options
+                                    
+                                    //If the loop user is the logged in user
+                                    if (i == Cur_user_id)
+                                    {
+                                        <h4>You, Options: </h4>
+                                    }
+                                    else
+                                    {
+                                        <h4>@Teamusers[i].FirstName @Teamusers[i].LastName, Options: </h4>
+                                    }
+                                    //If logged in user is an admin, and the loop user is not an admin
+                                    if (is_admin && Teamusers[i].Role != "Admin")
+                                    {
+                                        <span class="btn btn-light" asp-action="TeamPage_Detail" asp-controller="User">Promote User</span>
+                                        if (Teamusers[i].Role != "User")
+                                        {
+                                            <span class="btn btn-light" asp-action="TeamPage_Detail" asp-controller="User">Demote User</span>
+                                        }
+                                        <span class="btn btn-light" asp-action="TeamPage_Detail" asp-controller="User">Kick User</span>
+
+                                    }
+                                    //if loop user is the logged in user
+                                    if (Teamusers[i].UserId == Cur_user_id)
+                                    {
+                                        if (Teamusers[i].Role != "User")
+                                        {
+                                                <span class="btn btn-light" asp-action="TeamPage_Detail" asp-controller="User">Demote self</span>
+                                        }
+                                            <span class="btn btn-light" asp-action="TeamPage_Detail" asp-controller="User">Leave Group</span>
+                                        }
+
+                                    }
+                            </div>
+                        </div>
+                    </div>
+
+                    if (is_admin)
+                    {
+                        <div id="Options_toggle @i.ToString();}"></div>
+                        <div class="dropdown-menu" aria-labelledby="Options_toggle @{i.ToString();}">
+                            <form class="Team">
+                                <div class="form-group">
+                                    <label>Team code: </label><input type="text" class="form-control" id="teamCode" placeholder="      Example: FGT24HF">
+                                </div>
+
+                                <div class="btnGroup">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm">Join</button>
+                                </div>
+                            </form>
+                            <br />
+                            <a class="dropdown-item" href="#">Blokker 1</a>
+                            <a class="dropdown-item" href="#">Blokker 2</a>
+                            <a class="dropdown-item" href="#">Blokker 3</a>
+                        </div>
+
+                    }
+                    <br />
+
+                }
+
+            }
+        </div>
+        <div class="col-3"></div>
+        <div class="row footer">
+            <div class="col text-center">
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
