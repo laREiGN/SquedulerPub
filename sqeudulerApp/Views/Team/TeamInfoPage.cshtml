@@ -378,7 +378,7 @@
                                                     {
                                                         <div class="row align-items-end">
                                                             <div class="col">
-                                                                <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                                <a asp-action="Delete_request_member" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
                                                             </div>
                                                         </div>
                                                     }
@@ -688,9 +688,23 @@
                                                     </div>
                                                     
                                                     <div class="row align-items-end">
-                                                        <div class="col">
-                                                            <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
-                                                        </div>
+                                                        @{ 
+                                                            if (request.Sender_ID == ViewBag.UserID)
+                                                            {
+                                                            <div class="row align-items-end">
+                                                                <div class="col">
+                                                                    <a asp-action="Delete_request_member" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                                </div>
+                                                            </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col">
+                                                                    <a asp-action="Delete_request" asp-controller="Team" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                                </div>
+                                                            }
+                                                         }
+                                                        
                                                     </div>
                                                 </div>
                                             </div>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using sqeudulerApp.Models;
 using sqeudulerApp.Repository;
+using sqeudulerApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -353,13 +354,55 @@ namespace sqeudulerApp.Controllers
         }
         public async Task<IActionResult> Accept_request(int id)
         {
-            /*
+            
             var requests = from row in _context.Requests.Where(
                         row => row.Mssg_ID == id)
                            select row;
+
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            Email em = new Email();
+
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+
+            string sender = "";
+            string co = "";
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName;
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+
+            foreach (var usr in users)
+            {
+
+                string body3 = "\n Requester: " + sender;
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                string body1 = "Request: " + request_title + " Accepted";
+                string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time +". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
+                
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                
+            }
+            
             _context.Requests.Remove(requests.FirstOrDefault());
             await _context.SaveChangesAsync();
-            */
+            
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
@@ -367,14 +410,108 @@ namespace sqeudulerApp.Controllers
         {
             var requests = from row in _context.Requests.Where(
                         row => row.Mssg_ID == id)
-                           select row;           
+                           select row;
+
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            Email em = new Email();
+
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+
+            string sender = "";
+            string co = "";
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName;
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+
+
+            foreach (var usr in users)
+            {
+                string body3 = "\n Requester: " + sender;
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+
+                string body1 = "Request: " + request_title + " Denied";
+                string body2 = "\n The request has been Denied. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
+
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+
+            }
+
             _context.Requests.Remove(requests.FirstOrDefault());
             await _context.SaveChangesAsync();
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
-        
-        
+        public async Task<IActionResult> Delete_request_member(int id)
+        {
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            Email em = new Email();
+
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "- Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+
+            string sender = "";
+            string co = "";
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+            foreach (var usr in users)
+            {
+                if(usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName; 
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+
+            foreach (var usr in users)
+            {
+                
+                string body1 = "Request: " + request_title + " Deleted";
+                string body3 = "\n Requester: " + sender;
+                if(co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                string body2 = "\n The request has been Deleted by the requester. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
+                
+
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+
+            }
+
+            _context.Requests.Remove(requests.FirstOrDefault());
+            await _context.SaveChangesAsync();
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         /*
         [HttpPost]
         [ValidateAntiForgeryToken]
