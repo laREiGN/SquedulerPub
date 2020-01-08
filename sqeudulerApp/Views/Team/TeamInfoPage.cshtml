@@ -110,7 +110,7 @@
             if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton") {
                 var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
                 var TeamCode = event.target.getAttribute("data-bag-TC");
-                var avlid = event.target.getAttribute("data-bag-id");
+                var avlid = document.getElementById('removeAvlButton').dataset.av;
 
                 var confirmRmv = document.getElementById("confirmRemove");
                 var confirmPrmt = document.getElementById("confirmPromote");
@@ -449,7 +449,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
@@ -704,7 +704,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
