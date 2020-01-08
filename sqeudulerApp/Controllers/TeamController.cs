@@ -60,6 +60,15 @@ namespace sqeudulerApp.Controllers
 
         }
 
+        [Route("[action]/{avlid}/{TeamCode}")]
+        public IActionResult RemoveAvailability(int avlid, string TeamCode)
+        {
+            int id = avlid;
+            _Availability.Remove(id);
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TeamCode });
+
+        }
+
         public IActionResult MainPage()
         {
             return View();
@@ -104,7 +113,7 @@ namespace sqeudulerApp.Controllers
                     "JOIN [dbo]. [User] ON [UserTeam].[UserID] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
-                string availabilityquery = "SELECT [Availability].[UserId], [Availability].[team_id], [Availability].[work_date], [Availability].[start_work_hour], " +
+                string availabilityquery = "SELECT [Availability].[Id], [Availability].[UserId], [Availability].[team_id], [Availability].[work_date], [Availability].[start_work_hour], " +
                     "[Availability].[end_work_hour]" +
                     "FROM [dbo].[Availability]" +
                     "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
@@ -232,20 +241,21 @@ namespace sqeudulerApp.Controllers
                     {
                         List<string> singleavailability = new List<string>();
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. userid 1. teamid 2. date, 3. start time, 4. end time
+                        // 0. id 1. userid 2. teamid 3. date, 4. start time, 5. end time
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             singleavailability.Add(sqlResultReader.GetValue(i).ToString());
                         }
-                        if (singleavailability[0] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[1] == teamcode)
+                        if (singleavailability[1] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[2] == teamcode)
                         {
-                            DateTime date1 = DateTime.Parse(singleavailability[2]);
-                            DateTime time1 = DateTime.Parse(singleavailability[3]);
-                            DateTime time2 = DateTime.Parse(singleavailability[4]);
+                            DateTime date1 = DateTime.Parse(singleavailability[3]);
+                            DateTime time1 = DateTime.Parse(singleavailability[4]);
+                            DateTime time2 = DateTime.Parse(singleavailability[5]);
 
                             List<string> singleavailabilityupdate = new List<string>();
                             singleavailabilityupdate.Add(singleavailability[0]);
                             singleavailabilityupdate.Add(singleavailability[1]);
+                            singleavailabilityupdate.Add(singleavailability[2]);
                             singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
                             singleavailabilityupdate.Add(time1.ToString("HH:mm"));
                             singleavailabilityupdate.Add(time2.ToString("HH:mm"));
