@@ -29,18 +29,6 @@
     <script type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
-
-        $(document).ready(function () {
-            $("#TESTProvideHoursBtn").click(function () {
-                $("#AvailabilityPopup").modal('show');
-            });
-            $("#btnCancel").click(function () {
-                $("#AvailabilityPopup").modal('hide');
-            });
-        });
-    </script>
-
-    <script>
         //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
@@ -451,7 +439,7 @@
                 <div class="split left">
                     <div class="centered">
                         <h5>Your availabilities</h5>
-                        <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#AvailabilityPopup" id="TESTProvideHoursBtn">Provide Availability</button>
                         <br />
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
@@ -706,7 +694,7 @@
                 <div class="split left">
                     <div class="centered">
                         <h5>Your availabilities</h5>
-                        <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#AvailabilityPopup" id="TESTProvideHoursBtn">Provide Availability</button>
                         <br />
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
@@ -939,7 +927,7 @@
                                 <br />
                                 <input asp-for="availability.team_id" type="hidden" value="@ViewBag.teamcontext.Item1[2]">
                                 <button type="submit" class="btn btn-outline-secondary">Submit</button>
-                                <button type="button" id="btnCancel" class="btn btn-primary button">Cancel</button>
+                                <button type="button" id="btnCancel" data-dismiss="modal" class="btn btn-primary button">Cancel</button>
                             </div>
                         </form>
                     </div>
