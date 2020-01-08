@@ -26,10 +26,22 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
-//initialize calendar api
+
+        $(document).ready(function () {
+            $("#TESTProvideHoursBtn").click(function () {
+                $("#AvailabilityPopup").modal('show');
+            });
+            $("#btnCancel").click(function () {
+                $("#AvailabilityPopup").modal('hide');
+            });
+        });
+    </script>
+
+    <script>
+        //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
@@ -80,6 +92,9 @@
             }
             calendar.render();
         });
+    </script>
+
+    <script>
         function switchTab(evt, tabName) {
             // Declare all variables
             var i, tabcontent, tablinks;
@@ -100,62 +115,27 @@
             evt.currentTarget.className += " active";
 
         }
-        $(document).ready(function () {
-            $("#TESTProvideHoursBtn").click(function () {
-                $("#AvailabilityPopup").modal('show');
-            });
-            $("#btnCancel").click(function () {
-                $("#AvailabilityPopup").modal('hide');
-            });
+    </script>
+
+    <script>
+        document.addEventListener('click', function (event) {
+            if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton") {
+                var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
+                var TeamCode = event.target.getAttribute("data-bag-TC");
+                var avlid = event.target.getAttribute("data-bag-id");
+
+                var confirmRmv = document.getElementById("confirmRemove");
+                var confirmPrmt = document.getElementById("confirmPromote");
+                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
+
+                var currentRouteRmv = confirmRmv.getAttribute("href");
+                var currentRoutePrmt = confirmPrmt.getAttribute("href");
+
+                confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
+                confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
+                confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
+            }
         });
-
-    @* start JQ to pass data to model *@
-    /*        $(document).on(
-    "click",
-    ".memberControl",
-    function () {
-    var UserEmail = $(this).attr("data-bag-email");
-    var TeamCode  = $(this).attr("data-bag-TC");
-    $(".modal-footer #confirmRemove").attr("asp-route-TeamCode") = TeamCode;
-    $(".modal-footer #confirmRemove").attr("asp-route-Email") = UserEmail;
-    $(".modal-footer #confirmPromote").attr("asp-route-TeamCode") = TeamCode;
-    $(".modal-footer #confirmPromote").attr("asp-route-Email") = UserEmail;
-    });*/
-    // JS version
-    document.addEventListener('click', function(event) {
-    if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton")
-    {
-    var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
-    var TeamCode = event.target.getAttribute("data-bag-TC");
-
-    var confirmRmv = document.getElementById("confirmRemove");
-    var confirmPrmt = document.getElementById("confirmPromote");
-
-    var currentRouteRmv = confirmRmv.getAttribute("href");
-    var currentRoutePrmt = confirmPrmt.getAttribute("href");
-
-    confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
-    confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
-
-    }
-    });
-
-    document.addEventListener('click', function(event) {
-    if (event.target.id == "removeAvlButton")
-    {
-    var TeamCode = event.target.getAttribute("data-bag-TC");
-    var avlid = event.target.getAttributes("data-bag-id");
-
-    var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
-
-    var currentRouteRmvAvl = confirmRmvAvl.getAttribute("href");
-
-    confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
-
-    }
-    });
-
-    @* end of JQ to pass data to model *@
     </script>
 
 
@@ -481,7 +461,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRemoveAvl" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
@@ -736,7 +716,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRemoveAvl" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
@@ -906,7 +886,7 @@
     </div>
 
     <div class="container">
-        <div class="modal fade" tabindex="-1" id="ConfirmRemoveAvl" data-keyboard="false" data-backdrop="static" role="dialog">
+        <div class="modal fade" tabindex="-1" id="confirmRemoveAvailability" data-keyboard="false" data-backdrop="static" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
