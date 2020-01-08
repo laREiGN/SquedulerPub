@@ -245,15 +245,31 @@ namespace sqeudulerApp.Controllers
             // used for the sign up button. when you click on that button,
             // the button will take the input within that form in the html and create a User object out of it and pass that as argument when it calls this action
             // since the form only asks for email and password when loggin in, the FirstName Field remains null. Tom
-            if (model.FirstName is null)
+            bool emailTaken = false;
+            if (model.FirstName is null || model.LastName is null || model.Password is null || model.Email is null)
             {
                 return View();
             }
 
             else if (ModelState.IsValid)
             {
-                _User.Add(model);
-                return RedirectToAction("Index");
+                foreach (User user in _User.GetUsers)
+                {
+                    if (user.Email == model.Email)
+                    {
+                        emailTaken = true;
+                        break;
+                    }
+                }
+                if(emailTaken == false)
+                {
+                    _User.Add(model);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "This Email is already in use.");
+                }
             }
             return View();
         }
@@ -361,7 +377,9 @@ namespace sqeudulerApp.Controllers
                             {
                                 sqlResultReader.Close();
                                 conn.Close();
+                                ModelState.AddModelError("Email", "Email/Password wrong. Please try again.");
                                 return View("Index");
+
                             }
                         }
                         else { return RedirectToAction("Index", "User"); }
@@ -369,7 +387,10 @@ namespace sqeudulerApp.Controllers
                 }
 
             }
-            else { return RedirectToAction("Index", "User"); }
+            else {
+                ModelState.AddModelError("Email", "Please fill in all the fields.");
+                return RedirectToAction("Index", "User"); 
+            }
         }
         
         public ActionResult SignOut()
