@@ -508,62 +508,8 @@
                         <br />
                         <div class="row">
                             <div class="col-md-12">
-                                <form asp-action="Create" asp-controller="Requests">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Title" class="control-label"></label>
-                                        <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" required />
-                                        <span asp-validation-for="Requests.Title" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Text" class="control-label"></label>
-                                        <input asp-for="Requests.Text" placeholder="Request..." class="form-control" required />
-                                        <span asp-validation-for="Requests.Text" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Target_Date" class="control-label"></label>
-                                        <input asp-for="Requests.Target_Date" class="form-control" type="date" required>
-                                        <span asp-validation-for="Requests.Target_Date" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.start_work_hour" class="control-label"></label>
-                                        <input asp-for="Requests.start_work_hour" type="time" min="09:00" max="18:00" required>
-                                        <span asp-validation-for="Requests.start_work_hour" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.end_work_hour" class="control-label"></label>
-                                        <input asp-for="Requests.end_work_hour" type="time" min="09:00" max="18:00" required>
-                                        <span asp-validation-for="Requests.end_work_hour" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
-                                        <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1" required>
-                                            @{
-                                                <option value=-1>Nobody</option>
-                                                @foreach (List<string> member in ViewBag.teamcontext.Item2)
-                                                {
-                                                    //if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
-                                                    if (Int32.Parse(member[5]) != ViewBag.UserID)
-                                                    {
-                                                        <option value=@member[5]>@member[0] @member[1]</option>
-                                                    }
-                                                }
-                                            }
-                                        </select>
-                                        <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="Create" class="btn btn-primary" />
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="col-md-12">
+                                <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request">Create message</button>
+
                             </div>
                         </div>
                     </div>
@@ -766,7 +712,7 @@
                                                                     if (request.Co_Recvr_Approved)
                                                                     {
                                                                         <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
-                                                                       
+
                                                                     }
                                                                     //not approved by co reciever
                                                                     else
@@ -780,7 +726,7 @@
                                                             else
                                                             {
                                                                 <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
-                                                                       
+
                                                             }
 
                                                         }
@@ -857,60 +803,8 @@
                         <br />
                         <div class="row">
                             <div class="col-md-12">
-                                <form asp-action="Create" asp-controller="Requests">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Title" class="control-label"></label>
-                                        <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" required />
-                                        <span asp-validation-for="Requests.Title" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Text" class="control-label"></label>
-                                        <input asp-for="Requests.Text" placeholder="Request..." class="form-control" required />
-                                        <span asp-validation-for="Requests.Text" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Target_Date" class="control-label"></label>
-                                        <input asp-for="Requests.Target_Date" class="form-control" type="date" required>
-                                        <span asp-validation-for="Requests.Target_Date" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.start_work_hour" class="control-label"></label>
-                                        <input asp-for="Requests.start_work_hour" type="time" min="09:00" max="18:00" required>
-                                        <span asp-validation-for="Requests.start_work_hour" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.end_work_hour" class="control-label"></label>
-                                        <input asp-for="Requests.end_work_hour" type="time" min="09:00" max="18:00" required>
-                                        <span asp-validation-for="Requests.end_work_hour" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
-                                        <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1" required>
-                                            @{
-                                                <option value=-1>Nobody</option>
-                                                @foreach (List<string> member in ViewBag.teamcontext.Item2)
-                                                {
-                                                    //if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
-                                                    if (Int32.Parse(member[5]) != ViewBag.UserID)
-                                                    {
-                                                        <option value=@member[5]>@member[0] @member[1]</option>
-                                                    }
-                                                }
-                                            }
-                                        </select>
-                                        <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="Create" class="btn btn-primary" />
-                                    </div>
-                                </form>
+                                <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request">Create message</button>
+
                             </div>
                         </div>
                     </div>
@@ -1089,6 +983,85 @@
         </div>
     </div>
     @* end of the design of the availability popup *@
+    <div id="Model_request" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                   
+                    <h4 class="modal-title">&nbsp;<b>Create message:</b></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+               
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form asp-action="Create" asp-controller="Requests">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Title" class="control-label"></label>
+                                    <input asp-for="Requests.Title" placeholder="Enter a Title..." class="form-control" required />
+                                    <span asp-validation-for="Requests.Title" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Text" class="control-label"></label>
+                                    <input asp-for="Requests.Text" placeholder="Request..." class="form-control" required />
+                                    <span asp-validation-for="Requests.Text" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Sender_ID" value="@ViewBag.UserID" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <input hidden type="hidden" asp-for="Requests.Team_Code" value="@ViewBag.Teamcode" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Target_Date" class="control-label"></label>
+                                    <input asp-for="Requests.Target_Date" class="form-control" type="date" required>
+                                    <span asp-validation-for="Requests.Target_Date" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.start_work_hour" class="control-label"></label>
+                                    <input asp-for="Requests.start_work_hour" type="time" min="09:00" max="18:00" required>
+                                    <span asp-validation-for="Requests.start_work_hour" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.end_work_hour" class="control-label"></label>
+                                    <input asp-for="Requests.end_work_hour" type="time" min="09:00" max="18:00" required>
+                                    <span asp-validation-for="Requests.end_work_hour" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Requests.Co_Receiver_ID" class="control-label"></label>
+                                    <select asp-for="Requests.Co_Receiver_ID" class="form-control" id="sel1" required>
+                                        @{
+                                            <option value=-1>Nobody</option>
+                                            @foreach (List<string> member in ViewBag.teamcontext.Item2)
+                                            {
+                                                //if (member[2] != "admin" && Int32.Parse(member[5]) != ViewBag.UserID)
+                                                if (Int32.Parse(member[5]) != ViewBag.UserID)
+                                                {
+                                                    <option value=@member[5]>@member[0] @member[1]</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Requests.Co_Receiver_ID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Create" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-12">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>
