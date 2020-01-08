@@ -29,7 +29,7 @@
     <script type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
-//initialize calendar api
+        //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
@@ -80,6 +80,9 @@
             }
             calendar.render();
         });
+    </script>
+
+    <script>
         function switchTab(evt, tabName) {
             // Declare all variables
             var i, tabcontent, tablinks;
@@ -100,43 +103,27 @@
             evt.currentTarget.className += " active";
 
         };
-        $(document).ready(function () {
-            $("#TESTProvideHoursBtn").click(function () {
-                $("#AvailabilityPopup").modal('show');
-            });
-            $("#btnCancel").click(function () {
-                $("#AvailabilityPopup").modal('hide');
-            });
-        });
+    </script>
 
-        document.addEventListener('click', function(event) {
-            if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton"){
+    <script>
+        document.addEventListener('click', function (event) {
+            if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton") {
                 var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
                 var TeamCode = event.target.getAttribute("data-bag-TC");
+                var avlid = document.getElementById('removeAvlButton').dataset.av;
 
                 var confirmRmv = document.getElementById("confirmRemove");
                 var confirmPrmt = document.getElementById("confirmPromote");
+                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
 
                 var currentRouteRmv = confirmRmv.getAttribute("href");
                 var currentRoutePrmt = confirmPrmt.getAttribute("href");
 
                 confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
                 confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
-            }
-        });
-
-        document.addEventListener('click', function(event) {
-            if (event.target.id == "removeAvlButton"){
-                var TeamCode = event.target.getAttribute("data-bag-TC");
-                var avlid = event.target.getAttributes("data-bag-id");
-                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
-                var currentRouteRmvAvl = confirmRmvAvl.getAttribute("href");
-
                 confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
             }
         });
-
-    @* end of JQ to pass data to model *@
     </script>
 
 
@@ -495,7 +482,7 @@
                 <div class="split left">
                     <div class="centered">
                         <h5>Your availabilities</h5>
-                        <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#AvailabilityPopup" id="TESTProvideHoursBtn">Provide Availability</button>
                         <br />
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
@@ -505,7 +492,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRemoveAvl" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
@@ -844,7 +831,7 @@
                 <div class="split left">
                     <div class="centered">
                         <h5>Your availabilities</h5>
-                        <button class="btn btn-outline-secondary" type="button" id="TESTProvideHoursBtn">Provide Availability</button>
+                        <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#AvailabilityPopup" id="TESTProvideHoursBtn">Provide Availability</button>
                         <br />
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
@@ -854,7 +841,7 @@
                                     <p class="avlinfo">@availability[4] till @availability[5]</p>
                                     <div class="HiddenText">
 
-                                        <button type="button" data-bag-id="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRemoveAvl" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
                                     </div>
                                 </div>
                             }
@@ -1040,7 +1027,7 @@
     </div>
 
     <div class="container">
-        <div class="modal fade" tabindex="-1" id="ConfirmRemoveAvl" data-keyboard="false" data-backdrop="static" role="dialog">
+        <div class="modal fade" tabindex="-1" id="confirmRemoveAvailability" data-keyboard="false" data-backdrop="static" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -1093,7 +1080,7 @@
                                 <br />
                                 <input asp-for="availability.team_id" type="hidden" value="@ViewBag.teamcontext.Item1[2]">
                                 <button type="submit" class="btn btn-outline-secondary">Submit</button>
-                                <button type="button" id="btnCancel" class="btn btn-primary button">Cancel</button>
+                                <button type="button" id="btnCancel" data-dismiss="modal" class="btn btn-primary button">Cancel</button>
                             </div>
                         </form>
                     </div>
