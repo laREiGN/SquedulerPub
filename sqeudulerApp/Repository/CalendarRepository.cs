@@ -17,6 +17,11 @@ namespace sqeudulerApp.Repository
         }
         //Get all rows in ScheduleFinal table in db
         public IEnumerable<Calendar> GetCalendar => db.ScheduleFinal;
+        public void ScheduleUser(Calendar workshift)
+        {
+            db.ScheduleFinal.Add(workshift);
+            db.SaveChanges();
+        }
 
 
     }

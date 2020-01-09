@@ -9,5 +9,6 @@ namespace sqeudulerApp.Services
     public interface ICalendar
     {
         IEnumerable<Calendar> GetCalendar { get; }
+        void ScheduleUser(Calendar workshift) { }
     }
 }

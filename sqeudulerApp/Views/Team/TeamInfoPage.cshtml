@@ -12,7 +12,7 @@
     <title>Home | @ViewBag.teamcontext.Item1[0]</title>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" a href="~/css/bootstrap.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/core/main.css" />
     <link rel="stylesheet" a href="~/fullcalendar/packages/daygrid/main.css" />
@@ -29,16 +29,58 @@
     <script type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>
+        function filterAvailabilities() {
+            // Declare variables
+            var dateInput, endInput, startInput, ul, i;
+            dateInput = document.getElementById('dateInput').value;
+            startInput = document.getElementById('startInput').value + ":00";
+            endInput = document.getElementById('endInput').value + ":00";
+
+            var startTimeString = dateInput + "T" + startInput;
+            var endTimeString = dateInput + "T" + endInput;
+
+            var startFilter = new Date(Date.parse(startTimeString));
+            var endFilter = new Date(Date.parse(endTimeString));
+
+            ul = document.getElementById("availabilitylist");
+            var listofavailabilities = ul.getElementsByTagName('li');
+
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < listofavailabilities.length; i++) {
+                var infolistofsingleavailability = listofavailabilities[i].getElementsByTagName("p");
+                var nameperson = infolistofsingleavailability[0].textContent;
+                var availabledate = infolistofsingleavailability[1].textContent;
+                var startendtime = infolistofsingleavailability[2].textContent.split(" - ");
+
+                var newdate = availabledate.split("/").reverse().join("-");
+
+                var starttime = startendtime[0] + ":00";
+                var endtime = startendtime[1] + ":00";
+
+                var availablestart = new Date(Date.parse(newdate + "T" + starttime));
+                var availableend = new Date(Date.parse(newdate + "T" + endtime));
+
+                if (availablestart > startFilter && availablestart < endFilter ||
+                    availableend > startFilter && availableend < endFilter ||
+                    availablestart < startFilter && availableend > endFilter) {
+                    listofavailabilities[i].style.display = "";
+                } else {
+                    listofavailabilities[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+    <script>
         //initialize calendar api
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 //setup view for calendar
-                plugins: ['dayGrid', 'timeGrid','list'],
+                plugins: ['dayGrid', 'timeGrid'],
                 height: 550,
                 header: {
-                    left: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+                    left: 'timeGridWeek,timeGridDay',
                     center: 'title',
                     right: 'prev,next'
                 },
@@ -116,9 +158,6 @@
                 var confirmPrmt = document.getElementById("confirmPromote");
                 var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
 
-                var currentRouteRmv = confirmRmv.getAttribute("href");
-                var currentRoutePrmt = confirmPrmt.getAttribute("href");
-
                 confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
                 confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
                 confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
@@ -126,8 +165,109 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('click', function (event) {
+            if (event.target.id == "scheduleButton") {
+                var UserId = event.target.dataset.usrid; //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
+                var UserName = event.target.dataset.usrname;
+                var AvailableDate = event.target.dataset.avldate;
+                var AvailableStartTime = event.target.dataset.avlstart + ":00";
+                var AvailableEndTime = event.target.dataset.avlend + ":00";
+                var TeamCode = event.target.getAttribute("data-bag-TC");
+
+                var newdate = AvailableDate.split("/").reverse().join("-");
+                var AvlStart = new Date(Date.parse(newdate + "T" + AvailableStartTime));
+                var AvlEnd = new Date(Date.parse(newdate + "T" + AvailableEndTime));
+
+/*                document.getElementById("ShiftUserId").setAttribute('value', UserId); 
+                document.getElementById("ShiftUserName").setAttribute('value', UserName);
+                document.getElementById("ShiftUserTeamCode").setAttribute('value', TeamCode);
+                document.getElementById("AvailableStart").setAttribute('value', AvlStart);
+                document.getElementById("AvailableEnd").setAttribute('value', AvlEnd);*/
+
+                document.getElementById("ShiftUserId").value = UserId; 
+                document.getElementById("ShiftUserName").value = UserName;
+                document.getElementById("ShiftUserTeamCode").value = TeamCode;
+                document.getElementById("AvailableStart").value = AvlStart;
+                document.getElementById("AvailableEnd").value = AvlEnd;
+
+            }
+        });
+    </script>
+
+    <script>
+
+            document.addEventListener('click', function (event) {
+                if (event.target.id == "confirmSchedule") {
+                
+
+                    var AvailableStart = new Date(document.getElementById('AvailableStart').value);
+                    var AvailableEnd = new Date(document.getElementById('AvailableEnd').value);
+                    var TeamCode = document.getElementById('ShiftUserTeamCode').value;
+                    var UserName = document.getElementById('ShiftUserName').value;
+                    var UserId = document.getElementById('ShiftUserId').value;
+
+                    var ShiftDate = document.getElementById('ShiftDate').value;
+                    var ShiftStart = document.getElementById('ShiftStart').value;
+                    var ShiftEnd = document.getElementById('ShiftEnd').value;
+
+
+                    var startTimeShift = new Date(Date.parse(ShiftDate + "T" + ShiftStart + ":00"));
+                    var endTimeShift = new Date(Date.parse(ShiftDate + "T" + ShiftEnd + ":00"));
+
+                    var test1 = startTimeShift >= AvailableStart;
+                    var test2 = startTimeShift < AvailableEnd;
+                    var test3 = endTimeShift > AvailableStart;
+                    var test4 = endTimeShift <= AvailableEnd;
+
+                    if (test1 && test2 && test3 && test4) {
+
+                        var url = '@Url.Action("ScheduleMember", "Team", new { UID= "UserId", start= "startTimeShift", end= "endTimeShift" })';
+
+                        url = url.replace("UserId", UserId);
+
+                        url = url.replace("startTimeShift", startTimeShift.getTime());
+
+                        url = url.replace("endTimeShift", endTimeShift.getTime());
+                        url = url.replace(/\s/g, '');
+                        url = url.replace(/\s/g, '');
+                        url = url.replace(/\s/g, '');
+                        alert(url); //just for debugging
+
+                        window.location.href = url;
+
+                    }
+                    else {
+                        alert("Members can only be scheduled in their available time periods.");
+                    }
+            
+                    
+                }
+            });
+
+    </script>
 
     <style>
+        #filterbutton {
+            width: 100%
+        }
+
+        .recursive-container {
+            width: 100%;
+            height: auto;
+            padding: 0px;
+            margin: 0px;
+            margin-bottom: 8px;
+            overflow: auto;
+            background: #999;
+            display: inline-block;
+            vertical-align: top; /* here */
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
         /* Split the screen in half */
         .split {
             height: 100%;
@@ -226,7 +366,7 @@
             width: 600px;
             height: 500px;
             margin: 0px auto 0px;
-            padding: 10px 20px;
+            padding: 0px;
             text-align: center;
         }
 
@@ -768,7 +908,51 @@
 
                 <div id="calendar"></div>
                 <table style="width:100%;"><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
+                <br>
 
+                <div id="availabilitycontainer" class="rounded border pre-inner">
+                    <div class="rounded border recursive-container">
+                        <div>
+                            <label for="dateIinput">Start date:</label>
+                            <input type="date" id="dateInput" value="">
+                        </div>
+                        <div>
+                            <label for="startInput">Start time:</label>
+                            <input type="time" id="startInput" value="">
+                        </div>
+                        <div>
+                            <label for="endInput">End time:</label>
+                            <input type="time" id="endInput" value="">
+                        </div>
+                        <div>
+                            <button class="btn btn-info button-primary" id="filterbutton" onclick="filterAvailabilities()">FILTER</button>
+                        </div>
+                    </div>
+                    <ul id="availabilitylist">
+                        @foreach (List<string> availability in ViewBag.teamcontext.Item4)
+                        {
+                            <li>
+                                <div class="rounded border memberinfocontainer transformer">
+                                    <p class="memberinfo">@availability[6]</p>
+                                    <p class="memberinfo">@availability[3]</p>
+                                    <p class="memberinfo">@availability[4] - @availability[5]</p>
+                                    <div class="HiddenText">
+                                        <button type="button" 
+                                                data-usrid="@availability[1]" 
+                                                data-usrname="@availability[6]"
+                                                data-avldate="@availability[3]"
+                                                data-avlstart="@availability[4]"
+                                                data-avlend="@availability[5]"
+                                                data-bag-TC="@ViewBag.teamcontext.Item1[2]" 
+                                                data-toggle="modal" data-target="#SchedulePopup" 
+                                                id="scheduleButton" class="btn btn-info button">SCHEDULE</button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
             </div>
 
             <div id="TeamInfo" class="tabcontent">
@@ -936,6 +1120,47 @@
         </div>
     </div>
     @* end of the design of the availability popup *@
+
+    <div class="container">
+        <div class="modal fade" tabindex="-1" id="SchedulePopup" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Schedule groupmember:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="md-form">
+                            <label class="control-label">Date:</label>
+                            <input id="ShiftDate" type="date" class="form-control datepicker" placeholder="Selected date" value="">
+                        </div>
+                        <div class="md-form">
+                            <br />
+                            <label class="control-label">Start Time:</label>
+                            <input id="ShiftStart" type="time" step="60" class="form-control datepicker" placeholder="Start Time" value="">
+                        </div>
+                        <div class="md-form">
+                            <br />
+                            <label class="control-label">End Time:</label>
+                            <input id="ShiftEnd" type="time" step="60" class="form-control datepicker" placeholder="End Time" value="">
+                        </div>
+                        <div class="form-group">
+                            <br />
+                            <input id="ShiftUserId" type="hidden" value="">
+                            <input id="ShiftUserName" type="hidden" value="">
+                            <input id="ShiftUserTeamCode" type="hidden" value="@ViewBag.teamcontext.Item1[2]">
+                            <input id="AvailableStart" type="hidden" value="">
+                            <input id="AvailableEnd" type="hidden" value="">
+                        </div>
+                        <div class="modal-footer">
+                            <button id="confirmSchedule" class="btn btn-outline-secondary">Schedule Shift</button>
+                            <button type="button" id="btnCancel" data-dismiss="modal" class="btn btn-primary button">Cancel</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
