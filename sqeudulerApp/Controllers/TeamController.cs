@@ -42,18 +42,19 @@ namespace sqeudulerApp.Controllers
             _Availability = _IAvailability;
         }
 
-        public IActionResult ScheduleMember(int UID, string start, string end) 
+        [Route("[action]/{UID}/{start}/{end}")]
+        public IActionResult ScheduleMember(int UID, string start, string end, string TID) 
         {
             Models.Calendar shift = new Models.Calendar();
             shift.UserId = UID;
-            shift.TeamId = this.TeamCode;
+            shift.TeamId = TID;
             shift.Description = "";
             shift.Title = (from user in this._context.User where user.UserId == UID select user.FirstName + " " + user.LastName).SingleOrDefault(); //nameUser;
-            shift.StartTime = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(start));
-            shift.EndTime = (new DateTime(1970, 1, 1)).AddMilliseconds(double.Parse(end));
+            shift.StartTime = (new DateTime(1970, 1, 1, 1, 0, 0)).AddMilliseconds(double.Parse(start));
+            shift.EndTime = (new DateTime(1970, 1, 1,1, 0, 0)).AddMilliseconds(double.Parse(end));
             this._Calendar.ScheduleUser(shift);
 
-            return Ok(RedirectToAction("TeamInfoPage", "Team", new { t = this.TeamCode }));
+            return RedirectToAction("TeamInfoPage", "Team", new { t = this.TeamCode });
 
         }
 
