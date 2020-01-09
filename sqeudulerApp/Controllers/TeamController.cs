@@ -8,13 +8,12 @@ using sqeudulerApp.Services;
 using System.Net;
 using System.Net.Mail;
 using System.Drawing;
-using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
 using System.Globalization;
 using sqeudulerApp.Repository;
 using static sqeudulerApp.Models.TeamPageModel;
-
+using Microsoft.Data.SqlClient;
 
 namespace sqeudulerApp.Controllers
 {
@@ -301,45 +300,51 @@ namespace sqeudulerApp.Controllers
 
                 using (_context)
                 {
-
+                    //select request regarding the user
                     var requests_raw = from row in _context.Requests.Where(
                         row => row.Sender_ID == USRID || row.Co_Receiver_ID == USRID)
                                        select row;
+                   
+                    var requests_all_raw = from row in _context.Requests.Where(row => row.Team_Code == teamcode) select row;
 
-                    var requests_all_raw = from row in _context.Requests select row;
-
+                    //loop through requests, regarding a member
                     foreach (var req_raw in requests_raw)
                     {
-                        Requests_Site temp_req = new Requests_Site();
-                        temp_req.Mssg_ID = req_raw.Mssg_ID;
-                        temp_req.Title = req_raw.Title;
-                        temp_req.Text = req_raw.Text;
-                        temp_req.Sender_ID = req_raw.Sender_ID;
-                        //temp_req.Receiver_ID = req_raw.Receiver_ID;
-                        temp_req.Team_Code = req_raw.Team_Code;
-                        temp_req.Co_Receiver_ID = req_raw.Co_Receiver_ID;
-                        temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
-                        //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
-                        temp_req.Date = req_raw.Date;
-
-                        Requests.Add(temp_req);
+                        //if the request regarding the user, is in the team
+                        if (req_raw.Team_Code == teamcode)
+                        {
+                            Requests_Site temp_req = new Requests_Site();
+                            temp_req.Mssg_ID = req_raw.Mssg_ID;
+                            temp_req.Title = req_raw.Title;
+                            temp_req.Text = req_raw.Text;
+                            temp_req.Sender_ID = req_raw.Sender_ID;
+                            temp_req.Team_Code = req_raw.Team_Code;
+                            temp_req.Co_Receiver_ID = req_raw.Co_Receiver_ID;
+                            temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
+                            temp_req.Date = req_raw.Date;
+                            temp_req.Target_Date = req_raw.Target_Date;
+                            temp_req.start_work_hour = req_raw.start_work_hour;
+                            temp_req.end_work_hour = req_raw.end_work_hour;
+                            Requests.Add(temp_req);
+                        }
                     }
 
-                    //temp forall
+                    //loop through all the requests in a team
                     foreach (var req_raw in requests_all_raw)
                     {
+                        //convert requests from database into requests for the site 
                         Requests_Site temp_req = new Requests_Site();
                         temp_req.Mssg_ID = req_raw.Mssg_ID;
                         temp_req.Title = req_raw.Title;
                         temp_req.Text = req_raw.Text;
                         temp_req.Sender_ID = req_raw.Sender_ID;
-                        //temp_req.Receiver_ID = req_raw.Receiver_ID;
                         temp_req.Team_Code = req_raw.Team_Code;
                         temp_req.Co_Receiver_ID = req_raw.Co_Receiver_ID;
                         temp_req.Co_Recvr_Approved = req_raw.Co_Recvr_Approved;
-                        //temp_req.Receiver_Approved = req_raw.Receiver_Approved;
                         temp_req.Date = req_raw.Date;
-
+                        temp_req.Target_Date = req_raw.Target_Date;
+                        temp_req.start_work_hour = req_raw.start_work_hour;
+                        temp_req.end_work_hour = req_raw.end_work_hour;
                         Requests_all.Add(temp_req);
                     }
 
@@ -361,11 +366,6 @@ namespace sqeudulerApp.Controllers
                         //loop through requests and assign member names
                         foreach (Requests_Site site in Requests)
                         {
-                            //assign name for receiver
-                            //if (site.Receiver_ID == memb.UserId)
-                            //{
-                            //    site.Name_Receiver = memb.FirstName + " " + memb.LastName;
-                            //}
                             //assign name for co reciever
                             if (site.Co_Receiver_ID == memb.UserId)
                             {
@@ -377,14 +377,9 @@ namespace sqeudulerApp.Controllers
                                 site.Name_Sender = memb.FirstName + " " + memb.LastName;
                             }
                         }
-
+                        //loop through requests and assign member names of all the members in a team
                         foreach (Requests_Site site in Requests_all)
                         {
-                            //assign name for receiver
-                            //if (site.Receiver_ID == memb.UserId)
-                            //{
-                            //    site.Name_Receiver = memb.FirstName + " " + memb.LastName;
-                            //}
                             //assign name for co reciever
                             if (site.Co_Receiver_ID == memb.UserId)
                             {
@@ -398,7 +393,7 @@ namespace sqeudulerApp.Controllers
                         }
                     }
 
-
+                    //assign values to viewbag, for the teaminfopage view
                     ViewBag.UserID = USRID;
                     ViewBag.AllRequests = Requests_all;
                     ViewBag.Teamcode = teamcode;
@@ -435,5 +430,7 @@ namespace sqeudulerApp.Controllers
             }
             return RedirectToAction("TeamInfoPage", "Team", new { t = model.availability.team_id });
         }
+
+
     }
 }

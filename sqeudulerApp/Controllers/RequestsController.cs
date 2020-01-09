@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using sqeudulerApp.Models;
 using sqeudulerApp.Repository;
+using sqeudulerApp.Services;
 using static sqeudulerApp.Models.TeamPageModel;
 
 namespace sqeudulerApp.Controllers
@@ -57,113 +59,421 @@ namespace sqeudulerApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Mssg_ID,Title,Text,Sender_ID,Receiver_ID,Team_Code,Co_Receiver_ID,Co_Recvr_Approved,Receiver_Approved,Date")] Requests_Site_Post requests)
+        public async Task<IActionResult> Create([Bind("Mssg_ID,Title,Text,Sender_ID,Receiver_ID,Team_Code,Co_Receiver_ID,Co_Recvr_Approved,Receiver_Approved,Date,Target_Date,start_work_hour,end_work_hour")] Requests_Site_Post requests)
         {
-            Requests new_req = new Requests();
-            new_req.Mssg_ID = requests.Mssg_ID;
-            new_req.Title = requests.Title;
-            new_req.Text = requests.Text;
-            new_req.Sender_ID = int.Parse(requests.Sender_ID);
-            //new_req.Receiver_ID = int.Parse(requests.Receiver_ID);
-            //TODO: Save teamcode in sesion, and get it from said session
-            new_req.Team_Code = requests.Team_Code;
-            new_req.Co_Receiver_ID = int.Parse(requests.Co_Receiver_ID);
-            new_req.Co_Recvr_Approved = false;
-            //new_req.Receiver_Approved = false;
-            new_req.Date = DateTime.Now;
-            if (ModelState.IsValid)
+            //current user has sender id
+            if (HttpContext.Session.GetInt32("ID") == int.Parse(requests.Sender_ID))
             {
-                _context.Add(new_req);
-                await _context.SaveChangesAsync();
+                Requests new_req = new Requests();
+                new_req.Mssg_ID = requests.Mssg_ID;
+                new_req.Title = requests.Title;
+                new_req.Text = requests.Text;
+                new_req.Sender_ID = int.Parse(requests.Sender_ID);
+                new_req.Team_Code = requests.Team_Code;
+                new_req.Co_Receiver_ID = int.Parse(requests.Co_Receiver_ID);
+                new_req.Co_Recvr_Approved = false;
+                new_req.Date = DateTime.Now;
+                DateTime datevalue;
+
+                //check if string has date time format
+                if (DateTime.TryParse(requests.Target_Date, out datevalue) && DateTime.TryParse(requests.start_work_hour, out datevalue) && DateTime.TryParse(requests.end_work_hour, out datevalue))
+                {
+                    //start is after end
+                    if (DateTime.Parse(requests.start_work_hour) >= DateTime.Parse(requests.end_work_hour))
+                    {
+                        return Redirect(Request.Headers["Referer"].ToString());
+                    }
+                    new_req.Target_Date = requests.Target_Date;
+                    new_req.start_work_hour = requests.start_work_hour;
+                    new_req.end_work_hour = requests.end_work_hour;
+                }
+                else
+                {
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(new_req);
+                    await _context.SaveChangesAsync();
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+                //return to previous page/
                 return Redirect(Request.Headers["Referer"].ToString());
             }
-            //return to previous page/
+            else
+            {
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+        }
+
+
+        /// <summary>
+        /// Approves a request, when the co_reciever approves a request
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Approve_request(int id)
+        {          
+            //select message from database
+                var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                               select row;
+            //check if current user is co reciever
+            if (HttpContext.Session.GetInt32("ID") == requests.FirstOrDefault().Co_Receiver_ID)
+            {
+                //chance the co reviever approval to true
+                requests.FirstOrDefault().Co_Recvr_Approved = true;
+                //update the request in the database
+                _context.Requests.Update(requests.FirstOrDefault());
+                //wait until the changes are saved to the database
+                await _context.SaveChangesAsync();
+                //return to the previous page
+            }
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
-        // GET: Requests1/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        /// <summary>
+        /// Disapproves a request, when the co_reciever doesn't agree with the request anymore
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Disapprove_request(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var requests = await _context.Requests.FindAsync(id);
-            if (requests == null)
+            //select message from database
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+            //check if current user is co reciever
+            if (HttpContext.Session.GetInt32("ID") == requests.FirstOrDefault().Co_Receiver_ID)
             {
-                return NotFound();
+                //chance the co reviever approval to true
+                requests.FirstOrDefault().Co_Recvr_Approved = false;
+                //update the request in the database
+                _context.Requests.Update(requests.FirstOrDefault());
+                //wait until the changes are saved to the database
+                await _context.SaveChangesAsync();
+                //return to the previous page
             }
-            return View(requests);
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
-        // POST: Requests1/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Mssg_ID,Title,Text,Sender_ID,Reciever_ID,Team_Code,Co_Reciever_ID,Co_Recvr_Approved,Reciever_Approved,Date")] Requests requests)
+        /// <summary>
+        /// Accepts a request, if with a co_reciever, can only be accepted with a co_approved message
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Accept_request(int id)
         {
-            if (id != requests.Mssg_ID)
-            {
-                return NotFound();
-            }
+            //select message from database
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+            //select the sender and co reciever(if there is one)
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
 
-            if (ModelState.IsValid)
+            //check if user exists as admin
+            var admin = from row in _context.UserTeam.Where(row => row.UserID == HttpContext.Session.GetInt32("ID") && row.Role == "admin") select row;
+
+            //check if current user is admin, within the team
+            if (admin.FirstOrDefault() == null)
             {
-                try
+                //if not return to site
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+                //create email service
+                Email em = new Email();
+            //assign values from requests to strings
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "/ Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+            string sender = "";
+            string co = "";
+            //assign ids to int
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+            //security check
+            //has a co_reciever
+            if(requests.FirstOrDefault().Co_Receiver_ID >= 0)
+            {
+                //if request is not accepted
+                if(!requests.FirstOrDefault().Co_Recvr_Approved)
                 {
-                    _context.Update(requests);
-                    await _context.SaveChangesAsync();
+                    //return to the previous page
+                    return Redirect(Request.Headers["Referer"].ToString());
                 }
-                catch (DbUpdateConcurrencyException)
+            }
+            //else continue
+            //loop through users and assign names, this is not done within the next loop, as the first user, would only get 1(its own) name and not the 2nd persons name
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
                 {
-                    if (!RequestsExists(requests.Mssg_ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    sender = usr.FirstName + " " + usr.LastName;
                 }
-                return RedirectToAction(nameof(Index));
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
             }
-            return View(requests);
-        }
-
-        // GET: Requests1/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
+            //send a email(s) to the user(s)
+            foreach (var usr in users)
             {
-                return NotFound();
+                //assign requester
+                string body3 = "\n Requester: " + sender;
+                //check if the name of the co_reciever is not empty/there is no co reciever
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                //make title wich says that the request is accepted
+                string body1 = "Request: " + request_title + " Accepted";
+                //body of the email, showing all information regarding the request
+                string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
+                //send the email via our support email
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+
             }
-
-            var requests = await _context.Requests
-                .FirstOrDefaultAsync(m => m.Mssg_ID == id);
-            if (requests == null)
-            {
-                return NotFound();
-            }
-
-            return View(requests);
-        }
-
-        // POST: Requests1/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var requests = await _context.Requests.FindAsync(id);
-            _context.Requests.Remove(requests);
+            //delete the request from the database
+            _context.Requests.Remove(requests.FirstOrDefault());
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //return to the previous page
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
-        private bool RequestsExists(int id)
+        public async Task<IActionResult> Accept_and_approve_request(int id)
         {
-            return _context.Requests.Any(e => e.Mssg_ID == id);
+            //select message from database
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+            //select the sender and co reciever(if there is one)
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            
+           
+            //create email service
+            Email em = new Email();
+            //assign values from requests to strings
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "/ Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+            string sender = "";
+            string co = "";
+            //assign ids to int
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;           
+            
+            //check if user exists as admin
+            var admin = from row in _context.UserTeam.Where(row => row.UserID == HttpContext.Session.GetInt32("ID") && row.Role == "admin") select row;
+
+            //check if current user is admin, within the team and co_reciever
+            if (admin.FirstOrDefault() == null)
+            {
+                //admin is not co_reciever
+                if (admin.FirstOrDefault().UserID != co_id)
+                {
+                    //if not return to site
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+            }
+
+
+            //else continue
+            //loop through users and assign names, this is not done within the next loop, as the first user, would only get 1(its own) name and not the 2nd persons name
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName;
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+            //send a email(s) to the user(s)
+            foreach (var usr in users)
+            {
+                //assign requester
+                string body3 = "\n Requester: " + sender;
+                //check if the name of the co_reciever is not empty/there is no co reciever
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                //make title wich says that the request is accepted
+                string body1 = "Request: " + request_title + " Accepted";
+                //body of the email, showing all information regarding the request
+                string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
+                //send the email via our support email
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+
+            }
+            //delete the request from the database
+            _context.Requests.Remove(requests.FirstOrDefault());
+            await _context.SaveChangesAsync();
+            //return to the previous page
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+
+        /// <summary>
+        /// When a owner wants to delete a request
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Delete_request(int id)
+        {
+            //select message from database
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+            //select the sender and co reciever(if there is one)
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            
+            //check if user exists as admin
+            var admin = from row in _context.UserTeam.Where(row => row.UserID == HttpContext.Session.GetInt32("ID") && row.Role == "admin") select row;
+
+            //check if current user is admin, within the team
+            if (admin.FirstOrDefault() == null)
+            {
+                //if not return to site
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
+            //create email service
+            Email em = new Email();
+
+            //assign values from requests to strings
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "/ Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+
+            string sender = "";
+            string co = "";
+            //assign ids to int
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+
+          
+            //loop through users and assign names, this is not done within the next loop, as the first user, would only get 1(its own) name and not the 2nd persons name           
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName;
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+            //send a email(s) to the user(s)
+            foreach (var usr in users)
+            {
+                //assign requester
+                string body3 = "\n Requester: " + sender;
+                //check if the name of the co_reciever is not empty/there is no co reciever
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                //make title wich says that the request is Denied
+                string body1 = "Request: " + request_title + " Denied";
+                //body of the email, showing all information regarding the request
+                string body2 = "\n The request has been Denied. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
+                //send the email via our support email
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+            }
+            //delete the request from the database
+            _context.Requests.Remove(requests.FirstOrDefault());
+            await _context.SaveChangesAsync();
+            //return to the previous page
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+        
+        /// <summary>
+        /// When the requester wants to delete the request
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Delete_request_member(int id)
+        {
+            //select message from database
+            var requests = from row in _context.Requests.Where(
+                        row => row.Mssg_ID == id)
+                           select row;
+            //select the sender and co reciever(if there is one)
+            var users = from row in _context.User.Where(
+                row => row.UserId == requests.FirstOrDefault().Sender_ID | row.UserId == requests.FirstOrDefault().Co_Receiver_ID)
+                        select row;
+            //create email service
+            Email em = new Email();
+
+            //assign values from requests to strings
+            string request_title = requests.FirstOrDefault().Title;
+            string request_decription = requests.FirstOrDefault().Text;
+            string request_time = requests.FirstOrDefault().Target_Date + "/ Start: " + requests.FirstOrDefault().start_work_hour + "- End: " + requests.FirstOrDefault().end_work_hour;
+            string request_date = requests.FirstOrDefault().Date.ToString();
+
+            string sender = "";
+            string co = "";
+            //assign ids to int
+            int sender_id = requests.FirstOrDefault().Sender_ID;
+            int co_id = requests.FirstOrDefault().Co_Receiver_ID;
+
+            //check if current user is sender
+            if (sender_id != HttpContext.Session.GetInt32("ID"))
+            {
+                //if not return to site
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
+            //loop through users and assign names, this is not done within the next loop, as the first user, would only get 1(its own) name and not the 2nd persons name  
+            foreach (var usr in users)
+            {
+                if (usr.UserId == sender_id)
+                {
+                    sender = usr.FirstName + " " + usr.LastName;
+                }
+                if (usr.UserId == co_id)
+                {
+                    co = usr.FirstName + " " + usr.LastName;
+                }
+            }
+            //send a email(s) to the user(s)
+            foreach (var usr in users)
+            {
+                //assign requester
+                string body3 = "\n Requester: " + sender;
+                //check if the name of the co_reciever is not empty/there is no co reciever
+                if (co != "")
+                {
+                    body3 = body3 + ".\n Co user: " + co;
+                }
+                //make title wich says that the request is Deleted by the user
+                string body1 = "Request: " + request_title + " Deleted";
+                //body of the email, showing all information regarding the request
+                string body2 = "\n The request has been Deleted by the requester. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
+                //send the email via our support email
+                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+            }
+            //delete the request from the database
+            _context.Requests.Remove(requests.FirstOrDefault());
+            await _context.SaveChangesAsync();
+            //return to the previous page
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
     }
 }

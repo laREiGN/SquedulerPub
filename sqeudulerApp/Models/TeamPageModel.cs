@@ -11,6 +11,7 @@ namespace sqeudulerApp.Models
         public Teams Teams { get; set; }
         public Requests Requests { get; set; }
         public Requests_Site Requests_On_Site { get; set; }
+        public Requests_Site_Post Requests_On_Post { get; set; }
         public Availability availability { get; set; }
         public IEnumerable<User> Users { get; }
         public IEnumerable<Requests> GetAllRequests_Site { get; }
@@ -26,8 +27,6 @@ namespace sqeudulerApp.Models
             public string Text { get; set; }
             [Required]
             public int Sender_ID { get; set; }
-            //[Required]
-            //public int Receiver_ID { get; set; }
             [Required]
             public string Team_Code { get; set; }
             public int Co_Receiver_ID { get; set; }
@@ -36,11 +35,12 @@ namespace sqeudulerApp.Models
             [Required]
             [DataType(DataType.Date)]
             public DateTime Date { get; set; }
-
+            public string Target_Date { get; set; }
+            public string start_work_hour { get; set; }
+            public string end_work_hour { get; set; }
             public string Name_Sender { get; set; }
             public string Name_Receiver { get; set; }
             public string Name_Co_Receiver { get; set; }
-
         }
         //Model for posting a request
         //Can't use integer values in HTML select
@@ -54,12 +54,12 @@ namespace sqeudulerApp.Models
             public string Text { get; set; }
             [Required]
             public string Sender_ID { get; set; }
-            //[Required]
-            //public string Receiver_ID { get; set; }
             [Required]
             public string Team_Code { get; set; }
             public string Co_Receiver_ID { get; set; }
-                   
+            public string Target_Date { get; set; }
+            public string start_work_hour { get; set; }
+            public string end_work_hour { get; set; }
         }
     }
 }

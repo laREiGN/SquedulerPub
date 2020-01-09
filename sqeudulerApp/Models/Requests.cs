@@ -8,7 +8,7 @@ namespace sqeudulerApp.Models
 {
     public class Requests
     {
-       
+
 
         [Key]
         //Is generated automaticly 
@@ -17,13 +17,8 @@ namespace sqeudulerApp.Models
         public string Text { get; set; }
         //Uses the ID of the user making the request
         [Required]
-        public int Sender_ID { get; set; }
+        public int Sender_ID { get; set; }       
 
-        //Remove, and send request to all owners in the team(just show all request in a team, for all owners)
-        //ID of a owner
-        //[Required]
-        //public int Receiver_ID { get; set; }
-        
         //Uses the teamcode of the team, where the request is made in
         [Required]
         public string Team_Code { get; set; }
@@ -33,13 +28,12 @@ namespace sqeudulerApp.Models
         //Wether the tagged person approves of the request conditions
         public bool Co_Recvr_Approved { get; set; }
         //Wether the original person still approves of the request conditions
-        
-        //Remove 
-       // public bool Receiver_Approved { get; set; }
-        //NOTE: Both Approved values must be 1/true, in order to accept the request, so that both users agree
+      
         //The date of when the message was made
-        [DataType(DataType.Date)]
-        public DateTime Date { get; set; }
-
+        [DataType(DataType.DateTime)]
+        public DateTime Date { get; set; }       
+        public string Target_Date { get; set; }       
+        public string start_work_hour { get; set; }      
+        public string end_work_hour { get; set; }
     }
 }
