@@ -74,6 +74,11 @@ namespace sqeudulerApp.Controllers
             //check if string has date time format
             if (DateTime.TryParse(requests.Target_Date, out datevalue) && DateTime.TryParse(requests.start_work_hour, out datevalue) && DateTime.TryParse(requests.end_work_hour, out datevalue))
             {
+                //start is after end
+                if(DateTime.Parse(requests.start_work_hour) >= DateTime.Parse(requests.end_work_hour))
+                {
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
                 new_req.Target_Date = requests.Target_Date;
                 new_req.start_work_hour = requests.start_work_hour;
                 new_req.end_work_hour = requests.end_work_hour;
