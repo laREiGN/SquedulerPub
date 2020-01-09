@@ -27,6 +27,7 @@ namespace sqeudulerApp.Controllers
         private readonly IUserTeam _UserTeam;
         private readonly DB_Context _context;
         private readonly IAvailability _Availability;
+        private string TeamCode;
 
         string strCon = "Server=tcp:squeduler.database.windows.net,1433;Initial Catalog=squeduler;Persist Security Info=False;User ID=user;Password=squeduler#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
@@ -38,6 +39,22 @@ namespace sqeudulerApp.Controllers
             _UserTeam = _IUserTeam;
             _context = context;
             _Availability = _IAvailability;
+        }
+
+        [Route("[action]/{UID}/{start}/{end}")]
+        public IActionResult ScheduleMember(int UID, string start, string end, string TID) 
+        {
+            Models.Calendar shift = new Models.Calendar();
+            shift.UserId = UID;
+            shift.TeamId = TID;
+            shift.Description = "";
+            shift.Title = (from user in this._context.User where user.UserId == UID select user.FirstName + " " + user.LastName).SingleOrDefault(); //nameUser;
+            shift.StartTime = (new DateTime(1970, 1, 1, 1, 0, 0)).AddMilliseconds(double.Parse(start));
+            shift.EndTime = (new DateTime(1970, 1, 1,1, 0, 0)).AddMilliseconds(double.Parse(end));
+            this._Calendar.ScheduleUser(shift);
+
+            return RedirectToAction("TeamInfoPage", "Team", new { t = this.TeamCode });
+
         }
 
         [Route("[action]/{Email}/{TeamCode}")]
@@ -68,28 +85,13 @@ namespace sqeudulerApp.Controllers
 
         }
 
-        public IActionResult MainPage()
-        {
-            return View();
-        }
-
-        public IActionResult PersonalPage()
-        {
-
-            return View();
-        }
-
-        public IActionResult SchedulePage()
-        {
-            return View();
-        }
-
 
         // t is de unique code of the team
         [Route("[action]/{t}")]
         public IActionResult TeamInfoPage(string t)
         {
             string teamcode = t;
+            this.TeamCode = t;
             
             using SqlConnection conn = new SqlConnection(strCon);
             {
@@ -113,9 +115,10 @@ namespace sqeudulerApp.Controllers
                     "WHERE [UserTeam].[Team]= @TeamCode AND [User]. [Email] = @useremail";
 
                 string availabilityquery = "SELECT [Availability].[Id], [Availability].[UserId], [Availability].[team_id], [Availability].[work_date], [Availability].[start_work_hour], " +
-                    "[Availability].[end_work_hour]" +
+                    "[Availability].[end_work_hour], concat([User].[FirstName], ' ' ,[User].[LastName]), [User].[Email]" +
                     "FROM [dbo].[Availability]" +
                     "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
+                    "JOIN [dbo].[User] ON [Availability].[UserId] = [User].[UserId]" +
                     "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
@@ -240,7 +243,7 @@ namespace sqeudulerApp.Controllers
                     {
                         List<string> singleavailability = new List<string>();
                         // for each column in the current row (there should only be one row) add the column info which is in this case
-                        // 0. id 1. userid 2. teamid 3. date, 4. start time, 5. end time
+                        // 0. id 1. userid 2. teamid 3. date, 4. start time, 5. end time, 6. user name, 7. user email
                         for (int i = 0; i < sqlResultReader.FieldCount; i++)
                         {
                             singleavailability.Add(sqlResultReader.GetValue(i).ToString());
@@ -258,6 +261,8 @@ namespace sqeudulerApp.Controllers
                             singleavailabilityupdate.Add(date1.ToString("dd/MM/yyyy"));
                             singleavailabilityupdate.Add(time1.ToString("HH:mm"));
                             singleavailabilityupdate.Add(time2.ToString("HH:mm"));
+                            singleavailabilityupdate.Add(singleavailability[6]);
+                            singleavailabilityupdate.Add(singleavailability[7]);
                             availability.Add(singleavailabilityupdate);
                         }
                     }
