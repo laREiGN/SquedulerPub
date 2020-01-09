@@ -41,8 +41,6 @@ namespace sqeudulerApp.Models
             public string Name_Sender { get; set; }
             public string Name_Receiver { get; set; }
             public string Name_Co_Receiver { get; set; }
-
-
         }
         //Model for posting a request
         //Can't use integer values in HTML select
@@ -62,7 +60,6 @@ namespace sqeudulerApp.Models
             public string Target_Date { get; set; }
             public string start_work_hour { get; set; }
             public string end_work_hour { get; set; }
-
         }
     }
 }

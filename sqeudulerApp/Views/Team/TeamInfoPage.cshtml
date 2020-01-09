@@ -702,7 +702,7 @@
                                                                 {
                                                                     <div class="row align-items-end">
                                                                         @{
-                                                                            <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
+                                                                            <a asp-action="Accept_and_approve_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
                                                                         }
                                                                     </div>
                                                                 }
@@ -985,15 +985,12 @@
     @* end of the design of the availability popup *@
     <div id="Model_request" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
-                   
+                <div class="modal-header">                  
                     <h4 class="modal-title">&nbsp;<b>Create message:</b></h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-               
+                </div>              
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
