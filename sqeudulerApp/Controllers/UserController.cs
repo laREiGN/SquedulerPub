@@ -424,12 +424,12 @@ namespace sqeudulerApp.Controllers
             if (check == true)
             {
                 _Teams.Remove(TeamId);
-                return View("TeamPage");
+                return RedirectToAction("TeamPage");
             }
             else
             {
                 _UserTeam.Remove(UserID, TeamId);
-                return View("TeamPage");
+                return RedirectToAction("TeamPage");
             }
             return View("TeamPage");
         }
