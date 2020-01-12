@@ -53,7 +53,7 @@ namespace sqeudulerApp.Controllers
             shift.EndTime = (new DateTime(1970, 1, 1,1, 0, 0)).AddMilliseconds(double.Parse(end));
             this._Calendar.ScheduleUser(shift);
 
-            return RedirectToAction("TeamInfoPage", "Team", new { t = this.TeamCode });
+            return RedirectToAction("TeamInfoPage", "Team", new { t = TID });
 
         }
 
