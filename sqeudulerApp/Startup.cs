@@ -27,6 +27,8 @@ namespace sqeudulerApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+            services.AddSingleton<IConfiguration>(Configuration);
             //making use of entity framework to use the connectionstring in appsettings to make a connection with the database.
             services.AddDbContext<DB_Context>(options => options.UseSqlServer(Configuration.GetConnectionString("connectionStr")));
             services.AddControllersWithViews();
