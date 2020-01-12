@@ -81,9 +81,9 @@ namespace sqeudulerApp.Controllers
                             em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", model.Email, "Password Recovery", body);
                             return View("Index");
                         }
-                        return View();
+                       // return View();
                     }
-                    return View();
+                    //return View();
                 }
             }
             else
