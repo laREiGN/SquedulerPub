@@ -119,7 +119,7 @@ namespace sqeudulerApp.Controllers
                     "FROM [dbo].[Availability]" +
                     "JOIN [dbo].UserTeam ON [UserTeam].[UserID] = [Availability].[UserId]" +
                     "JOIN [dbo].[User] ON [Availability].[UserId] = [User].[UserId]" +
-                    "WHERE [UserTeam].[Team] = @TeamCode AND [UserTeam].[UserId] = [Availability].[UserId]";
+                    "WHERE [UserTeam].[Team] = @TeamCode";
 
                 // Create a new list that will contain the 'team information' aka results of the teamquery
                 List<string> teaminfo = new List<string>();
@@ -248,7 +248,7 @@ namespace sqeudulerApp.Controllers
                         {
                             singleavailability.Add(sqlResultReader.GetValue(i).ToString());
                         }
-                        if (singleavailability[1] == GetCurrentUserID(HttpContext.Session.GetString("Uid")).ToString() && singleavailability[2] == teamcode)
+                        if (singleavailability[2] == teamcode)
                         {
                             DateTime date1 = DateTime.Parse(singleavailability[3]);
                             DateTime time1 = DateTime.Parse(singleavailability[4]);

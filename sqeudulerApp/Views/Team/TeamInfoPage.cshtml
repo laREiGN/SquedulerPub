@@ -643,14 +643,18 @@
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
                             {
-                                <div class="rounded border memberinfocontainer transformer">
-                                    <p class="avlinfo">@availability[3]</p>
-                                    <p class="avlinfo">@availability[4] till @availability[5]</p>
-                                    <div class="HiddenText">
+                                @if (int.Parse(availability[1])== ViewBag.UserID)
+                                {
+                                    <div class="rounded border memberinfocontainer transformer">
+                                        <p class="avlinfo">@availability[3]</p>
+                                        <p class="avlinfo">@availability[4] till @availability[5]</p>
+                                        <div class="HiddenText">
 
-                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                            <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+
                             }
                         </div>
                     </div>
@@ -934,16 +938,19 @@
                         <br />
                         <div class="rounded border pre-inner">
                             @foreach (List<string> availability in ViewBag.teamcontext.Item4)
-                            {
-                                <div class="rounded border memberinfocontainer transformer">
-                                    <p class="avlinfo">@availability[3]</p>
-                                    <p class="avlinfo">@availability[4] till @availability[5]</p>
-                                    <div class="HiddenText">
+                             {
+                                @if (int.Parse(availability[1])== ViewBag.UserID)
+                                 {
+                                      <div class="rounded border memberinfocontainer transformer">
+                                         <p class="avlinfo">@availability[3]</p>
+                                         <p class="avlinfo">@availability[4] till @availability[5]</p>
+                                         <div class="HiddenText">
 
-                                        <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
-                                    </div>
-                                </div>
-                            }
+                                             <button type="button" data-av="@availability[0]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#confirmRemoveAvailability" id="removeAvlButton" class="btn btn-danger button">Delete availability</button>
+                                         </div>
+                                      </div>
+                                 }
+                             }
                         </div>
                     </div>
                 </div>
