@@ -10,16 +10,20 @@ using sqeudulerApp.Models;
 using sqeudulerApp.Repository;
 using sqeudulerApp.Services;
 using static sqeudulerApp.Models.TeamPageModel;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using Microsoft.Extensions.Configuration;
 
 namespace sqeudulerApp.Controllers
 {
     public class RequestsController : Controller
     {
         private readonly DB_Context _context;
-
-        public RequestsController(DB_Context context)
+        private readonly IConfiguration _configuration;
+        public RequestsController(DB_Context context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: Requests1
@@ -161,7 +165,7 @@ namespace sqeudulerApp.Controllers
         }
 
         /// <summary>
-        /// Accepts a request, if with a co_reciever, can only be accepted with a co_approved message
+        /// Accepts a request, if a co_reciever, can only be accepted with a co_approved message
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -236,8 +240,24 @@ namespace sqeudulerApp.Controllers
                 //body of the email, showing all information regarding the request
                 string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
                 //send the email via our support email
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
-
+                try
+                {
+                    em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                }
+                //use sendgrid
+                catch
+                {
+                    var apiKey = "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";                   
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress("squedrecovery@gmail.com", "squeduler_support");
+                    List<EmailAddress> tos = new List<EmailAddress>
+                    {
+                        new EmailAddress(usr.Email, "")                               
+                    };
+                    var htmlContent = "";
+                    var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, body1, body2, htmlContent);
+                    var response = await client.SendEmailAsync(msg);
+                }
             }
             //delete the request from the database
             _context.Requests.Remove(requests.FirstOrDefault());
@@ -314,7 +334,24 @@ namespace sqeudulerApp.Controllers
                 //body of the email, showing all information regarding the request
                 string body2 = "\n The request has been accepted. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your schedule for more information." + body3 + ". \n Request made on: " + request_date;
                 //send the email via our support email
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                try
+                {
+                    em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                }
+                //use sendgrid
+                catch
+                {
+                    var apiKey = "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";
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress("squedrecovery@gmail.com", "squeduler_support");
+                    List<EmailAddress> tos = new List<EmailAddress>
+                    {
+                        new EmailAddress(usr.Email, "")
+                    };
+                    var htmlContent = "";
+                    var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, body1, body2, htmlContent);
+                    var response = await client.SendEmailAsync(msg);
+                }
 
             }
             //delete the request from the database
@@ -393,7 +430,24 @@ namespace sqeudulerApp.Controllers
                 //body of the email, showing all information regarding the request
                 string body2 = "\n The request has been Denied. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
                 //send the email via our support email
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                try
+                {
+                    em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                }
+                //use sendgrid
+                catch
+                {
+                    var apiKey = "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";
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress("squedrecovery@gmail.com", "squeduler_support");
+                    List<EmailAddress> tos = new List<EmailAddress>
+                    {
+                        new EmailAddress(usr.Email, "")
+                    };
+                    var htmlContent = "";
+                    var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, body1, body2, htmlContent);
+                    var response = await client.SendEmailAsync(msg);
+                }
             }
             //delete the request from the database
             _context.Requests.Remove(requests.FirstOrDefault());
@@ -466,7 +520,25 @@ namespace sqeudulerApp.Controllers
                 //body of the email, showing all information regarding the request
                 string body2 = "\n The request has been Deleted by the requester. \n Description: " + request_decription + ". \n Shift: " + request_time + ". \n Please check your employer for more information." + body3 + ". \n Request made on: " + request_date;
                 //send the email via our support email
-                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                //send the email via our support email
+                try
+                {
+                    em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", usr.Email, body1, body2);
+                }
+                //use sendgrid
+                catch
+                {
+                    var apiKey = "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";
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress("squedrecovery@gmail.com", "squeduler_support");
+                    List<EmailAddress> tos = new List<EmailAddress>
+                    {
+                        new EmailAddress(usr.Email, "")
+                    };
+                    var htmlContent = "";
+                    var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, body1, body2, htmlContent);
+                    var response = await client.SendEmailAsync(msg);
+                }
             }
             //delete the request from the database
             _context.Requests.Remove(requests.FirstOrDefault());

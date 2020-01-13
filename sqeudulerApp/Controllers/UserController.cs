@@ -11,6 +11,9 @@ using System.Drawing;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using static sqeudulerApp.Scripts.Extra;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using Microsoft.Extensions.Configuration;
 
 namespace sqeudulerApp.Controllers
 {
@@ -22,15 +25,17 @@ namespace sqeudulerApp.Controllers
         private readonly ITeams _Teams;
         private readonly IUserTeam _UserTeam;
         private readonly IAvailability _Availability;
+        private readonly IConfiguration _configuration;
 
-
-        public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, IAvailability _IAvailability)
+        public UserController(IUser _IUser, ITeams _ITeams, IUserTeam _IUserTeam, IAvailability _IAvailability, IConfiguration configuration)
         {
             _User = _IUser;
             _Teams = _ITeams;
             _UserTeam = _IUserTeam;
             _Availability = _IAvailability;
+            _configuration = configuration;
         }
+
 
         public IActionResult Index()
         {
@@ -42,7 +47,7 @@ namespace sqeudulerApp.Controllers
             return View();
         }
 
-        public IActionResult ForgotPassword(User model)
+        public async Task<IActionResult> ForgotPasswordAsync(User model)
         {
             if (model.Email != null)
             {
@@ -74,11 +79,37 @@ namespace sqeudulerApp.Controllers
                             conn.Close();
                             //sent email to user with the new temp password
 
-                            string body1 = "Your password is ";
-                            string password = New_password;
-                            string body2 = " . \nPlease change it right away to prevent further log in problems.";
-                            string body = body1 + password + body2;
-                            em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", model.Email, "Password Recovery", body);
+
+                            //try to use smtp
+                            try
+                            {
+                                string body1 = "Your password is ";
+                                string password = New_password;
+                                string body2 = " . \nPlease change it right away to prevent further log in problems.";
+                                string body = body1 + password + body2;
+                                em.NewHeadlessEmail("squedrecovery@gmail.com", "squedteam3!", model.Email, "Password Recovery", body);
+                            }
+                            //use sendgrid
+                            catch
+                            {
+                                var apiKey = "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";
+                                string body1 = "Your password is ";
+                                string password = New_password;
+                                string body2 = " . \nPlease change it right away to prevent further log in problems.";
+                                string body = body1 + password + body2;
+                                var client = new SendGridClient(apiKey);
+                                var from = new EmailAddress("squedrecovery@gmail.com", "squeduler_support");
+                                var subject = "Password Recovery";
+                                List<EmailAddress> tos = new List<EmailAddress>
+                                {
+                                  new EmailAddress(model.Email, "")
+                                };
+                                var htmlContent = "";
+                                var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, tos, subject, body, htmlContent);
+                                var response = await client.SendEmailAsync(msg);
+                            }
+                            
+
                             return View("Index");
                         }
                        // return View();
