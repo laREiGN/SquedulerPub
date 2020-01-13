@@ -393,6 +393,10 @@
             transition: width 0.5s, height 0.5s;
         }
 
+        .transformer2 {
+            transition: width 0.5s, height 4.5s;
+        }
+
         .memberinfocontainer:hover {
             width: 500px;
             height: auto;
@@ -451,9 +455,9 @@
                 <h3>Main Page</h3>
                 <p>Recent activities and requests</p>
                 <div class="row">
-                    <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                    <div class="col-md-4 rounded border pre-inner" style="height: 560px; text-align: left;">
                         <h4>Requests for: @ViewBag.Username</h4>
-                        <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                        <div class="overflow-auto" style="overflow-auto; height: 500px;">
                             <div class="container">
                                 <div class="row">
                                     @foreach (TeamPageModel.Requests_Site request in ViewBag.Requests)
@@ -509,15 +513,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
-                                            <div class="container">
-                                                <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
-                                                    <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                        <div class="col-md-12 mt-2 container rounded border memberinfocontainer transformer2" style="margin-bottom: 4px; width:50%;">
+                                            <div class="row align-items-start align-items-center" style="padding: 2px;">
+                                                <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                            </div>
+                                            <div class="row align-items-center">
+                                                <div class="col-md-12 mt-2">
+                                                    <b>Requester</b>: @request.Name_Sender
                                                 </div>
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-12 mt-2">
-                                                        <b>Requester</b>: @request.Name_Sender
-                                                    </div>
+                                                <div class="HiddenText">
                                                     @{
                                                         if (request.Co_Receiver_ID >= 0)
                                                         {
@@ -529,13 +533,13 @@
                                                                     if (request.Co_Recvr_Approved)
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-warning">Approved by co-reciever</button>
+                                                                            <span style="width: 100%" class="badge badge-success">Approved by co-receiver</span>
                                                                         </div>
                                                                     }
                                                                     else
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by co-reciever</button>
+                                                                            <span style="width: 100%" class="badge badge-danger">Not Approved by co-reciever</span>
                                                                         </div>
                                                                     }
                                                                 }
@@ -568,9 +572,10 @@
                                                         <p>@request.Date</p>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
+                                                        <button type="button" style="width: 100%;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
                                                     </div>
                                                 </div>
+                                            </div>
                                                 @{
                                                     if (request.Co_Receiver_ID == ViewBag.UserID)
                                                     {
@@ -601,21 +606,20 @@
                                                     }
                                                 }
                                             </div>
-                                        </div>
 
-                                    }
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
+                        <div class="col-md-4">
 
-                    </div>
-                    <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
 
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <div id="Personal" class="tabcontent">
                 <h3>Personal</h3>
@@ -711,9 +715,9 @@
                 <h3>Main Page</h3>
                 <p>Recent activities and requests</p>
                 <div class="row">
-                    <div class="col-md-4" style="height: 560px; border-style: solid; background-color: #bbbbbb; border-width: 10px; border-color: #3d3d3d;">
+                    <div class="col-md-4 rounded border pre-inner" style="height: 560px; text-align: left;">
                         <h4>All Requests in the Team</h4>
-                        <div class="overflow-auto" style="overflow-auto; height: 500px; background-color: #bbbbbb;">
+                        <div class="overflow-auto" style="overflow-auto; height: 500px;">
                             <div class="container">
                                 <div class="row">
                                     @foreach (TeamPageModel.Requests_Site request in ViewBag.AllRequests)
@@ -769,15 +773,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 mt-2" style="height:100%; width:50%; border-style: solid; background-color: #808080; border-width: 2px; border-color: #333333;">
-                                            <div class="container">
-                                                <div class="row align-items-start" style="text-align: center; background-color: #3d3d3d; color: white; border-style: solid; border-width: 2px; border-color: #333333;">
-                                                    <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                        <div class="col-md-12 mt-2 container rounded border memberinfocontainer transformer2" style="margin-bottom: 4px; width:50%;">                                           
+                                            <div class="row align-items-start align-items-center" style="padding: 2px;">
+                                                <h2>@Html.DisplayFor(modelItem => request.Title)</h2>
+                                            </div>
+                                            <div class="row align-items-center">
+                                                <div class="col-md-12 mt-2">
+                                                    <b>Requester</b>: @request.Name_Sender
                                                 </div>
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-12 mt-2">
-                                                        <b>Requester</b>: @request.Name_Sender
-                                                    </div>
+                                                <div class="HiddenText">
                                                     @{
                                                         if (request.Co_Receiver_ID >= 0)
                                                         {
@@ -789,13 +793,13 @@
                                                                     if (request.Co_Recvr_Approved)
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-warning">Approved by co-reciever</button>
+                                                                            <span style="width: 100%" class="badge badge-success">Approved by co-receiver</span>
                                                                         </div>
                                                                     }
                                                                     else
                                                                     {
                                                                         <div class="col">
-                                                                            <button style="width: 100%" class="btn btn-danger">Not Approved by co-reciever</button>
+                                                                            <span style="width: 100%" class="badge badge-danger">Not Approved by co-reciever</span>
                                                                         </div>
                                                                     }
                                                                 }
@@ -828,71 +832,72 @@
                                                         <p>@request.Date</p>
                                                     </div>
                                                     <div class="col-md-12 mt-2">
-                                                        <button type="button" style="width: 100%; border-color: black; border-width:2px;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
-                                                    </div>
-                                                </div>
-                                                <div class="row align-items-end">
-                                                    <div class="col">
-                                                        @{
-                                                            //has co reciever
-                                                            if (request.Co_Receiver_ID >= 0)
-                                                            {
-                                                                if (request.Co_Receiver_ID == ViewBag.UserID)
-                                                                {
-                                                                    <div class="row align-items-end">
-                                                                        @{
-                                                                            <a asp-action="Accept_and_approve_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
-                                                                        }
-                                                                    </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    //is approved by co reciever
-                                                                    if (request.Co_Recvr_Approved)
-                                                                    {
-                                                                        <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Accept Request</button></a>
-
-                                                                    }
-                                                                    //not approved by co reciever
-                                                                    else
-                                                                    {
-                                                                        <button style="width: 100%; border-color: black; border-width:2px;" class="btn btn-danger">Not Approved by Co-reciever</button>
-                                                                    }
-                                                                }
-
-                                                            }
-                                                            //has no co reciever
-                                                            else
-                                                            {
-                                                                <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
-
-                                                            }
-
-                                                        }
-                                                    </div>
-
-                                                    <div class="row align-items-end">
-                                                        @{
-                                                            if (request.Sender_ID == ViewBag.UserID)
-                                                            {
-                                                                <div class="row align-items-end">
-                                                                    <div class="col">
-                                                                        <a asp-action="Delete_request_member" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div class="col">
-                                                                    <a asp-action="Delete_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%; border-color: black; border-width:2px;" type="button" class="btn btn-danger">Delete Request</button></a>
-                                                                </div>
-                                                            }
-                                                        }
-
+                                                        <button type="button" style="width: 100%;" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Model_request_detail_@request.Mssg_ID">Show Details</button>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row align-items-end">                                  
+                                                <div class="col">
+                                                    @{
+                                                        //has co reciever
+                                                        if (request.Co_Receiver_ID >= 0)
+                                                        {
+
+                                                            if (request.Co_Receiver_ID == ViewBag.UserID)
+                                                            {
+                                                                <div class="row align-items-end">
+                                                                    @{
+                                                                        <a asp-action="Accept_and_approve_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                //is approved by co reciever
+                                                                if (request.Co_Recvr_Approved)
+                                                                {
+                                                                    <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%;" type="button" class="btn btn-success">Accept Request</button></a>
+
+                                                                }
+                                                                //not approved by co reciever
+                                                                else
+                                                                {
+                                                                    <span style="width: 100%" class="badge badge-danger">Not Approved by co-reciever</span>
+                                                                }
+                                                            }
+
+                                                        }
+                                                        //has no co reciever
+                                                        else
+                                                        {
+                                                            <a asp-action="Accept_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%;" type="button" class="btn btn-success">Approve and Accept Request</button></a>
+                                                        }
+
+                                                    }
+                                                </div>
+
+                                                <div class="row align-items-end">
+                                                    @{
+                                                        if (request.Sender_ID == ViewBag.UserID)
+                                                        {
+                                                            <div class="row align-items-end">
+                                                                <div class="col">
+                                                                    <a asp-action="Delete_request_member" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col">
+                                                                <a asp-action="Delete_request" asp-controller="Requests" asp-route-id="@request.Mssg_ID"><button style="width: 100%;" type="button" class="btn btn-danger">Delete Request</button></a>
+                                                            </div>
+                                                        }
+                                                    }
+
+                                                </div>
+                                            </div>
                                         </div>
+                                        
 
                                     }
                                 </div>
