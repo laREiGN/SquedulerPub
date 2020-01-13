@@ -52,7 +52,7 @@
                 var availabledate = infolistofsingleavailability[1].textContent;
                 var startendtime = infolistofsingleavailability[2].textContent.split(" - ");
 
-                var newdate = availabledate.split("/").reverse().join("-");
+                var newdate = availabledate.split("-").reverse().join("-");
 
                 var starttime = startendtime[0] + ":00";
                 var endtime = startendtime[1] + ":00";
@@ -64,7 +64,8 @@
                     availableend > startFilter && availableend < endFilter ||
                     availablestart < startFilter && availableend > endFilter) {
                     listofavailabilities[i].style.display = "";
-                } else {
+                }
+                else {
                     listofavailabilities[i].style.display = "none";
                 }
             }
