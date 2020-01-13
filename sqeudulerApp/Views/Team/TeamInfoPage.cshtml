@@ -149,14 +149,12 @@
 
     <script>
         document.addEventListener('click', function (event) {
-            if (event.target.id == "kickButton" || event.target.id == "promoteButton" || event.target.id == "removeAvlButton") {
+            if (event.target.id == "kickButton" || event.target.id == "promoteButton") {
                 var UserEmail = event.target.getAttribute("data-bag-email"); //name of attribute of the target element which we clicked on with the value which we will use in the controller: email and teamcode
                 var TeamCode = event.target.getAttribute("data-bag-TC");
-                var avlid = document.getElementById('removeAvlButton').dataset.av;
 
                 var confirmRmv = document.getElementById("confirmRemove");
                 var confirmPrmt = document.getElementById("confirmPromote");
-                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
 
                 confirmRmv.setAttribute("href", "/Team/RemoveUserFromTeam" + "/" + UserEmail + "/" + TeamCode);
                 confirmPrmt.setAttribute("href", "/Team/PromoteUserInTeam" + "/" + UserEmail + "/" + TeamCode);
@@ -164,7 +162,18 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('click', function (event) {
+            if (event.target.id == "removeAvlButton") {
+                var TeamCode = event.target.getAttribute("data-bag-TC");
+                var avlid = document.getElementById('removeAvlButton').dataset.av;
 
+                var confirmRmvAvl = document.getElementById("confirmRemoveAvl");
+
+                confirmRmvAvl.setAttribute("href", "/Team/RemoveAvailability" + "/" + avlid + "/" + TeamCode);
+            }
+        });
+    </script>
     <script>
         document.addEventListener('click', function (event) {
             if (event.target.id == "scheduleButton") {
@@ -179,13 +188,13 @@
                 var AvlStart = new Date(Date.parse(newdate + "T" + AvailableStartTime));
                 var AvlEnd = new Date(Date.parse(newdate + "T" + AvailableEndTime));
 
-/*                document.getElementById("ShiftUserId").setAttribute('value', UserId); 
-                document.getElementById("ShiftUserName").setAttribute('value', UserName);
-                document.getElementById("ShiftUserTeamCode").setAttribute('value', TeamCode);
-                document.getElementById("AvailableStart").setAttribute('value', AvlStart);
-                document.getElementById("AvailableEnd").setAttribute('value', AvlEnd);*/
+                /*                document.getElementById("ShiftUserId").setAttribute('value', UserId);
+                                document.getElementById("ShiftUserName").setAttribute('value', UserName);
+                                document.getElementById("ShiftUserTeamCode").setAttribute('value', TeamCode);
+                                document.getElementById("AvailableStart").setAttribute('value', AvlStart);
+                                document.getElementById("AvailableEnd").setAttribute('value', AvlEnd);*/
 
-                document.getElementById("ShiftUserId").value = UserId; 
+                document.getElementById("ShiftUserId").value = UserId;
                 document.getElementById("ShiftUserName").value = UserName;
                 document.getElementById("ShiftUserTeamCode").value = TeamCode;
                 document.getElementById("AvailableStart").value = AvlStart;
@@ -199,7 +208,7 @@
 
             document.addEventListener('click', function (event) {
                 if (event.target.id == "confirmSchedule") {
-                
+
 
                     var AvailableStart = new Date(document.getElementById('AvailableStart').value);
                     var AvailableEnd = new Date(document.getElementById('AvailableEnd').value);
@@ -243,8 +252,8 @@
                     else {
                         alert("Members can only be scheduled in their available time periods.");
                     }
-            
-                    
+
+
                 }
             });
 
@@ -1037,7 +1046,8 @@
                                         <p class="memberinfo">@member[4]</p>
                                         @if (member[2] == "member")
                                         {
-                                            <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">REMOVE MEMBER FROM TEAM</button>
+                                            <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmRmvMember" id="kickButton" class="btn btn-danger button">
+                                        MEMBER FROM TEAM</button>
                                             <button type="button" data-bag-email="@member[4]" data-bag-TC="@ViewBag.teamcontext.Item1[2]" data-toggle="modal" data-target="#ConfirmPrmtMember" id="promoteButton" class="btn btn-info button">PROMOTE</button>
                                         }
                                         else
