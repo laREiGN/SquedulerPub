@@ -185,7 +185,7 @@
                 var AvailableEndTime = event.target.dataset.avlend + ":00";
                 var TeamCode = event.target.getAttribute("data-bag-TC");
 
-                var newdate = AvailableDate.split("/").reverse().join("-");
+                var newdate = AvailableDate.split("-").reverse().join("-");
                 var AvlStart = new Date(Date.parse(newdate + "T" + AvailableStartTime));
                 var AvlEnd = new Date(Date.parse(newdate + "T" + AvailableEndTime));
 
