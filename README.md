@@ -1,3 +1,1 @@
 # Squeduler
-
-Useless app
